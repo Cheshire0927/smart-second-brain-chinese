@@ -40,7 +40,7 @@ export function registerWidgetBlocks(plugin: SecondBrainPlugin): void {
 		if (unknown.length > 0) {
 			el.createDiv({
 				cls: "s2b-widget-blocked",
-				text: `This widget asks for a library that is not bundled: ${unknown.join(", ")}. Available: ${Object.keys(WIDGET_LIBS).join(", ")}.`,
+				text: `此 Widget 请求了未内置的库：${unknown.join("、")}。可用库：${Object.keys(WIDGET_LIBS).join("、")}。`,
 			});
 			return;
 		}
@@ -64,7 +64,7 @@ function renderPlaceholder(el: HTMLElement): void {
 	const placeholder = el.createDiv({ cls: "s2b-widget-placeholder" });
 	const phase = `-${Math.round(performance.now() % SWEEP_PERIOD_MS)}ms`;
 	placeholder.style.animationDelay = phase;
-	placeholder.createDiv({ cls: "s2b-widget-placeholder-label", text: "Generating widget…" }).style.animationDelay =
+	placeholder.createDiv({ cls: "s2b-widget-placeholder-label", text: "正在生成 Widget…" }).style.animationDelay =
 		phase;
 }
 
@@ -94,19 +94,19 @@ function renderChatToolbar(
 		return saving;
 	};
 
-	iconButton(bar, "maximize-2", "Expand", async () => {
+	iconButton(bar, "maximize-2", "展开", async () => {
 		plugin.openWidgetModal(spec, sourcePath);
 	});
-	iconButton(bar, "copy", "Copy as block to paste into a note", async () => {
+	iconButton(bar, "copy", "复制为代码块以粘贴到笔记", async () => {
 		await navigator.clipboard.writeText(wrapWidgetFence(source));
-		new Notice("Widget block copied. Paste it into any note.");
+		new Notice("Widget 代码块已复制，可粘贴到任意笔记中。");
 	});
-	iconButton(bar, "save", "Save as a widget file and open it", async () => {
+	iconButton(bar, "save", "保存为 Widget 文件并打开", async () => {
 		try {
 			const file = await save();
 			await plugin.app.workspace.getLeaf("tab").openFile(file);
 		} catch (error) {
-			new Notice(`Could not save widget: ${error instanceof Error ? error.message : String(error)}`);
+			new Notice(`保存 Widget 失败：${error instanceof Error ? error.message : String(error)}`);
 		}
 	});
 }

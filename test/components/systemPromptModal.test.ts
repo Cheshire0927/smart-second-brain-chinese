@@ -45,8 +45,8 @@ describe("SystemPromptModal (diff)", () => {
 		});
 
 		expect(target.querySelectorAll(".prompt-diff-pane")).toHaveLength(2);
-		expect(button("Back to editor")).toBeUndefined();
-		button("Use default")?.click();
+		expect(button("返回编辑器")).toBeUndefined();
+		button("使用默认值")?.click();
 		expect(setPrompt).toHaveBeenCalledWith("shipped");
 		expect(modal.close).toHaveBeenCalled();
 	});
@@ -60,7 +60,7 @@ describe("SystemPromptModal (diff)", () => {
 			notePath: "Agents/A/AGENT.md",
 		});
 
-		button("Open note")?.click();
+		button("打开笔记")?.click();
 		expect(openLinkText).toHaveBeenCalledWith("Agents/A/AGENT.md", "", true);
 		expect(modal.close).toHaveBeenCalled();
 		expect(setPrompt).not.toHaveBeenCalled();
@@ -69,9 +69,9 @@ describe("SystemPromptModal (diff)", () => {
 	it("says the note matches when there is nothing to diff, and offers no Use default", async () => {
 		await render({ getPrompt: () => "same", defaultPrompt: "same", setPrompt: vi.fn(), notePath: "x.md" });
 
-		expect(target.textContent).toContain("matches the current default");
+		expect(target.textContent).toContain("此笔记与当前默认版本一致");
 		expect(target.querySelector(".prompt-diff-pane")).toBeNull();
-		expect(button("Use default")).toBeUndefined();
+		expect(button("使用默认值")).toBeUndefined();
 	});
 
 	it("read-only preview shows the prompt with no actions", async () => {

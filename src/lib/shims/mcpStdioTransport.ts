@@ -21,7 +21,7 @@ export function getDefaultEnvironment(): Record<string, string> {
 export class StdioClientTransport {
 	constructor() {
 		throw new Error(
-			"MCP stdio transport is not available in Smart Second Brain — connect to the server over HTTP.",
+			"Smart Second Brain 不支持 MCP stdio 传输方式 —— 请通过 HTTP 连接服务器。",
 		);
 	}
 }

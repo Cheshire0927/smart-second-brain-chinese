@@ -30,7 +30,7 @@ let messageContainer = $state<ReturnType<typeof MessageContainer> | undefined>()
 let input = $state<ReturnType<typeof Input> | undefined>();
 let lastSessionId: string | null = null;
 let isDragging = $state(false);
-let dragMessage = $state("Drop files here");
+let dragMessage = $state("将文件拖放到此处");
 let dragHasIssue = $state(false);
 
 $effect(() => {
@@ -455,7 +455,7 @@ function portalComposer(node: HTMLElement) {
       <div
         class="flex h-full items-center justify-center p-4 text-center text-sm text-[--text-muted]"
       >
-        Chat session is not available yet. Reopen this view after plugin initialization completes.
+        聊天会话尚不可用。请在插件初始化完成后重新打开此视图。
       </div>
     {/if}
 

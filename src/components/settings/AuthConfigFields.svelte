@@ -171,7 +171,7 @@ function getFieldStyles(fieldKey: string): string {
     <!-- Advanced disclosure (only if there are optional fields) -->
     {#if hasOptionalFields}
         <details class="auth-advanced" bind:open={showAdvanced}>
-            <summary class="auth-advanced-summary">Advanced</summary>
+            <summary class="auth-advanced-summary">高级</summary>
             {#each optionalFields() as [fieldKey, field]}
                 {@render fieldRenderer(fieldKey, field)}
             {/each}

@@ -36,7 +36,7 @@ const enabledCount = $derived.by(() => {
 });
 </script>
 
-<div class="modal-title">Search Result Details</div>
+<div class="modal-title">搜索结果详情</div>
 
 <div class="modal-content search-display-settings-modal">
   <p class="search-display-settings-intro">
@@ -46,7 +46,7 @@ const enabledCount = $derived.by(() => {
 
   <div class="search-display-settings-preview-panel">
     <div class="search-display-settings-preview-header">
-      <div class="search-display-settings-preview-title">Preview</div>
+      <div class="search-display-settings-preview-title">预览</div>
       <div class="search-display-settings-preview-count">
         {enabledCount} of {tagsAvailable ? 5 : 4} enabled
       </div>
@@ -87,24 +87,24 @@ const enabledCount = $derived.by(() => {
             <div class="s2b-search-result-badges">
               <span
                 class="s2b-search-result-badge s2b-search-result-badge-title"
-                aria-label="Title"
-                title="Title"
+                aria-label="标题"
+                title="标题"
               >
                 <span class="s2b-search-result-badge-icon" aria-hidden="true" use:icon={"heading"}
                 ></span>
               </span>
               <span
                 class="s2b-search-result-badge s2b-search-result-badge-tag"
-                aria-label="Tag"
-                title="Tag"
+                aria-label="标签"
+                title="标签"
               >
                 <span class="s2b-search-result-badge-icon" aria-hidden="true" use:icon={"tags"}
                 ></span>
               </span>
               <span
                 class="s2b-search-result-badge s2b-search-result-badge-content"
-                aria-label="Content"
-                title="Content"
+                aria-label="内容"
+                title="内容"
               >
                 <span
                   class="s2b-search-result-badge-icon"
@@ -129,19 +129,19 @@ const enabledCount = $derived.by(() => {
 
       {#if pluginData.searchShowKeyboardHints}
         <div class="prompt-instructions">
-          <div class="prompt-instruction"><span class="prompt-instruction-command">↑↓</span><span>Navigate</span></div>
-          <div class="prompt-instruction"><span class="prompt-instruction-command">↵</span><span>Open note</span></div>
-          <div class="prompt-instruction"><span class="prompt-instruction-command">{modEnterKey}</span><span>Open in new tab</span></div>
-          <div class="prompt-instruction"><span class="prompt-instruction-command">{altEnterKey}</span><span>Ask agent</span></div>
-          <div class="prompt-instruction"><span class="prompt-instruction-command">⇧↵</span><span>Create note</span></div>
+          <div class="prompt-instruction"><span class="prompt-instruction-command">↑↓</span><span>导航</span></div>
+          <div class="prompt-instruction"><span class="prompt-instruction-command">↵</span><span>打开笔记</span></div>
+          <div class="prompt-instruction"><span class="prompt-instruction-command">{modEnterKey}</span><span>在新标签页打开</span></div>
+          <div class="prompt-instruction"><span class="prompt-instruction-command">{altEnterKey}</span><span>询问智能体</span></div>
+          <div class="prompt-instruction"><span class="prompt-instruction-command">⇧↵</span><span>创建笔记</span></div>
           <div class="prompt-instruction"><span class="prompt-instruction-command">{tabKey}</span><span>semantic: off</span></div>
-          <div class="prompt-instruction"><span class="prompt-instruction-command">esc</span><span>Close</span></div>
+          <div class="prompt-instruction"><span class="prompt-instruction-command">esc</span><span>关闭</span></div>
         </div>
       {/if}
     </div>
   </div>
 
-  <SettingContainer name="Path" desc="Show the note's folder path inline in search results.">
+  <SettingContainer name="路径" desc="在搜索结果中内联显示笔记的文件夹路径。">
     <Toggle
       checked={pluginData.searchShowPath}
       onchange={(checked) => (pluginData.searchShowPath = checked)}
@@ -149,10 +149,10 @@ const enabledCount = $derived.by(() => {
   </SettingContainer>
 
   <SettingContainer
-    name="Tags"
+    name="标签"
     desc={tagsAvailable
-      ? "Show file tags inline in search results."
-      : "Show file tags inline in search results. Unavailable on phones, where the tag strip would crowd out the note name."}
+      ? "在搜索结果中内联显示文件标签。"
+      : "在搜索结果中内联显示文件标签。手机上不可用，标签栏会挤占笔记名称的空间。"}
   >
     <Toggle
       checked={showTags}
@@ -162,8 +162,8 @@ const enabledCount = $derived.by(() => {
   </SettingContainer>
 
   <SettingContainer
-    name="Match badges"
-    desc="Show why a note matched, for example Title, Tag, or Content."
+    name="匹配标记"
+    desc="显示笔记的匹配原因，例如标题、标签或内容。"
   >
     <Toggle
       checked={pluginData.searchShowMatchBadges}
@@ -172,8 +172,8 @@ const enabledCount = $derived.by(() => {
   </SettingContainer>
 
   <SettingContainer
-    name="Content snippets"
-    desc="Show the additional heading and snippet text under each search result."
+    name="内容摘要"
+    desc="在每条搜索结果下方显示附加标题与摘要文本。"
   >
     <Toggle
       checked={pluginData.searchShowMatchContext}
@@ -182,8 +182,8 @@ const enabledCount = $derived.by(() => {
   </SettingContainer>
 
   <SettingContainer
-    name="Keyboard shortcuts"
-    desc="Show keyboard shortcut hints at the bottom of the search modal."
+    name="键盘快捷键"
+    desc="在搜索弹窗底部显示键盘快捷键提示。"
   >
     <Toggle
       checked={pluginData.searchShowKeyboardHints}
@@ -193,7 +193,7 @@ const enabledCount = $derived.by(() => {
 </div>
 
 <div class="modal-button-container">
-  <Button buttonText="Done" onClick={() => modal.close()} />
+  <Button buttonText="完成" onClick={() => modal.close()} />
 </div>
 
 <style>

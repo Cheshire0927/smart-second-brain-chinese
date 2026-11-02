@@ -11,7 +11,7 @@ export class IndexingReportModal extends SvelteModal {
 	}
 
 	onOpen() {
-		this.setTitle("Indexing Report");
+		this.setTitle("索引报告");
 		this.mountComponent(
 			IndexingReportModalComponent,
 			{ modal: this, indexId: this.indexId },

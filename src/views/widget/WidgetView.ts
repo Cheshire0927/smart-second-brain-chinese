@@ -94,14 +94,14 @@ export class WidgetView extends FileView {
 		menu.addItem((item) =>
 			item
 				.setSection("action")
-				.setTitle(this.source ? "Show widget" : "Edit source")
+				.setTitle(this.source ? "显示 Widget" : "编辑源码")
 				.setIcon(this.source ? "layout-template" : "code")
 				.onClick(() => void this.toggleSource()),
 		);
 		menu.addItem((item) =>
 			item
 				.setSection("action")
-				.setTitle("Rename...")
+				.setTitle("重命名…")
 				.setIcon("pencil")
 				.onClick(() => this.promptRename()),
 		);
@@ -208,23 +208,23 @@ export class WidgetView extends FileView {
 		bar.createSpan({
 			cls: "s2b-diff-actions-label",
 			text: this.showProposal
-				? "Pending change from chat — showing the proposed widget"
-				: "Pending change from chat — showing the current widget",
+				? "来自聊天的待处理更改 —— 当前显示的是提议的 Widget"
+				: "来自聊天的待处理更改 —— 当前显示的是现有 Widget",
 		});
 		const toggle = bar.createEl("button", {
 			cls: "s2b-widget-view-review-toggle",
-			text: this.showProposal ? "Show current" : "Show proposed",
+			text: this.showProposal ? "显示当前" : "显示提议",
 		});
 		toggle.addEventListener("click", () => {
 			this.showProposal = !this.showProposal;
 			void this.render();
 		});
-		const accept = reviewButton(bar, "s2b-diff-accept-btn", "check", "Accept");
+		const accept = reviewButton(bar, "s2b-diff-accept-btn", "check", "接受");
 		accept.addEventListener("click", () => void this.acceptProposal(proposal));
-		const reject = reviewButton(bar, "s2b-diff-reject-btn", "x", "Reject");
+		const reject = reviewButton(bar, "s2b-diff-reject-btn", "x", "拒绝");
 		reject.addEventListener("click", () => {
 			getPendingChangesStore().rejectChange(proposal.id);
-			new Notice("Rejected the proposed change to this widget");
+			new Notice("已拒绝对此 Widget 的更改提议");
 		});
 		// Stale parity with the other review surfaces: a proposal whose file changed after
 		// staging always fails the store's conflict check, so say so instead of erroring.
@@ -234,7 +234,7 @@ export class WidgetView extends FileView {
 				if (!conflict) return;
 				accept.disabled = true;
 				accept.title =
-					"Cannot accept — the widget changed after this was proposed. Reject it and ask the agent to re-stage.";
+					"无法接受 —— 提议之后此 Widget 已被改动。请拒绝并让智能体重新提交。";
 			})
 			.catch(() => {
 				/* vault read failed — leave the button as-is */
@@ -244,9 +244,9 @@ export class WidgetView extends FileView {
 	private async acceptProposal(proposal: PendingUpdateEntry): Promise<void> {
 		try {
 			await getPendingChangesStore().acceptChange(proposal.id);
-			new Notice("Applied the proposed change to this widget");
+			new Notice("已应用对此 Widget 的更改提议");
 		} catch (error) {
-			new Notice(`Failed to apply change: ${error instanceof Error ? error.message : String(error)}`);
+			new Notice(`应用更改失败：${error instanceof Error ? error.message : String(error)}`);
 		}
 	}
 
@@ -276,15 +276,15 @@ export class WidgetView extends FileView {
 		this.source = this.body.createDiv({ cls: "s2b-widget-view-source" });
 		const textarea = this.source.createEl("textarea", {
 			cls: "s2b-widget-view-source-text",
-			attr: { spellcheck: "false", "aria-label": "Widget source" },
+			attr: { spellcheck: "false", "aria-label": "Widget 源码" },
 		});
 		textarea.value = text;
 		const bar = this.source.createDiv({ cls: "s2b-widget-view-source-bar" });
-		const save = bar.createEl("button", { text: "Save", cls: "mod-cta" });
-		const cancel = bar.createEl("button", { text: "Cancel" });
+		const save = bar.createEl("button", { text: "保存", cls: "mod-cta" });
+		const cancel = bar.createEl("button", { text: "取消" });
 		const hint = bar.createSpan({ cls: "s2b-widget-view-source-hint" });
 		setIcon(hint, "info");
-		hint.createSpan({ text: "Frontmatter (title, height, queries, libs), then the HTML." });
+		hint.createSpan({ text: "先是 frontmatter（title、height、queries、libs），然后是 HTML。" });
 		this.sourceStaleHint = bar.createSpan({ cls: "s2b-widget-view-source-hint s2b-widget-view-source-stale" });
 		this.sourceStaleHint.hide();
 		save.addEventListener("click", () => void this.saveSource(textarea.value));
@@ -304,7 +304,7 @@ export class WidgetView extends FileView {
 		if (!hint || !hint.isShown()) {
 			if (hint) {
 				setIcon(hint, "alert-triangle");
-				hint.createSpan({ text: "Changed on disk while editing — Cancel to reload; Save is disabled." });
+				hint.createSpan({ text: "编辑期间磁盘上的文件已变更 —— 请取消后重新加载，保存已禁用。" });
 				hint.show();
 			}
 		}
@@ -319,13 +319,13 @@ export class WidgetView extends FileView {
 		if (!file) return;
 		if (this.isSourceStale()) {
 			this.markSourceStale();
-			new Notice("This widget changed on disk while you were editing. Cancel to reload it, then edit again.");
+			new Notice("编辑期间此 Widget 在磁盘上已变更。请取消以重新加载，然后再编辑。");
 			return;
 		}
 		try {
 			await this.plugin.app.vault.modify(file, text.endsWith("\n") ? text : `${text}\n`);
 		} catch (error) {
-			new Notice(`Could not save widget: ${error instanceof Error ? error.message : String(error)}`);
+			new Notice(`保存 Widget 失败：${error instanceof Error ? error.message : String(error)}`);
 			return;
 		}
 		this.closeSource();

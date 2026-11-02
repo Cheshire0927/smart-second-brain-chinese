@@ -52,15 +52,15 @@ export function openAICodexProvider(providerId: string, displayName = "OpenAI Co
 		logo: OpenAILogo,
 		setupInstructions: {
 			steps: [
-				"Use ChatGPT/Codex sign-in to authorize this provider",
-				"Complete the browser-based sign-in flow",
-				"Select one of the discovered Codex-backed chat models",
+				"使用 ChatGPT/Codex 登录来授权此服务商",
+				"完成基于浏览器的登录流程",
+				"选择一个已发现的 Codex 聊天模型",
 			],
 		},
 		oauth: {
 			label: "ChatGPT",
 			icon: "log-in",
-			description: "Open a browser window to complete ChatGPT/Codex authorization.",
+			description: "在浏览器中打开窗口完成 ChatGPT/Codex 授权。",
 			signIn: async () => {
 				await signInWithOpenAICodex();
 				return { kind: "session" };
@@ -72,11 +72,11 @@ export function openAICodexProvider(providerId: string, displayName = "OpenAI Co
 		},
 		auth: {
 			apiKey: {
-				label: "ChatGPT Sign-In",
-				description: "This provider uses a browser-based ChatGPT/Codex sign-in flow.",
+				label: "ChatGPT 登录",
+				description: "此服务商使用基于浏览器的 ChatGPT/Codex 登录流程。",
 				kind: "text",
 				required: true,
-				placeholder: "Authorized via ChatGPT sign-in",
+				placeholder: "通过 ChatGPT 登录授权",
 			},
 		},
 		createChatInstance: (_auth: AuthObject, modelId: string, options?: Partial<ChatModelConfig>) =>
@@ -85,7 +85,7 @@ export function openAICodexProvider(providerId: string, displayName = "OpenAI Co
 				apiKey: async () => {
 					const session = await getValidOpenAICodexSession();
 					if (!session) {
-						throw new Error("ChatGPT sign-in required");
+						throw new Error("需要登录 ChatGPT");
 					}
 					return session.accessToken;
 				},
@@ -98,7 +98,7 @@ export function openAICodexProvider(providerId: string, displayName = "OpenAI Co
 		validateAuth: async (_auth: AuthObject): Promise<AuthValidationResult> => {
 			const session = await getValidOpenAICodexSession();
 			if (!session) {
-				return { valid: false, error: "Sign in with ChatGPT to use Codex" };
+				return { valid: false, error: "请登录 ChatGPT 以使用 Codex" };
 			}
 			return { valid: true };
 		},

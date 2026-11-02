@@ -27,7 +27,7 @@ function pick(action: () => void) {
 <PickerPopover
   bind:open={isOpen}
   bind:element={anchor}
-  tooltip="Add context"
+  tooltip="添加上下文"
   dataTestId="attach-context-button"
   triggerStyles="clickable-icon attach-context-button"
   contentClass="attach-context-popover"
@@ -44,7 +44,7 @@ function pick(action: () => void) {
       <Icon name="paperclip" size="xs" />
     {/snippet}
     {#snippet content()}
-      From device
+      从设备添加
     {/snippet}
   </PickerOptionRow>
 
@@ -54,7 +54,7 @@ function pick(action: () => void) {
         <Icon name="camera" size="xs" />
       {/snippet}
       {#snippet content()}
-        Take photo
+        拍照
       {/snippet}
     </PickerOptionRow>
   {/if}
@@ -64,7 +64,7 @@ function pick(action: () => void) {
       <Icon name="vault" size="xs" />
     {/snippet}
     {#snippet content()}
-      From vault
+      从仓库添加
     {/snippet}
   </PickerOptionRow>
 </PickerPopover>

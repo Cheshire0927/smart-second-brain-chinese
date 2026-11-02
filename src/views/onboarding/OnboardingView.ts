@@ -11,7 +11,7 @@ export class OnboardingView extends SvelteItemView {
 	}
 
 	getDisplayText(): string {
-		return "Welcome";
+		return "欢迎";
 	}
 
 	getIcon(): string {

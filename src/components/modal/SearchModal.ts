@@ -196,13 +196,13 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 			...(this.pickerOptions?.pickerIncludedPaths ?? []),
 		]);
 		// The agent hint names a keyboard shortcut, which a phone has no way to
-		// produce — and the mobile action bar already offers "Ask agent" as a
+		// produce — and the mobile action bar already offers "询问智能体" as a
 		// button right above this field, so the hint is both unusable and
 		// redundant there. Keep the syntax help, drop the shortcut.
 		this.setPlaceholder(
 			this.pickerOptions?.pickerText?.searchPlaceholder ??
 				(isMobileUI()
-					? "Search notes with #tag or /folder..."
+					? "用 #标签 或 /文件夹 搜索笔记…"
 					: `Search notes with #tag or /folder, or ${Platform.isMacOS ? "⌥↵" : "Alt+↵"} to ask the agent...`),
 		);
 		this.updateInstructions();
@@ -373,7 +373,7 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 	}
 
 	private getPickerConfirmVerb(): string {
-		return this.pickerOptions?.pickerText?.confirmVerb ?? "Add";
+		return this.pickerOptions?.pickerText?.confirmVerb ?? "添加";
 	}
 
 	private isPickerUnavailable(path: string): boolean {
@@ -441,9 +441,9 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 	}
 
 	private showMissingSearchEmbeddingIndexNotice(): void {
-		showSettingsLinkNotice(this.app, "Select a search embedding index before enabling semantic search.", {
+		showSettingsLinkNotice(this.app, "启用语义搜索前请先选择搜索嵌入索引。", {
 			tab: "search",
-			linkText: "Open search settings",
+			linkText: "打开搜索设置",
 		});
 	}
 
@@ -495,7 +495,7 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 				: `${this.getPickerConfirmVerb()} focused file`;
 		}
 
-		return this.selectedResultsByPath.size > 0 ? "Open selection" : "Open note";
+		return this.selectedResultsByPath.size > 0 ? "打开所选内容" : "打开笔记";
 	}
 
 	private getCreateInstructionPurpose(): string | null {
@@ -521,10 +521,10 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 
 		if (this.isPickerMode()) {
 			this.setInstructions([
-				{ command: "↑↓", purpose: "Navigate" },
+				{ command: "↑↓", purpose: "导航" },
 				{ command: "↵", purpose: this.getEnterInstructionPurpose() },
-				{ command: "⇧↑↓/↵", purpose: "Select" },
-				{ command: "esc", purpose: "Close" },
+				{ command: "⇧↑↓/↵", purpose: "选择" },
+				{ command: "esc", purpose: "关闭" },
 			]);
 			return;
 		}
@@ -534,17 +534,17 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 		const modShiftEnterKey = Platform.isMacOS ? "⌘⇧↵" : "Ctrl+Shift+↵";
 		const altEnterKey = Platform.isMacOS ? "⌥↵" : "Alt+↵";
 		const attachKey = Platform.isMacOS ? "⌥A" : "Alt+A";
-		const attachPurpose = this.selectedResultsByPath.size > 0 ? "Attach selection to chat" : "Attach to chat";
+		const attachPurpose = this.selectedResultsByPath.size > 0 ? "将所选内容附加到聊天" : "附加到聊天";
 		const semanticLabel = this.semanticEnabled ? "semantic: on" : "semantic: off";
 		const instructions = [
-			{ command: "↑↓", purpose: "Navigate" },
+			{ command: "↑↓", purpose: "导航" },
 			{ command: "↵", purpose: this.getEnterInstructionPurpose() },
-			{ command: "⇧↑↓/↵", purpose: "Select" },
-			{ command: modEnterKey, purpose: "Open in new tab" },
-			{ command: altEnterKey, purpose: "Ask agent" },
+			{ command: "⇧↑↓/↵", purpose: "选择" },
+			{ command: modEnterKey, purpose: "在新标签页打开" },
+			{ command: altEnterKey, purpose: "询问智能体" },
 			{ command: attachKey, purpose: attachPurpose },
 			{ command: tabKey, purpose: semanticLabel },
-			{ command: "esc", purpose: "Close" },
+			{ command: "esc", purpose: "关闭" },
 		];
 
 		const createPurpose = this.getCreateInstructionPurpose();
@@ -822,14 +822,14 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 		if (!messenger) {
 			// Reached before any chat has been opened, so the link has something to do —
 			// unlike the post-`createNewChat` guard below.
-			showActionNotice("Chat is not initialized yet.", openChatAction());
+			showActionNotice("聊天尚未初始化。", openChatAction());
 			return;
 		}
 
 		const plugin = getPlugin();
 		const threadPath = await plugin.agentManager.resolveOrOpenChatForAttach();
 		if (!threadPath) {
-			new Notice("Could not open a chat to attach to.");
+			new Notice("无法打开用于附加的聊天。");
 			return;
 		}
 
@@ -875,7 +875,7 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 
 		const messenger = getSessionRegistry();
 		if (!messenger) {
-			new Notice("Chat is not initialized yet. Please open a chat first.");
+			new Notice("聊天尚未初始化，请先打开一个聊天。");
 			return;
 		}
 
@@ -965,7 +965,7 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 
 	private async createNoteFromQuery(): Promise<void> {
 		const requestedTitle = this.currentQuery.trim();
-		const baseTitle = sanitizeNoteTitle(requestedTitle) || "Untitled";
+		const baseTitle = sanitizeNoteTitle(requestedTitle) || "未命名";
 
 		try {
 			const { title, path } = await this.getUniqueNotePath(baseTitle);
@@ -978,7 +978,7 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 			await this.app.workspace.revealLeaf(leaf);
 		} catch (error) {
 			Logger.error("[SearchModal] Failed to create note from query:", error);
-			new Notice("Failed to create note");
+			new Notice("创建笔记失败");
 		}
 	}
 
@@ -1522,7 +1522,7 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 				text: this.requireAllTags ? "ALL" : "ANY",
 			});
 			modeChip.type = "button";
-			modeChip.setAttribute("aria-label", "Toggle tag match mode");
+			modeChip.setAttribute("aria-label", "切换标签匹配模式");
 			modeChip.addEventListener("click", (evt) => {
 				evt.stopPropagation();
 				this.toggleRequireAllTags();
@@ -2066,7 +2066,7 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 		container.createSpan({ cls: "s2b-search-autocomplete-text", text: suggestion.display });
 		container.createSpan({
 			cls: "s2b-search-autocomplete-hint",
-			text: suggestion.kind === "tag" ? "Filter by tag" : "Filter by folder",
+			text: suggestion.kind === "tag" ? "按标签过滤" : "按文件夹过滤",
 		});
 	}
 
@@ -2170,13 +2170,13 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 		}
 
 		const row = this.resultContainerEl.createDiv({ cls: "s2b-search-followup" });
-		row.createSpan({ cls: "s2b-search-followup-label", text: "Not what you meant?" });
+		row.createSpan({ cls: "s2b-search-followup-label", text: "不是你要找的？" });
 
 		const btn = row.createEl("button", { cls: "s2b-pill s2b-pill--interactive s2b-search-followup-action" });
 		btn.type = "button";
 		const icon = btn.createSpan({ cls: "s2b-search-mobile-icon" });
 		setIcon(icon, "sparkles");
-		btn.appendChild(document.createTextNode("Search by meaning"));
+		btn.appendChild(document.createTextNode("按语义搜索"));
 		// Pointerdown, not click: the input keeps focus on mobile and a tap that
 		// blurs it first can dismiss the sheet before the click lands.
 		btn.addEventListener("pointerdown", (evt) => {
@@ -2207,7 +2207,7 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 		btn.type = "button";
 		const icon = btn.createSpan({ cls: "s2b-search-mobile-icon" });
 		setIcon(icon, "brain");
-		btn.appendChild(document.createTextNode("Ask the agent instead"));
+		btn.appendChild(document.createTextNode("改为询问智能体"));
 		btn.addEventListener("pointerdown", (evt) => {
 			evt.preventDefault();
 			void this.askAgentWithQuery();
@@ -2222,13 +2222,13 @@ export class SearchModal extends SuggestModal<SearchSuggestion> {
 
 		const emptyEl = this.resultContainerEl.createDiv({ cls: "s2b-search-empty" });
 		if (this.currentQuery.trim() && (this.isSearching || this.searchTimeout !== null)) {
-			emptyEl.setText("Searching...");
+			emptyEl.setText("正在搜索…");
 		} else if (this.currentQuery.trim()) {
-			emptyEl.setText("No notes found");
+			emptyEl.setText("未找到笔记");
 			this.appendSemanticHint();
 			this.appendAskAgentAction();
 		} else {
-			emptyEl.setText("No recent notes yet. Open a note to see it here, or type to search your notes.");
+			emptyEl.setText("暂无最近笔记。打开一篇笔记即可在此显示，或输入内容搜索笔记。");
 		}
 	}
 }

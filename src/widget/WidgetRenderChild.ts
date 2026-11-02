@@ -172,7 +172,7 @@ export class WidgetRenderChild extends MarkdownRenderChild {
 		this.frame = null;
 		this.containerEl.createDiv({
 			cls: "s2b-widget-blocked",
-			text: "This widget was stopped because it tried to navigate away from its sandbox.",
+			text: "此 Widget 已被停止，因为它试图跳转到沙箱之外。",
 		});
 	}
 

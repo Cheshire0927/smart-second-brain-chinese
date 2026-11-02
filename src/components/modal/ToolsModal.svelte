@@ -105,8 +105,8 @@ function openToolConfig(toolId: BuiltInToolId) {
   {#if selectedAgent}
     <div class="tools-modal-scroll">
       <ManagedEntitySection
-        heading="Configurable"
-        description="Enable, rename, and configure the individual tools your skills attach. A tool is only usable when at least one enabled skill provides it."
+        heading="可配置"
+        description="启用、重命名并配置技能附带的各个工具。只有当至少一个已启用技能提供该工具时，它才可用。"
         hasItems={true}
       >
         {#each BUILT_IN_TOOL_IDS as toolId (toolId)}
@@ -126,7 +126,7 @@ function openToolConfig(toolId: BuiltInToolId) {
                   <Badge label={skillName} tone="accent" />
                 {/each}
               {:else}
-                <Badge label="Not attached by any enabled skill" tone="warning" />
+                <Badge label="未被任何已启用技能附带" tone="warning" />
               {/if}
             {/snippet}
             {#snippet actions()}
@@ -134,7 +134,7 @@ function openToolConfig(toolId: BuiltInToolId) {
                 <Button
                   iconId="settings"
                   ariaLabel={`Configure ${displayName}`}
-                  tooltip="Configure tool"
+                  tooltip="配置工具"
                   onClick={() => openToolConfig(toolId)}
                 />
               {/if}
@@ -146,13 +146,13 @@ function openToolConfig(toolId: BuiltInToolId) {
 
       {#if activeIntegrations.length > 0 || activeSubAgents.length > 0}
         <ManagedEntitySection
-          heading="Always available"
-          description="Bound outside the skills system, so they aren't configured here — each is controlled by its own setting."
+          heading="始终可用"
+          description="在技能系统之外绑定，因此不在此处配置——各自由对应的设置项控制。"
           hasItems={true}
         >
           <ManagedEntityItem
-            name="Load skill"
-            desc="Lets the agent load a skill's full instructions on demand. Always available whenever any skill exists."
+            name="加载技能"
+            desc="让智能体按需加载技能的完整指令。只要存在任意技能就始终可用。"
           />
           {#each activeIntegrations as integ (integ.pluginId)}
             <ManagedEntityItem
@@ -160,17 +160,17 @@ function openToolConfig(toolId: BuiltInToolId) {
               desc={`Lets the agent script against the ${integ.displayName} plugin's api. Controlled in this agent's Integrations section above.`}
             >
               {#snippet badges()}
-                <Badge label="Integrations" tone="accent" />
+                <Badge label="集成" tone="accent" />
               {/snippet}
             </ManagedEntityItem>
           {/each}
           {#each activeSubAgents as name (name)}
             <ManagedEntityItem
               name={`Task — ${name}`}
-              desc="Lets the agent delegate a subtask to this subagent. Controlled in this agent's Subagents section above."
+              desc="让智能体把子任务委派给此子智能体。由上方「子智能体」分区控制。"
             >
               {#snippet badges()}
-                <Badge label="Subagents" tone="accent" />
+                <Badge label="子智能体" tone="accent" />
               {/snippet}
             </ManagedEntityItem>
           {/each}
@@ -181,7 +181,7 @@ function openToolConfig(toolId: BuiltInToolId) {
 
   <div class="tools-modal-footer">
     <div class="flex-1"></div>
-    <Button buttonText="Done" cta={true} onClick={() => modal.close()} />
+    <Button buttonText="完成" cta={true} onClick={() => modal.close()} />
   </div>
 </div>
 

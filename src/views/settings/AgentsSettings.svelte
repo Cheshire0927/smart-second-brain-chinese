@@ -23,9 +23,9 @@ const pluginData = getData();
 const plugin = getPlugin();
 
 const chatOpenLocationOptions: { display: string; value: ChatOpenLocation }[] = [
-	{ display: "Main area (tab)", value: "tab" },
-	{ display: "Left sidebar", value: "left" },
-	{ display: "Right sidebar", value: "right" },
+	{ display: "主区域（标签页）", value: "tab" },
+	{ display: "左侧边栏", value: "left" },
+	{ display: "右侧边栏", value: "right" },
 ];
 
 function suggestFolders(): TFolder[] {
@@ -47,7 +47,7 @@ function openAgentEditor(agentId: string) {
 }
 
 function createNewAgent() {
-	const agent = pluginData.createAgent("New Agent");
+	const agent = pluginData.createAgent("新建智能体");
 	pluginData.selectedAgentId = agent.id;
 	// Seed the base prompt note immediately so it exists in the vault before the editor opens.
 	void plugin.promptFilesService?.ensureAgentPrompt(agent.id);
@@ -57,7 +57,7 @@ function createNewAgent() {
 function duplicateAgent(agentId: string) {
 	const sourceAgent = agents[agentId];
 	if (!sourceAgent) return;
-	const duplicated = pluginData.duplicateAgent(agentId, `${sourceAgent.name} (Copy)`);
+	const duplicated = pluginData.duplicateAgent(agentId, `${sourceAgent.name}（副本）`);
 	pluginData.selectedAgentId = duplicated.id;
 	// Carry over the source's edited base + memory prompts to the duplicate's own notes.
 	void plugin.promptFilesService?.copyAgentPrompt(agentId, duplicated.id);
@@ -66,7 +66,7 @@ function duplicateAgent(agentId: string) {
 
 async function deleteAgent(agentId: string) {
 	if (agentId === DEFAULT_AGENT_ID) {
-		new Notice("Cannot delete the built-in default agent");
+		new Notice("无法删除内置的默认智能体");
 		return;
 	}
 	const agent = agents[agentId];
@@ -81,7 +81,7 @@ async function deleteAgent(agentId: string) {
 		pluginData.deleteAgent(agentId);
 		plugin.agentManager?.invalidateAgentRunnable(agentId);
 	} catch (error) {
-		new Notice(error instanceof Error ? error.message : "Failed to delete agent");
+		new Notice(error instanceof Error ? error.message : "删除智能体失败");
 	}
 }
 
@@ -93,7 +93,7 @@ function selectDefaultAgent(agentId: string) {
 function getAgentModelSummary(agentId: string): string {
 	const agent = agents[agentId];
 	if (!agent?.chatModel) {
-		return "No chat model selected";
+		return "未选择聊天模型";
 	}
 	const providerDef = getProviderDefinition(agent.chatModel.provider, pluginData.getAllProviderMeta());
 	return `${providerDef?.displayName ?? agent.chatModel.provider} · ${agent.chatModel.model}`;
@@ -115,13 +115,13 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
 
 <div class="agents-settings">
   <ManagedEntitySection
-    heading="Agents"
-    description="Agents combine a model, system prompt, skills, tools, and MCP servers into reusable assistants for different workflows."
-    emptyMessage="No agents configured."
+    heading="智能体"
+    description="智能体将模型、系统提示词、技能、工具和 MCP 服务器组合成可复用的助手，用于不同的工作流。"
+    emptyMessage="尚未配置任何智能体。"
     hasItems={agentIds.length > 0}
   >
     {#snippet actions()}
-      <Button buttonText="Add agent" cta={true} onClick={createNewAgent} />
+      <Button buttonText="添加智能体" cta={true} onClick={createNewAgent} />
     {/snippet}
 
     {#each agentIds as agentId (agentId)}
@@ -134,7 +134,7 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
           ? {
               selected: pluginData.defaultAgentId === agentId,
               onclick: () => selectDefaultAgent(agentId),
-              ariaLabel: `Set ${agent.name} as default agent`,
+              ariaLabel: `将 ${agent.name} 设为默认智能体`,
             }
           : undefined}
       >
@@ -146,7 +146,7 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
 
         {#snippet badges()}
           {#if agentId === DEFAULT_AGENT_ID}
-            <Badge label="Built-in" tone="muted" />
+            <Badge label="内置" tone="muted" />
           {/if}
         {/snippet}
 
@@ -170,21 +170,21 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
           {#if agentId !== DEFAULT_AGENT_ID}
             <Button
               iconId="trash"
-              ariaLabel="Delete agent"
-              tooltip="Delete agent"
+              ariaLabel="删除智能体"
+              tooltip="删除智能体"
               onClick={() => deleteAgent(agentId)}
             />
           {/if}
           <Button
             iconId="settings"
-            ariaLabel="Edit agent"
-            tooltip="Edit agent"
+            ariaLabel="编辑智能体"
+            tooltip="编辑智能体"
             onClick={() => openAgentEditor(agentId)}
           />
           <Button
             iconId="copy"
-            ariaLabel="Duplicate agent"
-            tooltip="Duplicate agent"
+            ariaLabel="复制智能体"
+            tooltip="复制智能体"
             onClick={() => duplicateAgent(agentId)}
           />
         {/snippet}
@@ -192,15 +192,15 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
     {/each}
   </ManagedEntitySection>
 
-  <SettingGroup heading="Agents storage">
+  <SettingGroup heading="智能体存储">
     <SettingItem
-      name="Agents folder"
-      desc="Vault folder holding agent context — skills, memories, and base prompts. Changing it seeds the new location; existing files are left in place."
+      name="智能体文件夹"
+      desc="存放智能体上下文（技能、记忆和基础提示词）的仓库文件夹。更改后会在新位置初始化，原有文件保持不变。"
     >
       <FolderSuggest
         app={plugin.app}
         value={pluginData.agentFolder}
-        placeholder="Agents"
+        placeholder="智能体"
         suggestionFn={(query) =>
           suggestFolders().filter((folder) =>
             folder.path.toLowerCase().includes(query.toLowerCase()),
@@ -211,12 +211,12 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
     </SettingItem>
   </SettingGroup>
 
-  <SettingGroup heading="Chats">
-    <SettingItem name="Chats folder" desc="Folder to store chat files and related data">
+  <SettingGroup heading="聊天">
+    <SettingItem name="聊天文件夹" desc="用于存放聊天文件及相关数据的文件夹">
       <FolderSuggest
         app={plugin.app}
         value={pluginData.targetFolder}
-        placeholder="Chats"
+        placeholder="聊天"
         suggestionFn={(query) =>
           suggestFolders().filter((folder) =>
             folder.path.toLowerCase().includes(query.toLowerCase()),
@@ -227,8 +227,8 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
     </SettingItem>
 
     <SettingItem
-      name="Attachment folder"
-      desc="Folder for chat file attachments. Leave empty to use Obsidian's attachment folder."
+      name="附件文件夹"
+      desc="聊天文件附件的存放文件夹。留空则使用 Obsidian 的附件文件夹。"
     >
       <FolderSuggest
         app={plugin.app}
@@ -243,7 +243,7 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
       />
     </SettingItem>
 
-    <SettingItem name="Open new chat in" desc="Where to open new chat windows">
+    <SettingItem name="在以下位置打开新聊天" desc="新聊天窗口的打开位置">
       <Dropdown
         type="options"
         dropdown={chatOpenLocationOptions}
@@ -256,8 +256,8 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
          toggle would control nothing. Hide it rather than offering a dead switch. -->
     {#if !isMobileUI()}
       <SettingItem
-        name="Show active agents in status bar"
-        desc="Display a clickable indicator in the status bar for each chat with a running agent."
+        name="在状态栏显示活跃智能体"
+        desc="为每个有运行中智能体的聊天在状态栏显示可点击的指示器。"
       >
         <Toggle
           checked={pluginData.showActiveAgentsInStatusBar}
@@ -267,15 +267,15 @@ function getAgentSkillsSummary(agentId: string): { icons: string[]; overflow: nu
     {/if}
   </SettingGroup>
 
-  <SettingGroup heading="Widgets">
+  <SettingGroup heading="Widget">
     <SettingItem
-      name="Widgets folder"
-      desc="Where a widget generated in chat is saved when you click its save button."
+      name="Widget 文件夹"
+      desc="在聊天中生成的 Widget 点击保存按钮后存放的位置。"
     >
       <FolderSuggest
         app={plugin.app}
         value={pluginData.widgetsFolder}
-        placeholder="Widgets"
+        placeholder="Widget"
         suggestionFn={(query) =>
           suggestFolders().filter((folder) =>
             folder.path.toLowerCase().includes(query.toLowerCase()),

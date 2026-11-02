@@ -24,8 +24,8 @@ const isEditing = $derived(!isMobileUI() && Boolean(session?.editingPairId));
 {#if isEditing}
   <div class="emb-row text-xs text-text-muted">
     <div class="emb-icon" use:icon={"pencil"} style="--icon-size: 11px"></div>
-    <span>Editing message</span>
-    <button class="emb-cancel clickable-icon" onclick={onCancel} title="Cancel edit" aria-label="Cancel edit" type="button">
+    <span>正在编辑消息</span>
+    <button class="emb-cancel clickable-icon" onclick={onCancel} title="取消编辑" aria-label="取消编辑" type="button">
       <div use:icon={"x"} style="--icon-size: 12px"></div>
     </button>
   </div>

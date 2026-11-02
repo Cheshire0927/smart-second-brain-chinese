@@ -327,7 +327,7 @@ export async function navigateToPendingChange(
 
 	const opened = await revealAndScroll(plugin, target.entry.change.path, target.line);
 	if (!opened) {
-		new Notice("This change creates a new file — nothing to open yet.");
+		new Notice("此更改会创建新文件，暂时没有可打开的内容。");
 	}
 	return target;
 }

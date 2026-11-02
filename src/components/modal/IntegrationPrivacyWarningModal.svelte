@@ -13,27 +13,25 @@ let { displayName, onConfirm, onCancel }: Props = $props();
 let dontAskAgain = $state(false);
 </script>
 
-<div class="modal-title">Privacy Warning</div>
+<div class="modal-title">隐私警告</div>
 <div class="modal-content">
   <p>
-    Enabling <strong>{displayName}</strong> gives the agent a tool that runs JavaScript against
-    this plugin's API with full vault access on the main thread.
+    启用 <strong>{displayName}</strong> 会为智能体提供一个工具，该工具在主线程上以完整仓库权限运行 JavaScript 调用本插件的 API。
   </p>
   <p>
-    <strong>Your privacy rules do not apply to this tool.</strong> Notes you've marked private for
-    the current provider can still be read or written through it, unlike <code>search_notes</code>,
-    <code>read_content</code>, and <code>manage_notes</code>, which respect those rules.
+    <strong>你的隐私规则不适用于此工具。</strong>你为当前服务商标为私密的笔记，仍可通过它读取或写入；而 <code>search_notes</code>、
+    <code>read_content</code> 和 <code>manage_notes</code> 则遵守这些规则。
   </p>
 </div>
 
 <label class="s2b-dont-ask-again">
   <Toggle checked={dontAskAgain} onchange={(checked) => (dontAskAgain = checked)} />
-  <span>Don't ask again for any integration</span>
+  <span>不再对任何集成询问</span>
 </label>
 
 <div class="modal-button-container">
-  <Button buttonText="Cancel" onClick={onCancel} />
-  <Button buttonText="Enable anyway" styles="mod-warning" onClick={() => onConfirm(dontAskAgain)} />
+  <Button buttonText="取消" onClick={onCancel} />
+  <Button buttonText="仍然启用" styles="mod-warning" onClick={() => onConfirm(dontAskAgain)} />
 </div>
 
 <style>

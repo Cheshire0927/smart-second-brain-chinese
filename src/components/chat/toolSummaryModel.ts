@@ -98,7 +98,7 @@ function asBuiltIn(toolName: string): BuiltInTool | undefined {
 
 /* ── Small formatting helpers ── */
 
-function pluralize(count: number, singular: string, plural = `${singular}s`): string {
+function pluralize(count: number, singular: string, plural = singular): string {
 	return `${count} ${count === 1 ? singular : plural}`;
 }
 
@@ -122,7 +122,7 @@ function stringInput(input: Record<string, unknown> | null | undefined, key: str
 
 /** Title-case a raw tool name as a fallback label (`get_all_tags` → `Get All Tags`). */
 function titleCaseToolName(name: string): string {
-	if (!name) return "Tool";
+	if (!name) return "工具";
 	return name
 		.replace(/_/g, " ")
 		.replace(/([a-z])([A-Z])/g, "$1 $2")
@@ -151,14 +151,14 @@ function summarizeSearchNotes(
 	const query = stringInput(input, "query");
 	const recentOnly = input?.recentOnly === true;
 	const label: Label = query
-		? { verb: verb("Searching notes for", "Searched notes for"), rest: `“${truncateTarget(query)}”` }
+		? { verb: verb("正在搜索笔记", "已搜索笔记"), rest: `“${truncateTarget(query)}”` }
 		: recentOnly
-			? { verb: verb("Looking at recent notes", "Looked at recent notes") }
-			: { verb: verb("Searching notes", "Searched notes") };
+			? { verb: verb("正在查看最近的笔记", "已查看最近的笔记") }
+			: { verb: verb("正在搜索笔记", "已搜索笔记") };
 
 	if (model?.kind !== "search_notes") return { label, summary: "" };
 	const total = model.payload.totalResults ?? model.payload.results?.length ?? 0;
-	return { label, summary: total === 0 ? "found no matches" : `found ${pluralize(total, "note")}` };
+	return { label, summary: total === 0 ? "未找到匹配项" : `找到 ${pluralize(total, "篇笔记")}` };
 }
 
 function summarizeGrepNotes(
@@ -167,8 +167,8 @@ function summarizeGrepNotes(
 ): RawSummary {
 	const pattern = stringInput(input, "pattern");
 	const label: Label = pattern
-		? { verb: verb("Searching for text", "Searched for text"), rest: `“${truncateTarget(pattern)}”` }
-		: { verb: verb("Searching note text", "Searched note text") };
+		? { verb: verb("正在搜索文本", "已搜索文本"), rest: `“${truncateTarget(pattern)}”` }
+		: { verb: verb("正在搜索笔记文本", "已搜索笔记文本") };
 
 	// grep_notes returns generic JSON — pull totals straight off the raw payload.
 	const payload = parseRawJson(model?.rawText);
@@ -176,9 +176,9 @@ function summarizeGrepNotes(
 		const total = numberProp(payload, "total_matches");
 		const files = numberProp(payload, "files_searched");
 		if (total !== undefined) {
-			if (total === 0) return { label, summary: "found no matches" };
-			const filePart = files !== undefined ? ` in ${pluralize(files, "file")}` : "";
-			return { label, summary: `found ${pluralize(total, "match", "matches")}${filePart}` };
+			if (total === 0) return { label, summary: "未找到匹配项" };
+			const filePart = files !== undefined ? `，涉及 ${pluralize(files, "个文件")}` : "";
+			return { label, summary: `找到 ${pluralize(total, "处匹配")}${filePart}` };
 		}
 	}
 	return { label, summary: "" };
@@ -191,16 +191,16 @@ function summarizeListDirectory(
 	const path = stringInput(input, "path") ?? stringInput(input, "root");
 	const label: Label =
 		path && path !== "/"
-			? { verb: verb("Listing folder", "Listed folder"), rest: truncateTarget(basename(path)) }
-			: { verb: verb("Listing the vault", "Listed the vault") };
+			? { verb: verb("正在列出文件夹", "已列出文件夹"), rest: truncateTarget(basename(path)) }
+			: { verb: verb("正在列出仓库", "已列出仓库") };
 
 	if (model?.kind !== "list_directory") return { label, summary: "" };
 	const folders = model.payload.totalFolders ?? 0;
 	const files = model.payload.totalFiles ?? 0;
 	const parts: string[] = [];
-	if (folders > 0) parts.push(pluralize(folders, "folder"));
-	parts.push(pluralize(files, "file"));
-	return { label, summary: `found ${parts.join(" and ")}` };
+	if (folders > 0) parts.push(pluralize(folders, "个文件夹"));
+	parts.push(pluralize(files, "个文件"));
+	return { label, summary: `找到 ${parts.join("、")}` };
 }
 
 function summarizeReadContent(
@@ -209,57 +209,57 @@ function summarizeReadContent(
 ): RawSummary {
 	const target = stringInput(input, "target") ?? stringInput(input, "path");
 	const label: Label = target
-		? { verb: verb("Reading", "Read"), rest: truncateTarget(basename(target)) }
-		: { verb: verb("Reading a note", "Read a note") };
+		? { verb: verb("正在读取", "已读取"), rest: truncateTarget(basename(target)) }
+		: { verb: verb("正在读取笔记", "已读取笔记") };
 
 	if (model?.kind !== "read_content") return { label, summary: "" };
 	const lines = countLines(model.payload.content);
-	const summary = model.payload.truncated ? `${pluralize(lines, "line")} (truncated)` : pluralize(lines, "line");
+	const summary = model.payload.truncated ? `${pluralize(lines, "行")}（已截断）` : pluralize(lines, "行");
 	return { label, summary };
 }
 
 function summarizeManageNotes(model: ToolOutputRenderModel | undefined): RawSummary {
 	// The operation set can be large; a plain "Edited notes" reads cleaner than a list.
-	if (model?.kind !== "manage_notes") return { label: { verb: verb("Editing notes", "Edited notes") }, summary: "" };
+	if (model?.kind !== "manage_notes") return { label: { verb: verb("正在编辑笔记", "已编辑笔记") }, summary: "" };
 	const { operations, paths } = model.summary;
 	const label: Label =
 		paths === 1
-			? { verb: verb("Editing a note", "Edited a note") }
-			: { verb: verb("Editing notes", "Edited notes") };
-	return { label, summary: `${pluralize(operations, "operation")} across ${pluralize(paths, "note")}` };
+			? { verb: verb("正在编辑笔记", "已编辑笔记") }
+			: { verb: verb("正在编辑笔记", "已编辑笔记") };
+	return { label, summary: `${pluralize(operations, "项操作")}，涉及 ${pluralize(paths, "篇笔记")}` };
 }
 
 function summarizeExecuteJavaScript(model: ToolOutputRenderModel | undefined): RawSummary {
-	const label: Label = { verb: verb("Running JavaScript", "Ran JavaScript") };
+	const label: Label = { verb: verb("正在运行 JavaScript", "已运行 JavaScript") };
 	if (model?.kind !== "execute_javascript") return { label, summary: "" };
-	if (model.payload.state === "error") return { label, summary: "errored" };
+	if (model.payload.state === "error") return { label, summary: "出错了" };
 	const logs = model.payload.logs.length;
 	const parts: string[] = [];
-	if (logs > 0) parts.push(`logged ${pluralize(logs, "line")}`);
-	if (model.payload.resultText) parts.push("returned a value");
-	if (model.payload.durationMs !== undefined) parts.push(`in ${model.payload.durationMs}ms`);
-	return { label, summary: parts.join(" ") };
+	if (logs > 0) parts.push(`输出了 ${pluralize(logs, "行")}日志`);
+	if (model.payload.resultText) parts.push("返回了值");
+	if (model.payload.durationMs !== undefined) parts.push(`耗时 ${model.payload.durationMs}ms`);
+	return { label, summary: parts.join("，") };
 }
 
 function summarizeGetAllTags(model: ToolOutputRenderModel | undefined): RawSummary {
-	const label: Label = { verb: verb("Listing all tags", "Listed all tags") };
+	const label: Label = { verb: verb("正在列出全部标签", "已列出全部标签") };
 	const count = listLength(model);
-	return { label, summary: count !== undefined ? `found ${pluralize(count, "tag")}` : "" };
+	return { label, summary: count !== undefined ? `找到 ${pluralize(count, "个标签")}` : "" };
 }
 
 function summarizeGetProperties(input: Record<string, unknown> | null | undefined): RawSummary {
 	const target = stringInput(input, "path") ?? stringInput(input, "target");
 	const label: Label = target
-		? { verb: verb("Reading properties of", "Read properties of"), rest: truncateTarget(basename(target)) }
-		: { verb: verb("Reading note properties", "Read note properties") };
+		? { verb: verb("正在读取属性", "已读取属性"), rest: truncateTarget(basename(target)) }
+		: { verb: verb("正在读取笔记属性", "已读取笔记属性") };
 	return { label, summary: "" };
 }
 
 function summarizeFetchUrl(input: Record<string, unknown> | null | undefined): RawSummary {
 	const url = stringInput(input, "url");
 	const label: Label = url
-		? { verb: verb("Fetching", "Fetched"), rest: truncateTarget(hostOf(url)) }
-		: { verb: verb("Fetching a page", "Fetched a page") };
+		? { verb: verb("正在获取", "已获取"), rest: truncateTarget(hostOf(url)) }
+		: { verb: verb("正在获取页面", "已获取页面") };
 	return { label, summary: "" };
 }
 
@@ -269,17 +269,17 @@ function summarizeWebSearch(
 ): RawSummary {
 	const query = stringInput(input, "query");
 	const label: Label = query
-		? { verb: verb("Searching the web for", "Searched the web for"), rest: `“${truncateTarget(query)}”` }
-		: { verb: verb("Searching the web", "Searched the web") };
+		? { verb: verb("正在联网搜索", "已联网搜索"), rest: `“${truncateTarget(query)}”` }
+		: { verb: verb("正在联网搜索", "已联网搜索") };
 	const count = listLength(model);
-	return { label, summary: count !== undefined ? `found ${pluralize(count, "result")}` : "" };
+	return { label, summary: count !== undefined ? `找到 ${pluralize(count, "条结果")}` : "" };
 }
 
 function summarizeLoadSkill(input: Record<string, unknown> | null | undefined): RawSummary {
 	const name = stringInput(input, "name") ?? stringInput(input, "skill");
 	const label: Label = name
-		? { verb: verb("Loading skill", "Loaded skill"), rest: truncateTarget(name) }
-		: { verb: verb("Loading a skill", "Loaded a skill") };
+		? { verb: verb("正在加载技能", "已加载技能"), rest: truncateTarget(name) }
+		: { verb: verb("正在加载技能", "已加载技能") };
 	return { label, summary: "" };
 }
 
@@ -296,21 +296,21 @@ function summarizeGeneric(
 	const primary = firstStringInput(input);
 	const rest = primary ? truncateTarget(primary) : name;
 	const label: Label = primary
-		? { verb: verb(`Using ${name}:`, `Used ${name}:`), rest }
-		: { verb: verb(`Using ${name}`, `Used ${name}`) };
+		? { verb: verb(`正在使用 ${name}：`, `已使用 ${name}：`), rest }
+		: { verb: verb(`正在使用 ${name}`, `已使用 ${name}`) };
 
 	// Pull a light outcome hint from the shape the render model already computed.
 	let summary = "";
 	if (model) {
 		switch (model.kind) {
 			case "list":
-				summary = `found ${pluralize(model.items.length, "item")}`;
+				summary = `找到 ${pluralize(model.items.length, "项")}`;
 				break;
 			case "table":
-				summary = `found ${pluralize(model.rows.length, "row")}`;
+				summary = `找到 ${pluralize(model.rows.length, "行")}`;
 				break;
 			case "keyValue":
-				summary = `found ${pluralize(model.entries.length, "field")}`;
+				summary = `找到 ${pluralize(model.entries.length, "个字段")}`;
 				break;
 			default:
 				summary = "";
@@ -413,7 +413,7 @@ export function buildToolSummary(
 	// While running with nothing decoded yet, a failed tool should still read as
 	// failed rather than showing a stale summary from a prior render.
 	if (status === "failed" && !model) {
-		return { label, summary: "failed" };
+		return { label, summary: "失败" };
 	}
 	return { label, summary: raw.summary };
 }
@@ -459,7 +459,7 @@ function sumBy(calls: MergedCall[], pick: (c: MergedCall) => number | undefined)
 
 const MERGE_SPECS: Partial<Record<BuiltInTool, MergeSpec>> = {
 	search_notes: {
-		verb: verb("Searching notes for", "Searched notes for"),
+		verb: verb("正在搜索笔记", "已搜索笔记"),
 		target: (input) => stringInput(input, "query"),
 		quoted: true,
 		aggregate: (calls) => {
@@ -468,11 +468,11 @@ const MERGE_SPECS: Partial<Record<BuiltInTool, MergeSpec>> = {
 					? (c.model.payload.totalResults ?? c.model.payload.results?.length ?? 0)
 					: undefined,
 			);
-			return total === undefined ? "" : total === 0 ? "found no matches" : `found ${pluralize(total, "note")}`;
+			return total === undefined ? "" : total === 0 ? "未找到匹配项" : `找到 ${pluralize(total, "篇笔记")}`;
 		},
 	},
 	grep_notes: {
-		verb: verb("Searching for text", "Searched for text"),
+		verb: verb("正在搜索文本", "已搜索文本"),
 		target: (input) => stringInput(input, "pattern"),
 		quoted: true,
 		aggregate: (calls) => {
@@ -483,12 +483,12 @@ const MERGE_SPECS: Partial<Record<BuiltInTool, MergeSpec>> = {
 			return total === undefined
 				? ""
 				: total === 0
-					? "found no matches"
-					: `found ${pluralize(total, "match", "matches")}`;
+					? "未找到匹配项"
+					: `找到 ${pluralize(total, "处匹配")}`;
 		},
 	},
 	read_content: {
-		verb: verb("Reading", "Read"),
+		verb: verb("正在读取", "已读取"),
 		target: (input) => {
 			const t = stringInput(input, "target") ?? stringInput(input, "path");
 			return t ? basename(t) : undefined;
@@ -498,11 +498,11 @@ const MERGE_SPECS: Partial<Record<BuiltInTool, MergeSpec>> = {
 			const total = sumBy(calls, (c) =>
 				c.model?.kind === "read_content" ? countLines(c.model.payload.content) : undefined,
 			);
-			return total === undefined ? "" : `${pluralize(total, "line")} total`;
+			return total === undefined ? "" : `共 ${pluralize(total, "行")}`;
 		},
 	},
 	get_properties: {
-		verb: verb("Reading properties of", "Read properties of"),
+		verb: verb("正在读取属性", "已读取属性"),
 		target: (input) => {
 			const t = stringInput(input, "path") ?? stringInput(input, "target");
 			return t ? basename(t) : undefined;
@@ -510,7 +510,7 @@ const MERGE_SPECS: Partial<Record<BuiltInTool, MergeSpec>> = {
 		quoted: false,
 	},
 	fetch_url: {
-		verb: verb("Fetching", "Fetched"),
+		verb: verb("正在获取", "已获取"),
 		target: (input) => {
 			const url = stringInput(input, "url");
 			return url ? hostOf(url) : undefined;
@@ -518,12 +518,12 @@ const MERGE_SPECS: Partial<Record<BuiltInTool, MergeSpec>> = {
 		quoted: false,
 	},
 	web_search: {
-		verb: verb("Searching the web for", "Searched the web for"),
+		verb: verb("正在联网搜索", "已联网搜索"),
 		target: (input) => stringInput(input, "query"),
 		quoted: true,
 	},
 	load_skill: {
-		verb: verb("Loading skill", "Loaded skill"),
+		verb: verb("正在加载技能", "已加载技能"),
 		target: (input) => stringInput(input, "name") ?? stringInput(input, "skill"),
 		quoted: false,
 	},
@@ -535,11 +535,11 @@ function joinTargets(targets: string[], quoted: boolean): string {
 	if (targets.length <= MAX_LISTED_TARGETS) {
 		const wrapped = targets.map(wrap);
 		if (wrapped.length === 1) return wrapped[0];
-		return `${wrapped.slice(0, -1).join(", ")} and ${wrapped.at(-1)}`;
+		return `${wrapped.slice(0, -1).join("、")} 和 ${wrapped.at(-1)}`;
 	}
 	const head = targets.slice(0, MAX_LISTED_TARGETS).map(wrap);
 	const remaining = targets.length - MAX_LISTED_TARGETS;
-	return `${head.join(", ")} and ${remaining} more`;
+	return `${head.join("、")} 和另外 ${remaining} 项`;
 }
 
 /**
@@ -569,12 +569,12 @@ export function buildMergedToolSummary(toolName: string, calls: MergedCall[], st
 		const label = `${base.label} ×${calls.length}`;
 		// Sum the count-based outcomes each call already computed so a merged
 		// generic tool still reports its result (e.g. two get_all_tags → "found N tags").
-		const summary = status === "failed" ? "failed" : mergedGenericSummary(calls);
+		const summary = status === "failed" ? "失败" : mergedGenericSummary(calls);
 		return { label, summary };
 	}
 
 	const targets = calls.map((c) => spec.target(c.input)).filter((t): t is string => !!t);
-	const noun = builtIn === "read_content" || builtIn === "get_properties" ? "note" : "item";
+	const noun = builtIn === "read_content" || builtIn === "get_properties" ? "篇笔记" : "项";
 
 	let rest: string;
 	if (targets.length === calls.length && targets.length > 0) {
@@ -588,7 +588,7 @@ export function buildMergedToolSummary(toolName: string, calls: MergedCall[], st
 	const label = renderLabel({ verb: spec.verb, rest }, status);
 	// A failed group must not display a positive aggregate ("found 3 notes") in red —
 	// mirror the single-call failed guard. Aggregates are also empty while running.
-	if (status === "failed") return { label, summary: "failed" };
+	if (status === "failed") return { label, summary: "失败" };
 	const summary = status === "running" || status === "pending" ? "" : (spec.aggregate?.(calls) ?? "");
 	return { label, summary };
 }
@@ -605,17 +605,17 @@ function mergedGenericSummary(calls: MergedCall[]): string {
 		switch (c.model?.kind) {
 			case "list":
 				total += c.model.items.length;
-				noun ??= "item";
+				noun ??= "项";
 				break;
 			case "table":
 				total += c.model.rows.length;
-				noun ??= "row";
+				noun ??= "行";
 				break;
 			case "keyValue":
 				total += c.model.entries.length;
-				noun ??= "field";
+				noun ??= "个字段";
 				break;
 		}
 	}
-	return noun ? `found ${pluralize(total, noun)}` : "";
+	return noun ? `找到 ${pluralize(total, noun)}` : "";
 }

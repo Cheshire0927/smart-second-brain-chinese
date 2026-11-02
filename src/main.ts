@@ -127,9 +127,9 @@ export default class SecondBrainPlugin extends Plugin {
 
 	private getAddToChatMenuLabel(selectedCount: number): string {
 		if (selectedCount <= 1) {
-			return "Add to chat";
+			return "添加到聊天";
 		}
-		return `Add ${selectedCount} files to chat`;
+		return `将 ${selectedCount} 个文件添加到聊天`;
 	}
 
 	/** Thread path for pending-change navigation: the focused chat if there is one,
@@ -151,22 +151,22 @@ export default class SecondBrainPlugin extends Plugin {
 	private addChatFileMenuItems(menu: Menu, file: TFile): void {
 		menu.addItem((item) =>
 			item
-				.setTitle("Rename chat")
+				.setTitle("重命名会话")
 				.setIcon("pencil")
 				.onClick(async () => {
-					const newTitle = await promptText(this.app, "Rename chat", file.basename, "Rename");
+					const newTitle = await promptText(this.app, "重命名会话", file.basename, "重命名");
 					if (!newTitle || newTitle === file.basename) return;
 					try {
 						await this.agentManager.renameThread(file.path, newTitle);
 					} catch (error) {
-						new Notice(`Failed to rename chat: ${error instanceof Error ? error.message : String(error)}`);
+						new Notice(`重命名会话失败：${error instanceof Error ? error.message : String(error)}`);
 					}
 				}),
 		);
 
 		menu.addItem((item) =>
 			item
-				.setTitle("Delete chat")
+				.setTitle("删除会话")
 				.setIcon("trash")
 				.setWarning(true)
 				.onClick(async () => {
@@ -175,7 +175,7 @@ export default class SecondBrainPlugin extends Plugin {
 					try {
 						await this.agentManager.deleteThread(file.path);
 					} catch (error) {
-						new Notice(`Failed to delete chat: ${error instanceof Error ? error.message : String(error)}`);
+						new Notice(`删除会话失败：${error instanceof Error ? error.message : String(error)}`);
 					}
 				}),
 		);
@@ -229,22 +229,20 @@ export default class SecondBrainPlugin extends Plugin {
 			if (selectedFiles.length === 1 && selectedFiles[0].extension === "chat") {
 				const file = selectedFiles[0];
 				context.addItem((item) => {
-					item.setTitle("Rename chat")
+					item.setTitle("重命名会话")
 						.setIcon("pencil")
 						.onClick(async () => {
-							const newTitle = await promptText(this.app, "Rename chat", file.basename, "Rename");
+							const newTitle = await promptText(this.app, "重命名会话", file.basename, "重命名");
 							if (!newTitle || newTitle === file.basename) return;
 							try {
 								await this.agentManager.renameThread(file.path, newTitle);
 							} catch (error) {
-								new Notice(
-									`Failed to rename chat: ${error instanceof Error ? error.message : String(error)}`,
-								);
+								new Notice(`重命名会话失败：${error instanceof Error ? error.message : String(error)}`);
 							}
 						});
 				});
 				context.addItem((item) => {
-					item.setTitle("Delete chat")
+					item.setTitle("删除会话")
 						.setIcon("trash")
 						.onClick(async () => {
 							const confirmed = await confirmDelete(this.app, file.basename);
@@ -252,9 +250,7 @@ export default class SecondBrainPlugin extends Plugin {
 							try {
 								await this.agentManager.deleteThread(file.path);
 							} catch (error) {
-								new Notice(
-									`Failed to delete chat: ${error instanceof Error ? error.message : String(error)}`,
-								);
+								new Notice(`删除会话失败：${error instanceof Error ? error.message : String(error)}`);
 							}
 						});
 				});
@@ -269,7 +265,7 @@ export default class SecondBrainPlugin extends Plugin {
 							await this.queueFilesForChatAttachment(selectedFiles);
 						} catch (error) {
 							new Notice(
-								`Failed to add files to chat: ${error instanceof Error ? error.message : String(error)}`,
+								`添加文件到聊天失败：${error instanceof Error ? error.message : String(error)}`,
 							);
 						}
 					});
@@ -288,7 +284,7 @@ export default class SecondBrainPlugin extends Plugin {
 	private async queueFilesForChatAttachment(files: TFile[]) {
 		const supportedFiles = this.getSupportedFiles(files);
 		if (supportedFiles.length === 0) {
-			new Notice("No supported files selected. Supported: txt, md, csv, json, images, pdf.");
+			new Notice("未选择受支持的文件。支持：txt、md、csv、json、图片、pdf。");
 			return;
 		}
 
@@ -296,7 +292,7 @@ export default class SecondBrainPlugin extends Plugin {
 
 		const registry = getSessionRegistry();
 		if (!registry) {
-			new Notice("Chat is not initialized yet. Please open chat and try again.");
+			new Notice("聊天尚未初始化，请先打开聊天后重试。");
 			return;
 		}
 
@@ -307,7 +303,7 @@ export default class SecondBrainPlugin extends Plugin {
 
 		const skipped = files.length - supportedFiles.length;
 		if (skipped > 0) {
-			new Notice(`Queued ${supportedFiles.length} file(s) for chat. Skipped ${skipped} unsupported file(s).`);
+			new Notice(`已将 ${supportedFiles.length} 个文件加入聊天，跳过 ${skipped} 个不支持的文件。`);
 		}
 	}
 
@@ -446,7 +442,7 @@ export default class SecondBrainPlugin extends Plugin {
 		// const VIEW_TYPE = "my-view";
 
 		this.registerHoverLinkSource(VIEW_TYPE_CHAT, {
-			display: "S2B Chat",
+			display: "S2B 聊天",
 			// true = by default require Cmd/Ctrl for this source
 			// false = by default no modifier required (more “reading-mode-like”)
 			defaultMod: false,
@@ -493,7 +489,7 @@ export default class SecondBrainPlugin extends Plugin {
 
 		// Register Smart Graph view
 		this.registerHoverLinkSource(VIEW_TYPE_SMART_GRAPH, {
-			display: "S2B Graph",
+			display: "S2B 图谱",
 			defaultMod: true,
 		});
 		this.registerView(VIEW_TYPE_SMART_GRAPH, (leaf) => new SmartGraphView(leaf, this));
@@ -514,16 +510,16 @@ export default class SecondBrainPlugin extends Plugin {
 		this.registerExtensions([WIDGET_FILE_EXTENSION], VIEW_TYPE_WIDGET);
 		registerWidgetEmbed(this);
 		// Note links inside widget frames (`data-note`) preview like links in a note.
-		this.registerHoverLinkSource(WIDGET_HOVER_SOURCE, { display: "S2B Widgets", defaultMod: false });
+		this.registerHoverLinkSource(WIDGET_HOVER_SOURCE, { display: "S2B Widget", defaultMod: false });
 
 		if (this.manifest.dir === undefined) {
 			this.unload();
-			throw new Error("Cannot localize plugin directory.");
-		}
+		throw new Error("无法定位插件目录。");
+	}
 
-		this.addRibbonIcon("message-square", "New chat", () => this.createNewChat());
-		this.addRibbonIcon("search", "Search notes", () => new SearchModal(this.app).open());
-		this.addRibbonIcon("git-fork", "Open smart graph", () => this.activateSmartGraphView());
+	this.addRibbonIcon("message-square", "新建聊天", () => this.createNewChat());
+	this.addRibbonIcon("search", "搜索笔记", () => new SearchModal(this.app).open());
+	this.addRibbonIcon("git-fork", "打开智能图谱", () => this.activateSmartGraphView());
 
 		// Create Agent Manager (v2) + session registry BEFORE mounting the status-bar
 		// indicator below. Both constructors are cheap (heavy init is deferred to
@@ -545,21 +541,21 @@ export default class SecondBrainPlugin extends Plugin {
 
 		this.addCommand({
 			id: "open-chat",
-			name: "Open chat",
+			name: "打开聊天",
 			icon: "message-square",
 			callback: async () => await this.agentManager.openLatestChat(),
 		});
 
 		this.addCommand({
 			id: "new-chat",
-			name: "New chat",
+			name: "新建聊天",
 			icon: "plus",
 			callback: async () => await this.agentManager.createNewChat(),
 		});
 
 		this.addCommand({
 			id: "search-notes",
-			name: "Search notes",
+			name: "搜索笔记",
 			icon: "search",
 			callback: () => new SearchModal(this.app).open(),
 		});
@@ -568,7 +564,7 @@ export default class SecondBrainPlugin extends Plugin {
 
 		this.addCommand({
 			id: "open-smart-graph",
-			name: "Open smart graph",
+			name: "打开智能图谱",
 			icon: "git-fork",
 			callback: () => this.activateSmartGraphView(),
 		});
@@ -583,45 +579,45 @@ export default class SecondBrainPlugin extends Plugin {
 
 		this.addCommand({
 			id: "open-onboarding",
-			name: "Show welcome",
+			name: "显示欢迎页",
 			icon: "zap",
 			callback: () => this.activateOnboardingView(),
 		});
 
 		this.addCommand({
 			id: "show-release-notes",
-			name: "Show release notes",
+			name: "显示更新日志",
 			icon: "scroll-text",
 			callback: () => void this.showReleaseNotes(),
 		});
 
 		this.addCommand({
 			id: "next-pending-change",
-			name: "Next pending change",
+			name: "下一处待处理更改",
 			icon: "chevron-down",
 			callback: async () => {
 				const threadId = this.resolveChatThreadIdForNavigation();
 				if (!threadId) {
-					new Notice("No chat is currently open");
+					new Notice("当前没有打开的聊天");
 					return;
 				}
 				const target = await navigateToPendingChange(this, threadId, "next");
-				if (!target) new Notice("No pending changes in this chat");
+				if (!target) new Notice("此聊天中没有待处理的更改");
 			},
 		});
 
 		this.addCommand({
 			id: "previous-pending-change",
-			name: "Previous pending change",
+			name: "上一处待处理更改",
 			icon: "chevron-up",
 			callback: async () => {
 				const threadId = this.resolveChatThreadIdForNavigation();
 				if (!threadId) {
-					new Notice("No chat is currently open");
+					new Notice("当前没有打开的聊天");
 					return;
 				}
 				const target = await navigateToPendingChange(this, threadId, "prev");
-				if (!target) new Notice("No pending changes in this chat");
+				if (!target) new Notice("此聊天中没有待处理的更改");
 			},
 		});
 
@@ -829,7 +825,7 @@ export default class SecondBrainPlugin extends Plugin {
 								await this.queueFilesForChatAttachment([file]);
 							} catch (error) {
 								new Notice(
-									`Failed to add file to chat: ${error instanceof Error ? error.message : String(error)}`,
+									`添加文件到聊天失败：${error instanceof Error ? error.message : String(error)}`,
 								);
 							}
 						}),
@@ -855,7 +851,7 @@ export default class SecondBrainPlugin extends Plugin {
 								await this.queueFilesForChatAttachment(attachableFiles);
 							} catch (error) {
 								new Notice(
-									`Failed to add files to chat: ${error instanceof Error ? error.message : String(error)}`,
+									`添加文件到聊天失败：${error instanceof Error ? error.message : String(error)}`,
 								);
 							}
 						}),
@@ -1062,8 +1058,8 @@ export default class SecondBrainPlugin extends Plugin {
 			},
 			notify: (version) => {
 				const message = createFragment((frag) => {
-					frag.appendText(`Smart Second Brain ${version} is available. `);
-					const link = frag.createEl("a", { text: "Update", href: "#" });
+					frag.appendText(`Smart Second Brain ${version} 已发布，可更新。`);
+					const link = frag.createEl("a", { text: "更新", href: "#" });
 					link.addEventListener("click", (event) => {
 						event.preventDefault();
 						this.openCommunityPluginSettings();
@@ -1127,8 +1123,8 @@ export default class SecondBrainPlugin extends Plugin {
 		if (record !== null) this.pluginData.lastSeenVersion = record;
 		if (sections.length === 0) return;
 		const message = createFragment((frag) => {
-			frag.appendText(`Smart Second Brain updated to ${current}. `);
-			const link = frag.createEl("a", { text: "See what's new", href: "#" });
+			frag.appendText(`Smart Second Brain 已更新到 ${current}。`);
+			const link = frag.createEl("a", { text: "查看更新内容", href: "#" });
 			link.addEventListener("click", (event) => {
 				event.preventDefault();
 				void this.showReleaseNotes(sections.length);

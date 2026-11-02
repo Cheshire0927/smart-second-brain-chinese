@@ -13,7 +13,7 @@ describe("buildToolOutputRenderModel", () => {
 			const expected =
 				length <= MAX_RENDERED_TOOL_OUTPUT_CHARS
 					? output
-					: `${output.slice(0, MAX_RENDERED_TOOL_OUTPUT_CHARS)}\n\n[UI preview truncated: 1 characters omitted]`;
+					: `${output.slice(0, MAX_RENDERED_TOOL_OUTPUT_CHARS)}\n\n[预览已截断：1 个字符被省略]`;
 			expect(model).toEqual({ kind: "markdown", markdown: expected, rawText: expected });
 		},
 	);
@@ -29,7 +29,7 @@ describe("buildToolOutputRenderModel", () => {
 		expect(model.kind).toBe("read_content");
 		if (model.kind !== "read_content") return;
 		expect(model.payload.truncated).toBe(true);
-		expect(model.payload.content).toContain("[UI preview truncated:");
+		expect(model.payload.content).toContain("[预览已截断：");
 		expect(model.rawText.length).toBeLessThan(MAX_RENDERED_TOOL_OUTPUT_CHARS + 100);
 		expect(output.text).toBe(original);
 	});
@@ -80,7 +80,7 @@ describe("buildToolOutputRenderModel", () => {
 		expect(model.summaryEntries).toEqual([{ key: "status", value: "ok" }]);
 		for (const json of [model.json, ...model.sections.map((section) => section.json)]) {
 			expect(json.length).toBeLessThan(MAX_RENDERED_TOOL_OUTPUT_CHARS + 100);
-			expect(json).toContain("[UI preview truncated:");
+			expect(json).toContain("[预览已截断：");
 		}
 	});
 

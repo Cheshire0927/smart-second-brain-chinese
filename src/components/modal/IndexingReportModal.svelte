@@ -16,11 +16,11 @@ let loading = $state(true);
 let activeTab = $state<"indexed" | "skipped">("indexed");
 
 const skipReasonLabels: Record<SkipReason, string> = {
-	excluded: "Excluded by internal rules",
-	privacy: "Private (untrusted provider)",
-	"not-indexed": "Not yet indexed",
-	"read-error": "Failed to read file",
-	"embed-error": "Embedding failed",
+	excluded: "被内部规则排除",
+	privacy: "私密（不可信服务商）",
+	"not-indexed": "尚未建立索引",
+	"read-error": "读取文件失败",
+	"embed-error": "嵌入失败",
 };
 
 const skipReasonIcons: Record<SkipReason, string> = {
@@ -56,9 +56,9 @@ onMount(async () => {
 </script>
 
 {#if loading}
-  <div class="s2b-report-loading">Loading report...</div>
+  <div class="s2b-report-loading">正在加载报告…</div>
 {:else if !report}
-  <div class="s2b-report-empty">No indexing data available. Build the index first.</div>
+  <div class="s2b-report-empty">暂无索引数据，请先建立索引。</div>
 {:else}
   <div class="s2b-report-tabs">
     <button
@@ -80,7 +80,7 @@ onMount(async () => {
   <div class="s2b-report-content">
     {#if activeTab === "indexed"}
       {#if totalIndexed === 0}
-        <div class="s2b-report-empty">No files indexed yet.</div>
+        <div class="s2b-report-empty">尚未索引任何文件。</div>
       {:else}
         <div class="s2b-report-list">
           {#each report.indexedFiles as filePath}
@@ -91,7 +91,7 @@ onMount(async () => {
         </div>
       {/if}
     {:else if totalSkipped === 0}
-      <div class="s2b-report-empty">No files were skipped.</div>
+      <div class="s2b-report-empty">没有文件被跳过。</div>
     {:else}
       {#each [...skippedByReason.entries()] as [reason, files]}
         <div class="s2b-report-group">

@@ -9,12 +9,12 @@ import SystemPromptModalComponent from "./SystemPromptModal.svelte";
  */
 export interface SystemPromptAccessors {
 	getPrompt: () => string | Promise<string>;
-	/** Writes the body back; the diff only ever calls it with `defaultPrompt` ("Use default"). */
+	/** Writes the body back; the diff only ever calls it with `defaultPrompt` ("使用默认值"). */
 	setPrompt?: (prompt: string) => void;
 	/**
-	 * Baseline the diff compares against and that "Use default" restores to.
+	 * Baseline the diff compares against and that "使用默认值" restores to.
 	 *
-	 * Required whenever `setPrompt` is present, because "Use default" is destructive: this
+	 * Required whenever `setPrompt` is present, because "使用默认值" is destructive: this
 	 * used to be optional with a `DEFAULT_AGENT_PROMPT` fallback, and `openSkillDiff` silently
 	 * relied on it — diffing a skill body against the agent base prompt and offering to
 	 * overwrite the skill with it. Making the two fields co-required means a new diff surface
@@ -59,10 +59,10 @@ export class SystemPromptModal extends SvelteModal {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.accessors = accessors;
-		this.titleText = options?.title ?? "System Prompt";
+		this.titleText = options?.title ?? "系统提示词";
 		this.descriptionText =
 			options?.description ??
-			"Your version compared with the current default. Edit the note to merge changes by hand, or replace it with the default.";
+			"你的版本与当前默认版本的对比。可编辑笔记手动合并改动，或用默认版本替换。";
 		this.readOnly = options?.readOnly ?? false;
 		this.setTitle(this.titleText);
 	}

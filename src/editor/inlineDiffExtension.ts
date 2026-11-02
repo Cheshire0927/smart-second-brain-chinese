@@ -25,7 +25,7 @@ function createEditActionBar(entryId: string, groupIndex: number, groupTotal: nu
 
 	const label = createSpan();
 	label.className = "s2b-diff-actions-label";
-	label.textContent = "Pending change";
+	label.textContent = "待处理更改";
 	bar.appendChild(label);
 
 	// Position among this note's pending change groups (e.g. "2/3"). Only shown
@@ -72,14 +72,14 @@ function createEditActionBar(entryId: string, groupIndex: number, groupTotal: nu
 		return btn;
 	};
 	if (canNavigate(entryId)) {
-		bar.appendChild(makeNavBtn("chevron-up", "Previous pending change", "prev"));
-		bar.appendChild(makeNavBtn("chevron-down", "Next pending change", "next"));
+		bar.appendChild(makeNavBtn("chevron-up", "上一处待处理更改", "prev"));
+		bar.appendChild(makeNavBtn("chevron-down", "下一处待处理更改", "next"));
 	}
 
 	// Toggle view mode icon (visible on hover via CSS)
 	const toggleBtn = createEl("button");
 	toggleBtn.className = "s2b-diff-toggle-btn";
-	toggleBtn.setAttribute("aria-label", "Toggle diff view");
+	toggleBtn.setAttribute("aria-label", "切换差异视图");
 	let currentMode: DiffViewMode;
 	try {
 		currentMode = getData().diffViewMode;
@@ -104,7 +104,7 @@ function createEditActionBar(entryId: string, groupIndex: number, groupTotal: nu
 	});
 	bar.appendChild(toggleBtn);
 
-	const acceptBtn = createResolveButton("s2b-diff-accept-btn", "check", "Accept", "Accept change");
+	const acceptBtn = createResolveButton("s2b-diff-accept-btn", "check", "Accept", "接受更改");
 	// Stale parity with the chat bar: once the document no longer matches the
 	// staged original, the store's conflict check makes every group accept fail
 	// unconditionally, so offer the explanation instead of the error.
@@ -112,7 +112,7 @@ function createEditActionBar(entryId: string, groupIndex: number, groupTotal: nu
 		acceptBtn.disabled = true;
 		acceptBtn.setAttribute(
 			"title",
-			"Cannot accept — the note changed after this was proposed. Reject it and ask the agent to re-stage.",
+			"无法接受 —— 提议之后笔记已被改动。请拒绝并让智能体重新提交。",
 		);
 	}
 	acceptBtn.addEventListener("click", (e) => {
@@ -127,7 +127,7 @@ function createEditActionBar(entryId: string, groupIndex: number, groupTotal: nu
 	});
 	bar.appendChild(acceptBtn);
 
-	const rejectBtn = createResolveButton("s2b-diff-reject-btn", "x", "Reject", "Reject change");
+	const rejectBtn = createResolveButton("s2b-diff-reject-btn", "x", "Reject", "拒绝更改");
 	rejectBtn.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -333,8 +333,7 @@ function getWidgetClasses(): WidgetClasses {
 		toDOM(): HTMLElement {
 			const banner = createDiv();
 			banner.className = "s2b-diff-cross-thread-banner";
-			const chat = this.otherCount === 1 ? "chat has" : "chats have";
-			banner.textContent = `${this.otherCount} other ${chat} a pending edit to this file. Only the latest is shown here; whichever is accepted first wins and the others may then fail to apply.`;
+			banner.textContent = `另有 ${this.otherCount} 个聊天也对这个文件提出了待应用的修改。此处只显示最新的一条；先被接受的那条生效，其余的随后可能无法应用。`;
 			return banner;
 		}
 

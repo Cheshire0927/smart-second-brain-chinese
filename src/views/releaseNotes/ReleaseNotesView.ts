@@ -30,7 +30,7 @@ export class ReleaseNotesView extends SvelteItemView {
 	}
 
 	getDisplayText(): string {
-		return "What's new";
+		return "更新日志";
 	}
 
 	getIcon(): string {

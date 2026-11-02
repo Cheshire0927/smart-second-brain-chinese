@@ -525,13 +525,13 @@ export class AgentManager {
 							Logger.error(`Failed to save the system prompt for ${agent.name}:`, error);
 							// The link shows what is actually on disk.
 							showActionNotice(
-								`Could not save the system prompt: ${extractErrorMessage(error)}`,
-								openNoteAction(agentDefinitionPath(agentId), "Open the agent note"),
+								`保存系统提示词失败：${extractErrorMessage(error)}`,
+								openNoteAction(agentDefinitionPath(agentId), "打开智能体笔记"),
 							);
 						});
 				},
 			},
-			{ title: `System Prompt — ${agent.name}` },
+			{ title: `系统提示词 — ${agent.name}` },
 		).open();
 	}
 
@@ -582,13 +582,13 @@ export class AgentManager {
 						.catch((error) => {
 							Logger.error(`Failed to save skill ${skillName}:`, error);
 							showActionNotice(
-								`Could not save the "${skillName}" skill: ${extractErrorMessage(error)}`,
-								openNoteAction(`${skills.getSkillsDir()}/${skillName}/SKILL.md`, "Open the skill note"),
+								`保存技能“${skillName}”失败：${extractErrorMessage(error)}`,
+								openNoteAction(`${skills.getSkillsDir()}/${skillName}/SKILL.md`, "打开技能笔记"),
 							);
 						});
 				},
 			},
-			{ title: `Skill — ${skillName}` },
+			{ title: `技能 — ${skillName}` },
 		).open();
 		return true;
 	}
@@ -673,10 +673,10 @@ export class AgentManager {
 			return { success: true };
 		} catch (error) {
 			if (error instanceof ProviderAuthError) {
-				return { success: false, message: "Invalid API key" };
+				return { success: false, message: "API 密钥无效" };
 			}
 			if (error instanceof ProviderEndpointError) {
-				return { success: false, message: "Invalid base URL or endpoint unreachable" };
+				return { success: false, message: "基础 URL 无效或端点不可达" };
 			}
 			if (error instanceof ProviderRegistryError) {
 				return { success: false, message: error.message };
@@ -684,7 +684,7 @@ export class AgentManager {
 			if (error instanceof Error) {
 				return { success: false, message: error.message };
 			}
-			return { success: false, message: "Provider configuration failed" };
+			return { success: false, message: "服务商配置失败" };
 		}
 	}
 
@@ -1334,10 +1334,10 @@ export class AgentManager {
 			// list of links, and the settings tab shows all of them anyway. A single failure gets
 			// taken straight to its own setup modal.
 			showActionNotice(
-				`Cannot connect to: ${unavailableProviders.join(", ")}. Check that the service is running.`,
+				`无法连接到：${unavailableProviders.join("、")}。请检查服务是否正在运行。`,
 				unavailableProviders.length === 1
 					? editProviderAction(unavailableProviders[0])
-					: settingsAction("general", "Review providers"),
+					: settingsAction("general", "查看服务商"),
 			);
 		}
 
@@ -1587,11 +1587,11 @@ export class AgentManager {
 			selectedAgent = pluginData.getSelectedAgent();
 		} else {
 			const found = pluginData.getAgent(agentId);
-			if (!found) throw new Error(`Agent "${agentId}" no longer exists — please select a different agent.`);
+			if (!found) throw new Error(`智能体“${agentId}”已不存在，请选择其他智能体。`);
 			selectedAgent = found;
 		}
 		const chatModel = selectedAgent.chatModel;
-		if (!chatModel) throw new Error("No chat model configured");
+		if (!chatModel) throw new Error("未配置聊天模型");
 		const summarizationModel = resolveSummarizationChatModel(chatModel, selectedAgent.summarizationModel);
 		const titleModel = resolveTitleChatModel(chatModel, selectedAgent.titleModel);
 
@@ -1630,8 +1630,8 @@ export class AgentManager {
 				pluginData.updateAgent(selectedAgent.id, { chatModel: null });
 				// The agent has just been left with no model, so the picker is the only way forward.
 				showActionNotice(
-					`Provider "${chatModel.provider}" is no longer available.`,
-					selectChatModelAction("Select a new model", selectedAgent.id),
+					`服务商“${chatModel.provider}”已不可用。`,
+					selectChatModelAction("选择新模型", selectedAgent.id),
 				);
 			}
 			throw error;

@@ -796,7 +796,7 @@ describe("unreachable provider", () => {
 		expect(embedDocuments).toHaveBeenCalledTimes(1);
 		expect(embedQuery).not.toHaveBeenCalled();
 		expect(showActionNotice).toHaveBeenCalledWith(
-			expect.stringMatching(/not reachable/),
+			expect.stringMatching(/不可达/),
 			expect.anything(),
 			expect.anything(),
 		);

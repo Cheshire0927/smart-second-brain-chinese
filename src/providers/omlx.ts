@@ -112,7 +112,7 @@ async function fetchModelEntries(auth: AuthObject): Promise<OpenAIModelEntry[]> 
 	});
 
 	if (response.status < 200 || response.status >= 300) {
-		throw new Error(`Model discovery failed for oMLX: ${response.text || `status ${response.status}`}`);
+		throw new Error(`oMLX 模型发现失败：${response.text || `状态码 ${response.status}`}`);
 	}
 
 	const payload = response.json as OpenAIModelResponse;
@@ -184,14 +184,14 @@ export function createOmlxProvider(instanceId: string, displayName: string): Emb
 		// =====================================================================
 		setupInstructions: {
 			steps: [
-				"Download and install oMLX for macOS from omlx.ai",
-				"Launch oMLX and start the server from the menu bar app",
-				"Download a model (LLM, VLM, or embedding) from the oMLX dashboard",
-				"The default server URL is http://localhost:8000",
+				"从 omlx.ai 下载并安装 macOS 版 oMLX",
+				"启动 oMLX，并从菜单栏应用启动服务",
+				"从 oMLX 面板下载模型（LLM、VLM 或嵌入模型）",
+				"默认服务器 URL 为 http://localhost:8000",
 			],
 			link: {
 				url: "https://omlx.ai",
-				text: "oMLX Website",
+				text: "oMLX 官网",
 			},
 		},
 
@@ -200,22 +200,22 @@ export function createOmlxProvider(instanceId: string, displayName: string): Emb
 		// =====================================================================
 		auth: {
 			baseUrl: {
-				label: "Server URL",
-				description: "The URL where your oMLX server is running",
+				label: "服务器 URL",
+				description: "你的 oMLX 服务运行所在的 URL",
 				kind: "text",
 				required: true,
 				placeholder: DEFAULT_BASE_URL,
 			},
 			apiKey: {
-				label: "API Key",
+				label: "API 密钥",
 				description:
-					"oMLX requires an API key by default (find it in the admin panel's global settings). Leave empty only if you disabled key verification.",
+					"oMLX 默认需要 API 密钥（可在管理面板的全局设置中找到）。仅在你关闭了密钥校验时才留空。",
 				kind: "secret",
 				required: true,
 			},
 			headers: {
-				label: "Custom Headers",
-				description: "Additional headers as JSON (optional)",
+				label: "自定义请求头",
+				description: "以 JSON 填写的附加请求头（可选）",
 				kind: "textarea",
 				required: false,
 				placeholder: '{"X-Custom-Header": "value"}',
@@ -282,13 +282,13 @@ export function createOmlxProvider(instanceId: string, displayName: string): Emb
 				}
 
 				if (response.status === 401 || response.status === 403) {
-					return { valid: false, error: errorMessage || "Authentication failed" };
+					return { valid: false, error: errorMessage || "身份验证失败" };
 				}
 
-				return { valid: false, error: errorMessage || `Request failed with status ${response.status}` };
+				return { valid: false, error: errorMessage || `请求失败，状态码 ${response.status}` };
 			} catch (error) {
 				const message = error instanceof Error ? error.message : String(error);
-				return { valid: false, error: `Connection failed: ${message}` };
+				return { valid: false, error: `连接失败：${message}` };
 			}
 		},
 

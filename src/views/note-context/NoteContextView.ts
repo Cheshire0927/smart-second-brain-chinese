@@ -49,9 +49,9 @@ export class NoteContextView extends SvelteItemView {
 	private getContextTitle(): string {
 		const contextFile = this.getContextFile();
 		if (contextFile?.extension === "md") {
-			return `Context of ${contextFile.basename}`;
+			return `${contextFile.basename} 的上下文`;
 		}
-		return "Context";
+		return "上下文";
 	}
 
 	private refreshTitle(): void {

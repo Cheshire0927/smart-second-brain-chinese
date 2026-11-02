@@ -187,24 +187,24 @@ let inferredLinksOn = $derived(!(settings.linkOnlyTopics ?? false) && (settings.
 let inferredLinksHint = $derived.by(() => {
 	const total = graphData.nodes.length;
 	if (!hasGraphIndex) {
-		return "Connect notes by meaning as well as by the links you wrote. Needs a graph embedding index — pick one in the plugin's Graph settings.";
+		return "除了你写的链接，也按语义把笔记连接起来。需要一个图谱嵌入索引——请在插件的图谱设置中选择一个。";
 	}
 	if (!inferredLinksOn) {
 		// Only report link coverage when topics really are link-only. A stored
 		// half-state (hidden but still grouping) would make that number a lie.
 		if (!settings.linkOnlyTopics) {
-			return "Hidden, but still grouping notes. Toggle twice to exclude them from topics as well.";
+			return "已隐藏，但仍在参与笔记分组。再切换两次可将它们也从主题中排除。";
 		}
-		if (total === 0) return "Off — topics come from the links you wrote.";
+		if (total === 0) return "已关闭——主题仅来自你写的链接。";
 		const placed = graphData.nodes.filter((n) => n.cluster != null).length;
 		const percent = Math.round((placed / total) * 100);
-		return `Off — topics come from the links you wrote. Your links alone group ${placed} of ${total} notes (${percent}%); the other ${total - placed} are unlinked.`;
+		return `已关闭——主题仅来自你写的链接。仅凭你的链接为 ${total} 篇笔记中的 ${placed} 篇分出了主题（${percent}%），其余 ${total - placed} 篇未建立链接。`;
 	}
 	const inferred = graphData.edges.filter((e) => e.type === "semantic").length;
 	if (inferred === 0) {
-		return "Connect notes by meaning as well as by the links you wrote — needs a graph embedding index.";
+		return "除了你写的链接，也按语义把笔记连接起来——需要一个图谱嵌入索引。";
 	}
-	return `Connect notes by meaning as well as by the links you wrote: ${inferred} similarity connections so unlinked notes still find a topic. Turn off to see what your own links cover.`;
+	return `除了你写的链接，也按语义把笔记连接起来：当前有 ${inferred} 条相似性连线，让未建立链接的笔记也能归入主题。关闭即可查看你自己的链接覆盖了哪些内容。`;
 });
 
 function handleLinkDistanceChange(val: number) {
@@ -290,8 +290,8 @@ function handleResetDevSettings() {
 // the user cannot perform. Drop them on mobile rather than advertise a
 // non-existent affordance.
 const onMobile = isMobileUI();
-const fitTooltip = onMobile ? "Fit graph to view" : "Fit graph to view (F)";
-const lassoTooltip = onMobile ? "Lasso selection" : "Lasso selection (or hold Shift + drag)";
+const fitTooltip = onMobile ? "适应视图" : "适应视图 (F)";
+const lassoTooltip = onMobile ? "框选" : "框选（或按住 Shift 拖动）";
 
 // Pointer/keyboard focus on the topic-naming button, which turns the spinner
 // into a cancel control. Tracked here because Button exposes no hover state.
@@ -346,14 +346,14 @@ $effect(() => {
     <Button
       iconId="log-out"
       onClick={() => onExitImmerse?.()}
-      tooltip="Exit immerse — back to the full graph"
+      tooltip="退出沉浸——返回完整图谱"
       styles="is-active"
     />
   {/if}
   <Button iconId="maximize" onClick={onFitToView} tooltip={fitTooltip} />
   <Button
     iconId="lasso"
-    tooltip={lassoMode ? "Exit lasso selection" : lassoTooltip}
+    tooltip={lassoMode ? "退出框选" : lassoTooltip}
     onClick={() => onLassoModeChange?.(!lassoMode)}
     styles={lassoMode ? "is-active" : ""}
   />
@@ -369,8 +369,8 @@ $effect(() => {
   <Button
     iconId="wand-sparkles"
     tooltip={showTopics
-      ? "Hide topics — show the raw graph without clustering"
-      : "Show topics — colour notes by their detected topic"}
+      ? "隐藏主题——显示未聚类的原始图谱"
+      : "显示主题——按检测到的主题为笔记着色"}
     onClick={() => onSettingsChange({ showTopics: !showTopics })}
     styles={showTopics ? "is-active" : ""}
   />
@@ -385,12 +385,12 @@ $effect(() => {
   <Button
     iconId={isTopicsCollapsed ? "chevrons-up-down" : "chevrons-down-up"}
     tooltip={isLeidenRunning
-      ? "Computing topics…"
+      ? "正在计算主题…"
       : !showTopics
-        ? "Turn topics on to collapse them"
+        ? "请先开启主题再折叠"
         : isTopicsCollapsed
-          ? "Expand all topics back into notes (S)"
-          : "Collapse all topics into single nodes (S) — or select topics and use Collapse"}
+          ? "将所有主题展开为笔记（S）"
+          : "将所有主题折叠为单个节点（S）——也可选中主题后使用“折叠”"}
     onClick={() => onToggleCollapseAll?.()}
     disabled={isLeidenRunning || !showTopics}
     styles={isTopicsCollapsed ? "is-active" : ""}
@@ -398,7 +398,7 @@ $effect(() => {
   <div class="toolbar-icon-wrapper">
     <Button
       iconId="sliders-horizontal"
-      tooltip={isCollapsed ? "Show graph panel" : "Hide graph panel"}
+      tooltip={isCollapsed ? "显示图谱面板" : "隐藏图谱面板"}
       onClick={() => (isCollapsed = !isCollapsed)}
       styles={!isCollapsed ? "is-active" : ""}
     />
@@ -407,7 +407,7 @@ $effect(() => {
     <div class="toolbar-icon-wrapper">
       <Button
         iconId="wrench"
-        tooltip={isDevCollapsed ? "Show dev panel" : "Hide dev panel"}
+        tooltip={isDevCollapsed ? "显示开发面板" : "隐藏开发面板"}
         onClick={() => (isDevCollapsed = !isDevCollapsed)}
         styles={!isDevCollapsed ? "is-active" : ""}
       />
@@ -429,9 +429,9 @@ $effect(() => {
         {#if isLoading}
           <span class="loading-label">{loadingLabel}</span>
         {:else if graphStats}
-          {nodeCount} notes · {graphStats.unlinkedNotes} unlinked · {graphStats.wikiEdges} links{#if graphStats.semanticEdges > 0}{" "}· {graphStats.semanticEdges} inferred{/if}
+          {nodeCount} 篇笔记 · {graphStats.unlinkedNotes} 篇未链接 · {graphStats.wikiEdges} 条链接{#if graphStats.semanticEdges > 0}{" "}· {graphStats.semanticEdges} 条推断{/if}
         {:else}
-          {nodeCount} notes
+          {nodeCount} 篇笔记
         {/if}
       </span>
     </div>
@@ -448,7 +448,7 @@ $effect(() => {
          `--setting-items-*`. Using core's structure means the panel tracks the
          user's theme instead of approximating it. -->
     <div class="setting-group">
-      <SettingContainer name="Topics" isHeading />
+      <SettingContainer name="主题" isHeading />
       <div class="setting-items">
 
     <!-- Held back until the vault's levels are known: the slider's length is
@@ -458,10 +458,10 @@ $effect(() => {
            This changes how finely notes are grouped into topics — hence the
            separate `granularity*` vocabulary throughout. -->
       <SettingContainer
-        name="Granularity"
+        name="粒度"
         desc={onMobile
-          ? "Left: a few broad topics. Right: many specific ones. Every note stays visible."
-          : "Left: a few broad topics. Right: many specific ones. Every note stays visible. (↑/↓ on the graph)"}
+          ? "向左：少数宽泛的主题；向右：多个具体的主题。每篇笔记都保持可见。"
+          : "向左：少数宽泛的主题；向右：多个具体的主题。每篇笔记都保持可见。（在图谱上按 ↑/↓）"}
         compact
       >
         <RangeSlider
@@ -475,7 +475,7 @@ $effect(() => {
         />
       </SettingContainer>
     {:else}
-      <SettingContainer name="Granularity" desc="Working out this vault's topic levels…" compact>
+      <SettingContainer name="粒度" desc="正在推算该仓库的主题层级…" compact>
         <span class="granularity-pending">…</span>
       </SettingContainer>
     {/if}
@@ -488,7 +488,7 @@ $effect(() => {
          folds the live measurement into the same hover description, so the
          number is still there without this row growing an extra line and an
          affordance nothing else in the panel has. -->
-    <SettingContainer name="Inferred links" desc={inferredLinksHint} compact>
+    <SettingContainer name="推断连线" desc={inferredLinksHint} compact>
       <!-- Disabled, not hidden, without a graph index: the stored value is kept
            (flipping it would silently rewrite settings on every open), the
            hint says what's missing, and the switch comes alive the moment an
@@ -508,9 +508,9 @@ $effect(() => {
       <!-- A heading row like the others, so the naming button lands in the
            control slot Obsidian already right-aligns rather than needing a
            bespoke flex row. -->
-      <SettingContainer name="Found · {segments.length}" isHeading class="section-heading--action">
+      <SettingContainer name="已找到 · {segments.length}" isHeading class="section-heading--action">
         {#snippet nameSuffix()}
-          {#if !onMobile}<span class="section-label-hint">shift/⌘ multi-select</span>{/if}
+          {#if !onMobile}<span class="section-label-hint">shift/⌘ 多选</span>{/if}
         {/snippet}
         <!-- The spinner doubles as the cancel control: hovering (or focusing)
              a live run swaps it for an X. Listeners go on the button itself
@@ -519,8 +519,8 @@ $effect(() => {
         <Button
           bind:element={labelButtonEl}
           iconId={showCancelLabeling ? "x" : isLabeling ? "loader" : "sparkles"}
-          ariaLabel={isLabeling ? "Cancel naming topics" : "Name topics with AI"}
-          tooltip={isLabeling ? "Cancel naming" : "Name topics with AI"}
+          ariaLabel={isLabeling ? "取消命名主题" : "用 AI 命名主题"}
+          tooltip={isLabeling ? "取消命名" : "用 AI 命名主题"}
           onClick={() => (isLabeling ? onCancelLabeling?.() : onLabelTopics?.())}
           styles={isLabeling && !showCancelLabeling ? "is-spinning" : ""}
         />
@@ -548,11 +548,11 @@ $effect(() => {
          controls reached on every visit stay at the top, where the topic list
          can also sit directly under the settings that produce it. -->
     <div class="setting-group">
-      <SettingContainer name="Scope" isHeading />
+      <SettingContainer name="范围" isHeading />
       <div class="setting-items">
     <SettingContainer
-      name="Markdown only"
-      desc="Show only Markdown notes; off shows all indexable files"
+      name="仅 Markdown"
+      desc="仅显示 Markdown 笔记；关闭则显示所有可索引的文件"
       compact
     >
       <Toggle
@@ -561,8 +561,8 @@ $effect(() => {
       />
     </SettingContainer>
     <SettingContainer
-      name="Tags"
-      desc="Draw each tag as a node linked to the notes that carry it; shared tags also help shape topics"
+      name="标签"
+      desc="把每个标签画成节点，连到带有该标签的笔记上；共用的标签也有助于主题成形"
       compact
     >
       <Toggle
@@ -577,11 +577,11 @@ $effect(() => {
     <!-- Purely how the graph above is drawn — nothing here changes which notes
          are included or how they group. -->
     <div class="setting-group">
-      <SettingContainer name="Display" isHeading />
+      <SettingContainer name="显示" isHeading />
       <div class="setting-items">
     <SettingContainer
-      name="Topic regions"
-      desc="Tint the area behind each topic so groups read at a glance"
+      name="主题区域"
+      desc="为每个主题背后的区域着色，一眼就能看清分组"
       compact
     >
       <Toggle
@@ -590,8 +590,8 @@ $effect(() => {
       />
     </SettingContainer>
     <SettingContainer
-      name="Topic labels"
-      desc="Show the topic name pills over the graph"
+      name="主题标签"
+      desc="在图谱上方显示主题名称标签"
       compact
     >
       <Toggle
@@ -600,8 +600,8 @@ $effect(() => {
       />
     </SettingContainer>
     <SettingContainer
-      name="Direction arrows"
-      desc="Show arrows for directed wiki links"
+      name="方向箭头"
+      desc="为有向双链显示箭头"
       compact
     >
       <Toggle
@@ -618,12 +618,12 @@ $effect(() => {
          vanishes leaves the user hunting for a control they saw a moment ago,
          and the hint says which switch to flip to get it back. -->
     <SettingContainer
-      name="Highlight inferred links"
+      name="高亮推断连线"
       desc={!hasGraphIndex
-        ? "Draw inferred links in the accent color. Needs a graph embedding index — pick one in the plugin's Graph settings."
+        ? "用强调色绘制推断连线。需要一个图谱嵌入索引——请在插件的图谱设置中选择一个。"
         : inferredLinksOn
-          ? "Draw inferred links in the accent color so they stand apart from the links you wrote"
-          : "Draw inferred links in the accent color. Needs Inferred links (under Topics) turned on."}
+          ? "用强调色绘制推断连线，使其与你手写的链接区分开"
+          : "用强调色绘制推断连线。需要先开启“推断连线”（位于主题分区下）。"}
       compact
     >
       <Toggle
@@ -633,8 +633,8 @@ $effect(() => {
       />
     </SettingContainer>
     <SettingContainer
-      name="Highlight isolated"
-      desc="Mark notes with no wiki links in accent color"
+      name="高亮孤立笔记"
+      desc="用强调色标记没有任何双链的笔记"
       compact
     >
       <Toggle
@@ -643,8 +643,8 @@ $effect(() => {
       />
     </SettingContainer>
     <SettingContainer
-      name="Highlight bridges"
-      desc="Mark notes that connect multiple topics in accent color"
+      name="高亮桥接笔记"
+      desc="用强调色标记连接了多个主题的笔记"
       compact
     >
       <Toggle
@@ -670,7 +670,7 @@ $effect(() => {
   <BottomSheet
     open={!isCollapsed}
     onClose={() => (isCollapsed = true)}
-    ariaLabel="Graph settings"
+    ariaLabel="图谱设置"
   >
     {@render panelBody()}
   </BottomSheet>
@@ -697,23 +697,23 @@ $effect(() => {
           class="section-label section-label--collapsible"
           onclick={() => (sectionOpen.devLayout = !sectionOpen.devLayout)}
         >
-          <span>Layout</span>
+          <span>布局</span>
           <svg class="section-chevron" class:open={sectionOpen.devLayout} xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
         {#if sectionOpen.devLayout}
-          <SettingContainer name="Link distance" desc="Target distance between connected nodes" compact>
+          <SettingContainer name="连线长度" desc="相连节点之间的目标距离" compact>
             <RangeSlider value={settings.linkDistance} min={30} max={500} step={5} showValue={true} oncommit={handleLinkDistanceChange} />
           </SettingContainer>
-          <SettingContainer name="Repulsion" desc="How strongly nodes push each other apart" compact>
+          <SettingContainer name="斥力" desc="节点相互排斥的强度" compact>
             <RangeSlider value={Math.abs(settings.chargeStrength)} min={10} max={1500} step={10} showValue={true} oncommit={handleChargeStrengthChange} />
           </SettingContainer>
-          <SettingContainer name="Center force" desc="How strongly the graph is pulled toward the center" compact>
+          <SettingContainer name="向心力" desc="图谱被拉向中心的强度" compact>
             <RangeSlider value={Math.round(settings.centerStrength * 100)} min={0} max={100} step={1} showValue={true} oncommit={handleCenterStrengthChange} />
           </SettingContainer>
-          <SettingContainer name="Link strength" desc="How strongly edges pull connected nodes together" compact>
+          <SettingContainer name="连线强度" desc="连线把相连节点拉近的强度" compact>
             <RangeSlider value={Math.round(settings.linkStrength * 100)} min={0} max={100} step={1} showValue={true} oncommit={handleLinkStrengthChange} />
           </SettingContainer>
-          <SettingContainer name="Cluster cohesion" desc="How strongly nodes are pulled toward their cluster center" compact>
+          <SettingContainer name="主题内聚" desc="节点被拉向所属主题中心的强度" compact>
             <RangeSlider value={Math.round((settings.clusterCohesionStrength ?? 0.15) * 100)} min={0} max={100} step={1} showValue={true} oncommit={handleClusterCohesionStrengthChange} />
           </SettingContainer>
         {/if}
@@ -723,26 +723,26 @@ $effect(() => {
           class="section-label section-label--collapsible"
           onclick={() => (sectionOpen.devAppearance = !sectionOpen.devAppearance)}
         >
-          <span>Appearance</span>
+          <span>外观</span>
           <svg class="section-chevron" class:open={sectionOpen.devAppearance} xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
         {#if sectionOpen.devAppearance}
-          <SettingContainer name="Directed links" desc="Draw arrowheads on authored wiki links" compact>
+          <SettingContainer name="有向连线" desc="在手写的双链上绘制箭头" compact>
             <Toggle checked={settings.directedWikiEdges ?? true} onchange={(v) => onSettingsChange({ directedWikiEdges: v })} />
           </SettingContainer>
-          <SettingContainer name="Topic regions" desc="Tinted area behind each topic's notes" compact>
+          <SettingContainer name="主题区域" desc="每个主题笔记背后的着色区域" compact>
             <Toggle checked={settings.showTopicHulls ?? true} onchange={(v) => onSettingsChange({ showTopicHulls: v })} />
           </SettingContainer>
-          <SettingContainer name="Topic labels" desc="Name pills drawn over each topic" compact>
+          <SettingContainer name="主题标签" desc="绘制在每个主题上方的名称标签" compact>
             <Toggle checked={settings.showClusterLabels ?? true} onchange={(v) => onSettingsChange({ showClusterLabels: v })} />
           </SettingContainer>
-          <SettingContainer name="Highlight bridges" desc="Ring notes whose neighbors are mostly in other topics" compact>
+          <SettingContainer name="高亮桥接笔记" desc="为邻居大多在其他主题中的笔记加上环形标记" compact>
             <Toggle checked={settings.highlightBridges ?? false} onchange={(v) => { onSettingsChange({ highlightBridges: v }); onReapplySegments?.(); }} />
           </SettingContainer>
-          <SettingContainer name="Highlight unlinked" desc="Ring notes with no authored links" compact>
+          <SettingContainer name="高亮未链接笔记" desc="为没有手写链接的笔记加上环形标记" compact>
             <Toggle checked={settings.highlightIsolated ?? false} onchange={(v) => { onSettingsChange({ highlightIsolated: v }); onReapplySegments?.(); }} />
           </SettingContainer>
-          <SettingContainer name="Markdown only" desc="Exclude non-markdown files from the graph" compact>
+          <SettingContainer name="仅 Markdown" desc="从图谱中排除非 Markdown 文件" compact>
             <Toggle checked={settings.markdownOnly ?? false} onchange={(v) => onSettingsChange({ markdownOnly: v })} />
           </SettingContainer>
         {/if}
@@ -752,11 +752,11 @@ $effect(() => {
           class="section-label section-label--collapsible"
           onclick={() => (sectionOpen.devSemantic = !sectionOpen.devSemantic)}
         >
-          <span>Semantic edges</span>
+          <span>语义连线</span>
           <svg class="section-chevron" class:open={sectionOpen.devSemantic} xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
         {#if sectionOpen.devSemantic}
-          <SettingContainer name="Neighbors (k)" desc="Max inferred neighbors contributed per note" compact>
+          <SettingContainer name="邻居数 (k)" desc="每篇笔记最多贡献的推断邻居数" compact>
             <RangeSlider
               value={settings.semanticNeighborCount ?? 5}
               min={0}
@@ -766,7 +766,7 @@ $effect(() => {
               oncommit={(v) => onSettingsChange({ semanticNeighborCount: v })}
             />
           </SettingContainer>
-          <SettingContainer name="Similarity threshold" desc="Min cosine similarity for an inferred edge (×100)" compact>
+          <SettingContainer name="相似度阈值" desc="生成推断连线所需的最小余弦相似度（×100）" compact>
             <RangeSlider
               value={Math.round((settings.semanticThreshold ?? 0.55) * 100)}
               min={0}
@@ -787,7 +787,7 @@ $effect(() => {
           <svg class="section-chevron" class:open={sectionOpen.devLeiden} xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
         {#if sectionOpen.devLeiden}
-          <SettingContainer name="Seed" desc="PRNG seed — same seed + graph = same topics" compact>
+          <SettingContainer name="随机种子" desc="伪随机数种子——相同种子 + 相同图谱 = 相同主题" compact>
             <input
               type="number"
               class="dev-number-input"
@@ -799,7 +799,7 @@ $effect(() => {
               }}
             />
           </SettingContainer>
-          <SettingContainer name="Resolution (γ)" desc="Higher → more, smaller topics. The granularity slider's underlying value" compact>
+          <SettingContainer name="分辨率 (γ)" desc="取值越大 → 主题更多更小。粒度滑块背后的实际取值" compact>
             <RangeSlider
               value={Math.round((settings.leidenResolution ?? 1) * 100)}
               min={10}
@@ -809,16 +809,16 @@ $effect(() => {
               oncommit={(v) => handleResolutionChange(v / 100)}
             />
           </SettingContainer>
-          <SettingContainer name="Bridge threshold" desc="Min fraction of foreign-topic neighbors to qualify as a bridge" compact>
+          <SettingContainer name="桥接阈值" desc="判定为桥接笔记所需的跨主题邻居最小比例" compact>
             <RangeSlider value={Math.round((settings.bridgeThreshold ?? 0.4) * 100)} min={0} max={100} step={5} showValue={true} oncommit={(v) => { onSettingsChange({ bridgeThreshold: v / 100 }); onReapplySegments?.(); }} />
           </SettingContainer>
-          <SettingContainer name="Link-only topics" desc="Detect topics from authored links alone, ignoring inferred edges" compact>
+          <SettingContainer name="仅按链接划分主题" desc="仅根据手写链接检测主题，忽略推断连线" compact>
             <Toggle checked={settings.linkOnlyTopics ?? false} onchange={(v) => onSettingsChange({ linkOnlyTopics: v })} />
           </SettingContainer>
         {/if}
 
         <div class="dev-actions">
-          <Button iconId="rotate-ccw" onClick={handleResetDevSettings} tooltip="Reset tuning to defaults" />
+          <Button iconId="rotate-ccw" onClick={handleResetDevSettings} tooltip="调参恢复默认值" />
         </div>
       </div>
     {/if}

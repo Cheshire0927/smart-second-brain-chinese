@@ -12,8 +12,8 @@ export const MODEL_CAPABILITY_ICONS: Record<
 	keyof HydratedChatModelMetadata["capabilities"],
 	{ icon: string; label: string }
 > = {
-	toolCalls: { icon: "wrench", label: "Tool calling" },
-	reasoning: { icon: "brain", label: "Extended reasoning" },
-	vision: { icon: "eye", label: "Vision / file attachments" },
-	structuredOutput: { icon: "braces", label: "Structured output (JSON schema)" },
+	toolCalls: { icon: "wrench", label: "工具调用" },
+	reasoning: { icon: "brain", label: "扩展推理" },
+	vision: { icon: "eye", label: "视觉 / 文件附件" },
+	structuredOutput: { icon: "braces", label: "结构化输出（JSON schema）" },
 };

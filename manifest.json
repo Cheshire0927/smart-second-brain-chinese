@@ -1,7 +1,7 @@
 {
   "id": "smart-second-brain",
   "name": "Smart Second Brain",
-  "description": "Search, explore, and chat with your notes using hybrid semantic search, an interactive knowledge graph, and an AI assistant powered by local or cloud providers like Ollama, OpenAI, and Anthropic.",
+  "description": "通过混合语义搜索、交互式知识图谱，以及由 Ollama、OpenAI、Anthropic 等本地或云端服务商驱动的 AI 助手，搜索、浏览并与你的笔记对话。",
   "author": "Leo310, nicobrauchtgit",
   "authorUrl": "https://smartsecondbrain.dev",
   "version": "2.3.0",

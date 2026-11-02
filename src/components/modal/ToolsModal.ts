@@ -15,7 +15,7 @@ export class ToolsModal extends SvelteModal {
 	}
 
 	onOpen() {
-		this.setTitle("Tools");
+		this.setTitle("工具");
 		this.mountComponent(
 			ToolsModalComponent,
 			{ modal: this, plugin: this.plugin, agentId: this.agentId, onChange: this.onChange },

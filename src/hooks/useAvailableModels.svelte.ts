@@ -494,9 +494,9 @@ export class AvailableModels {
 		// knowable here, so the General tab (listing all of them) is the honest destination —
 		// and the notice is what stops that tab from looking like nothing happened.
 		if (needsEmbedding && !this.hasEmbedModels) {
-			new Notice("No embedding models found for your providers. Check that one exposes embeddings.");
+			new Notice("未在你的服务商中找到嵌入模型，请确认其中至少一个提供嵌入能力。");
 		} else if (!needsEmbedding && !this.hasModels) {
-			new Notice("No models found. Check that your provider is running and reachable.");
+			new Notice("未找到模型，请确认服务商正在运行且可访问。");
 		}
 
 		dismiss?.();

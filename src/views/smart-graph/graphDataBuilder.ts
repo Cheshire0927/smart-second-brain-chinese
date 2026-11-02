@@ -528,7 +528,7 @@ function resolveSegmentsByLeiden(
 	}
 
 	return withRepresentative.map(({ communityId, nodeIds, bestId, index }) => {
-		const label = nodeById.get(bestId)?.label ?? nodeById.get(bestId)?.path ?? `Community ${index + 1}`;
+		const label = nodeById.get(bestId)?.label ?? nodeById.get(bestId)?.path ?? `主题 ${index + 1}`;
 		const paths = new Set(
 			nodeIds
 				.filter(isNoteId)

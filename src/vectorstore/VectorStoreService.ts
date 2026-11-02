@@ -1064,8 +1064,8 @@ export class VectorStoreService {
 			if (notice) {
 				notice.setMessage(
 					cancelled
-						? `Indexing cancelled (${outcome.indexedChunks} chunks updated)`
-						: `✓ Index updated: ${outcome.indexedChunks} chunks`,
+						? `已取消建立索引（已更新 ${outcome.indexedChunks} 个分块）`
+						: `✓ 索引已更新：${outcome.indexedChunks} 个分块`,
 				);
 				window.setTimeout(() => notice.hide(), 3000);
 			}
@@ -1320,10 +1320,10 @@ export class VectorStoreService {
 		if (!resolvedId) {
 			showSettingsLinkNotice(
 				this.plugin.app,
-				"No embedding model configured. Please set a default embedding model.",
+				"未配置嵌入模型，请先设置默认嵌入模型。",
 				{
 					tab: "search",
-					linkText: "Open search settings",
+					linkText: "打开搜索设置",
 				},
 			);
 			return false;
@@ -1332,26 +1332,26 @@ export class VectorStoreService {
 		const inst = await this.getOrCreateInstance(resolvedId);
 		const model = this.getModelForInstance(inst);
 		if (!model) {
-			showSettingsLinkNotice(this.plugin.app, "Invalid embedding index configuration.", {
+			showSettingsLinkNotice(this.plugin.app, "嵌入索引配置无效。", {
 				tab: "search",
-				linkText: "Open search settings",
+				linkText: "打开搜索设置",
 			});
 			return false;
 		}
 
 		if (!this.ensureProviderRegistered(model.provider)) {
-			showSettingsLinkNotice(this.plugin.app, `Provider "${model.provider}" is not configured.`, {
+			showSettingsLinkNotice(this.plugin.app, `服务商“${model.provider}”未配置。`, {
 				tab: "general",
-				linkText: "Open provider settings",
+				linkText: "打开服务商设置",
 			});
 			return false;
 		}
 
 		const embeddings = this.getEmbeddingsForInstance(inst, model);
 		if (!embeddings) {
-			showSettingsLinkNotice(this.plugin.app, "Failed to initialize embedding model.", {
+			showSettingsLinkNotice(this.plugin.app, "嵌入模型初始化失败。", {
 				tab: "general",
-				linkText: "Open provider settings",
+				linkText: "打开服务商设置",
 			});
 			return false;
 		}
@@ -1485,8 +1485,8 @@ export class VectorStoreService {
 			`[VectorStore] Stopping indexing for ${inst.indexId}: provider unreachable after ${consecutiveFailures} consecutive failures — ${reason}`,
 		);
 		showActionNotice(
-			"Indexing stopped — the embedding provider is not reachable. Check the connection, then resume.",
-			settingsAction("search", "Open search settings"),
+			"已停止建立索引 —— 嵌入服务商不可达。请检查连接后再继续。",
+			settingsAction("search", "打开搜索设置"),
 			10_000,
 		);
 		inst.abortController?.abort();
@@ -1515,7 +1515,7 @@ export class VectorStoreService {
 		// than reporting "already in progress" against its own twin.
 		if (inst.buildPromise) return inst.buildPromise;
 		if (inst.isIndexing || inst.progress.isIndexing) {
-			new Notice("Indexing already in progress...");
+			new Notice("正在建立索引…");
 			return Promise.resolve();
 		}
 		inst.buildPromise = this.runFullBuild(inst, embeddings, model).finally(() => {
@@ -1592,11 +1592,11 @@ export class VectorStoreService {
 			}
 
 			const { indexed, skipped } = inst.progress;
-			const skippedText = skipped > 0 ? `, ${skipped} skipped` : "";
+			const skippedText = skipped > 0 ? `，跳过 ${skipped} 条` : "";
 			notice.setMessage(
 				cancelled
-					? `Indexing cancelled (${indexed} notes indexed so far)`
-					: `✓ Indexed ${indexed} notes${skippedText}`,
+					? `已取消建立索引（已索引 ${indexed} 条笔记）`
+					: `✓ 已索引 ${indexed} 条笔记${skippedText}`,
 			);
 			window.setTimeout(() => notice.hide(), 3000);
 
@@ -1860,7 +1860,7 @@ export class VectorStoreService {
 						if (this.isUserCancellation(entryError)) return false;
 						Logger.error(`[VectorStore] Failed to index ${entry.file.path}:`, entryError);
 						const reason = entryError instanceof Error ? entryError.message : String(entryError);
-						new Notice(`Failed to embed ${entry.file.basename}: ${reason}`);
+						new Notice(`为 ${entry.file.basename} 生成嵌入失败：${reason}`);
 						await noteFailed(entry, "embed-error", isDocumentRejectionError(entryError));
 						continue;
 					}
@@ -1983,8 +1983,8 @@ export class VectorStoreService {
 	 */
 	private updateNotice(notice: Notice, progress: IndexingProgress): void {
 		const { indexed, skipped, total, percentage, etaMs } = progress;
-		const skippedText = skipped > 0 ? ` (${skipped} skipped)` : "";
-		const etaText = etaMs !== null ? ` (~${formatEta(etaMs)} left)` : "";
+		const skippedText = skipped > 0 ? `（跳过 ${skipped} 条）` : "";
+		const etaText = etaMs !== null ? `（剩余约 ${formatEta(etaMs)}）` : "";
 
 		const el = notice.messageEl;
 		el.empty();
@@ -1993,7 +1993,7 @@ export class VectorStoreService {
 
 		container.createDiv({
 			cls: "s2b-indexing-status",
-			text: `Indexing: ${indexed}/${total}${skippedText}${etaText}`,
+			text: `正在建立索引：${indexed}/${total}${skippedText}${etaText}`,
 		});
 
 		const progressContainer = container.createDiv({ cls: "s2b-indexing-progress" });
@@ -2070,7 +2070,7 @@ export class VectorStoreService {
 		} catch (error) {
 			Logger.error(`[VectorStore] Failed to embed ${file.path} (${inst.indexId}):`, error);
 			const reason = error instanceof Error ? error.message : String(error);
-			new Notice(`Failed to embed ${file.basename}: ${reason}`);
+			new Notice(`为 ${file.basename} 生成嵌入失败：${reason}`);
 			// Only a verdict on this document is remembered; a dead or misconfigured
 			// provider is not the note's fault, and the next validation retries it.
 			if (isDocumentRejectionError(error)) await this.rejectNote(inst, file.path, mtime);
@@ -2081,7 +2081,7 @@ export class VectorStoreService {
 			const vector = raw[i];
 			if (!vector || vector.length === 0) {
 				Logger.error(`[VectorStore] embedDocuments returned empty result for ${file.path}`);
-				new Notice(`Failed to embed ${file.basename}: empty result from model`);
+				new Notice(`为 ${file.basename} 生成嵌入失败：模型返回空结果`);
 				return;
 			}
 			vectors.push(new Float32Array(vector));
@@ -2313,9 +2313,9 @@ export class VectorStoreService {
 		const offline = isProviderUnreachableError(error);
 		showActionNotice(
 			offline
-				? "Semantic search unavailable — the embedding provider is not reachable. Showing no semantic results."
-				: `Semantic search failed: ${reason.slice(0, 120)}`,
-			settingsAction("search", "Open search settings"),
+				? "语义搜索不可用 —— 嵌入服务商不可达，将不返回语义结果。"
+				: `语义搜索失败：${reason.slice(0, 120)}`,
+			settingsAction("search", "打开搜索设置"),
 			8000,
 		);
 	}
@@ -2590,7 +2590,7 @@ export class VectorStoreService {
 			// The in-flight embedding call is raced against this signal rather than
 			// awaited (`embedWithCancellation`), so cancelling takes effect at once —
 			// it no longer waits out a request that may never return.
-			new Notice("Cancelling indexing…");
+			new Notice("正在取消建立索引…");
 		}
 	}
 
@@ -2604,12 +2604,12 @@ export class VectorStoreService {
 		const inst = await this.getOrCreateInstance(indexId);
 		const docs = await inst.store.getAllSerialized();
 		if (docs.length === 0) {
-			new Notice("Index is empty — nothing to export.");
+			new Notice("索引为空，没有可导出的内容。");
 			return false;
 		}
 
 		const filePath = showSaveDialog({
-			title: "Export Embedding Index",
+			title: "导出嵌入索引",
 			defaultPath: `s2b-embeddings-${sanitizeIndexId(...this.splitIndexId(indexId))}.msgpack`,
 			filters: [{ name: "MessagePack", extensions: ["msgpack"] }],
 		});
@@ -2629,11 +2629,11 @@ export class VectorStoreService {
 			const fs = requireNodeModule<typeof import("node:fs")>("fs");
 			fs.writeFileSync(filePath, new Uint8Array(encoded.buffer, encoded.byteOffset, encoded.byteLength));
 			Logger.log(`[VectorStore] Exported ${docs.length} documents to ${filePath}`);
-			new Notice(`Exported ${docs.length} embeddings.`);
+			new Notice(`已导出 ${docs.length} 条嵌入。`);
 			return true;
 		} catch (error) {
 			Logger.error("[VectorStore] Export failed:", error);
-			new Notice("Failed to export index.");
+			new Notice("导出索引失败。");
 			return false;
 		}
 	}
@@ -2650,7 +2650,7 @@ export class VectorStoreService {
 	 */
 	async importIndex(purpose: "search" | "graph" = "search"): Promise<string | null> {
 		const filePaths = showOpenDialog({
-			title: "Import Embedding Index",
+			title: "导入嵌入索引",
 			filters: [{ name: "MessagePack", extensions: ["msgpack"] }],
 			properties: ["openFile"],
 		});
@@ -2663,28 +2663,28 @@ export class VectorStoreService {
 
 			if (typeof decoded.version !== "number" || !Number.isInteger(decoded.version)) {
 				showActionNotice(
-					"Export file has an invalid or missing version field. Re-index to regenerate a compatible export.",
-					configureEmbedIndexAction(purpose, "Re-index"),
+					"导出文件的 version 字段无效或缺失。请重新建立索引以生成兼容的导出文件。",
+					configureEmbedIndexAction(purpose, "重新建立索引"),
 				);
 				return null;
 			}
 			if (decoded.version < INDEX_VERSION) {
 				showActionNotice(
-					`Export file schema v${decoded.version} is outdated (current: v${INDEX_VERSION}). Re-index to regenerate a compatible export.`,
-					configureEmbedIndexAction(purpose, "Re-index"),
+					`导出文件的 schema 版本 v${decoded.version} 已过时（当前为 v${INDEX_VERSION}）。请重新建立索引以生成兼容的导出文件。`,
+					configureEmbedIndexAction(purpose, "重新建立索引"),
 				);
 				return null;
 			}
 			if (decoded.version > INDEX_VERSION) {
 				new Notice(
-					`Export file was created with a newer plugin version (schema v${decoded.version}). Update the plugin to import it.`,
+					`导出文件由更新的插件版本生成（schema v${decoded.version}）。请更新插件后再导入。`,
 				);
 				return null;
 			}
 
 			const { providerId: provider, modelId: model } = decoded;
 			if (!provider || !model) {
-				new Notice("Export file is missing provider or model metadata.");
+				new Notice("导出文件缺少 provider 或 model 元数据。");
 				return null;
 			}
 
@@ -2716,11 +2716,11 @@ export class VectorStoreService {
 			});
 
 			Logger.log(`[VectorStore] Imported ${docs.length} documents for ${indexId}`);
-			new Notice(`Imported ${docs.length} embeddings (${model}).`);
+			new Notice(`已导入 ${docs.length} 条嵌入（${model}）。`);
 			return indexId;
 		} catch (error) {
 			Logger.error("[VectorStore] Failed to import index:", error);
-			new Notice("Failed to import index. The file may be corrupted.");
+			new Notice("导入索引失败，文件可能已损坏。");
 			return null;
 		}
 	}

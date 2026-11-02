@@ -64,6 +64,13 @@ const appliedCount = $derived(appliedEntries.length);
  * Spells out the pending batch's composition — "2 updates, 1 delete pending"
  * reads very differently from "3 pending changes" when Accept All sits one
  * click away and the destructive rows are hidden behind the collapse. */
+const CHANGE_TYPE_LABELS: Record<string, string> = {
+	create: "新建",
+	update: "更新",
+	delete: "删除",
+	move: "移动",
+};
+
 const summaryLabel = $derived.by(() => {
 	const parts: string[] = [];
 	if (pendingCount > 0) {
@@ -71,12 +78,12 @@ const summaryLabel = $derived.by(() => {
 		for (const e of pendingEntries) counts[e.change.type]++;
 		const composition = (Object.keys(counts) as Array<keyof typeof counts>)
 			.filter((type) => counts[type] > 0)
-			.map((type) => `${counts[type]} ${type}${counts[type] !== 1 ? "s" : ""}`)
-			.join(", ");
-		parts.push(`${composition} pending`);
+			.map((type) => `${counts[type]} 项${CHANGE_TYPE_LABELS[type]}`)
+			.join("、");
+		parts.push(`${composition}待处理`);
 	}
-	if (appliedCount > 0) parts.push(`${appliedCount} partially applied`);
-	return parts.join(", ");
+	if (appliedCount > 0) parts.push(`${appliedCount} 项已部分应用`);
+	return parts.join("，");
 });
 
 let isExpanded = $state(false);
@@ -248,13 +255,13 @@ function toggleSourceDiff(entryId: string) {
 function changeTypeLabel(entry: PendingChangeEntry): string {
 	switch (entry.change.type) {
 		case "create":
-			return "Create";
+			return "新建";
 		case "update":
-			return "Update";
+			return "更新";
 		case "delete":
-			return "Delete";
+			return "删除";
 		case "move":
-			return "Move";
+			return "移动";
 	}
 }
 
@@ -305,15 +312,15 @@ function otherThreadCount(entry: PendingChangeEntry): number {
 async function handleAccept(entry: PendingChangeEntry) {
 	try {
 		await store.acceptChange(entry.id);
-		new Notice(`Applied: ${changePathLabel(entry)}`);
+		new Notice(`已应用：${changePathLabel(entry)}`);
 	} catch (e) {
-		new Notice(`Failed to apply change: ${e instanceof Error ? e.message : String(e)}`);
+		new Notice(`应用更改失败：${e instanceof Error ? e.message : String(e)}`);
 	}
 }
 
 function handleReject(entry: PendingChangeEntry) {
 	store.rejectChange(entry.id);
-	new Notice(`Rejected: ${changePathLabel(entry)}`);
+	new Notice(`已拒绝：${changePathLabel(entry)}`);
 }
 
 /** Restore a note whose diff groups were partially accepted, for an entry that is
@@ -321,7 +328,7 @@ function handleReject(entry: PendingChangeEntry) {
 async function handleUndoApplied(entry: PendingChangeEntry) {
 	const skipped = await store.undoAppliedGroups(entry.id);
 	if (!skipped) {
-		new Notice(`Restored: ${changePathLabel(entry)}`);
+		new Notice(`已还原：${changePathLabel(entry)}`);
 		return;
 	}
 	new Notice(describeSkip(skipped));
@@ -331,11 +338,11 @@ async function handleUndoApplied(entry: PendingChangeEntry) {
 function describeSkip(skip: RevertSkip): string {
 	switch (skip.reason) {
 		case "conflict":
-			return `Left "${skip.path}" as-is — it changed after the change was partially applied.`;
+			return `已保持“${skip.path}”原样 — 它在更改部分应用后发生了变化。`;
 		case "missing":
-			return `Could not restore "${skip.path}" — that note no longer exists. Any applied content moved with it.`;
+			return `无法还原“${skip.path}” — 该笔记已不存在。已应用的内容随之一并移除。`;
 		case "failed":
-			return `Failed to restore "${skip.path}". See the console for details.`;
+			return `还原“${skip.path}”失败。详情请查看控制台。`;
 	}
 }
 
@@ -348,7 +355,7 @@ async function handleAcceptAll() {
 	const count = acceptable.length;
 	if (count === 0) {
 		new Notice(
-			"All pending changes are stale — the notes changed after they were proposed. Reject them and ask the agent to re-stage.",
+			"所有待处理更改均已过期 — 笔记在提出更改后发生了变化。请拒绝它们，并让智能体重新暂存。",
 		);
 		return;
 	}
@@ -360,14 +367,14 @@ async function handleAcceptAll() {
 	const deprivatizing = acceptable.filter((e) => store.isDeprivatizingMove(e.change)).length;
 	if (deletes > 0 || deprivatizing > 0) {
 		const risks: string[] = [];
-		if (deletes > 0) risks.push(`${deletes} note deletion${deletes !== 1 ? "s" : ""}`);
+		if (deletes > 0) risks.push(`${deletes} 项笔记删除`);
 		if (deprivatizing > 0)
-			risks.push(`${deprivatizing} move${deprivatizing !== 1 ? "s" : ""} out of a private location`);
+			risks.push(`${deprivatizing} 项移出私密位置的移动`);
 		const modal = new ConfirmModal(
 			getPlugin().app,
-			"Accept all changes?",
-			`This batch includes ${risks.join(" and ")}. Apply all ${count} change${count !== 1 ? "s" : ""}?`,
-			"Accept All",
+			"接受全部更改？",
+			`此批次包含 ${risks.join(" 和 ")}。是否应用全部 ${count} 项更改？`,
+			"全部接受",
 		);
 		modal.open();
 		if (!(await modal.promise).confirmed) return;
@@ -376,16 +383,16 @@ async function handleAcceptAll() {
 	batchRunning = true;
 	try {
 		const failures = await store.acceptAll(threadId, staleEntryIds);
-		const skippedNote = staleCount > 0 ? `, skipped ${staleCount} stale` : "";
+		const skippedNote = staleCount > 0 ? `，跳过 ${staleCount} 项过期更改` : "";
 		if (failures.length === 0) {
-			new Notice(`Applied ${count === 1 ? "the change" : `all ${count} changes`}${skippedNote}`);
+			new Notice(`已应用${count === 1 ? "该更改" : `全部 ${count} 项更改`}${skippedNote}`);
 		} else {
 			new Notice(
-				`Applied ${count - failures.length} changes${skippedNote}, ${failures.length} failed: ${failures.join(", ")}`,
+				`已应用 ${count - failures.length} 项更改${skippedNote}，${failures.length} 项失败：${failures.join("、")}`,
 			);
 		}
 	} catch (e) {
-		new Notice(`Error applying changes: ${e instanceof Error ? e.message : String(e)}`);
+		new Notice(`应用更改时出错：${e instanceof Error ? e.message : String(e)}`);
 	} finally {
 		batchRunning = false;
 	}
@@ -399,12 +406,12 @@ async function handleRejectAll() {
 	try {
 		const skipped = await store.rejectAll(threadId);
 		if (skipped.length === 0) {
-			new Notice(hadPending ? "Rejected all pending changes" : "Restored the partially applied notes");
+			new Notice(hadPending ? "已拒绝全部待处理更改" : "已还原部分应用的笔记");
 		} else {
 			// A partially-accepted note that couldn't be restored is left as it is. Say
 			// so per reason — otherwise "Rejected all" reads as "everything was undone"
 			// while those files still hold the accepted groups.
-			const head = hadPending ? "Rejected all pending changes." : "Finished undoing applied changes.";
+			const head = hadPending ? "已拒绝全部待处理更改。" : "已完成撤销已应用的更改。";
 			new Notice(`${head} ${skipped.map(describeSkip).join(" ")}`);
 		}
 	} finally {
@@ -417,7 +424,7 @@ async function handleRejectAll() {
  * and the button is only shown for updates. */
 async function handleJump(entry: PendingChangeEntry) {
 	const opened = await revealAndScroll(getPlugin(), entry.change.path, firstChangedLine(entry.change));
-	if (!opened) new Notice("Could not open the note for this change.");
+	if (!opened) new Notice("无法打开此更改对应的笔记。");
 }
 
 /** Fire Obsidian's native page-preview hover for this change's note. The Page
@@ -454,7 +461,7 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
       role="button"
       tabindex="0"
       aria-expanded={isExpanded}
-      aria-label={isExpanded ? "Collapse pending changes" : "Expand pending changes"}
+      aria-label={isExpanded ? "收起待处理更改" : "展开待处理更改"}
       onclick={() => (isExpanded = !isExpanded)}
       onkeydown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -474,9 +481,9 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
           class="clickable-icon pcb-diff-toggle"
           onclick={toggleDiffViewMode}
           title={diffViewMode === "word-diff"
-            ? "Switch in-note diffs to two-pane view"
-            : "Switch in-note diffs to inline word diff"}
-          aria-label="Toggle diff view mode"
+            ? "将笔记内差异切换为双栏视图"
+            : "将笔记内差异切换为行内词级差异"}
+          aria-label="切换差异视图模式"
           type="button"
         >
           <div use:icon={diffViewMode === "word-diff" ? "columns-2" : "file-diff"} style="--icon-size: 12px"></div>
@@ -488,12 +495,12 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
               e.stopPropagation();
               handleAcceptAll();
             }}
-            title="Accept all changes"
+            title="接受全部更改"
             type="button"
             disabled={batchRunning}
           >
             <div use:icon={"check"} style="--icon-size: 12px"></div>
-            <span>Accept All</span>
+            <span>全部接受</span>
           </button>
         {/if}
         <button
@@ -503,13 +510,13 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
             handleRejectAll();
           }}
           title={pendingCount > 0
-            ? "Reject all changes, restoring any partially applied notes"
-            : "Restore the partially applied notes to their original content"}
+            ? "拒绝全部更改，并还原任何已部分应用的笔记"
+            : "将已部分应用的笔记还原为原始内容"}
           type="button"
           disabled={batchRunning}
         >
           <div use:icon={"x"} style="--icon-size: 12px"></div>
-          <span>{pendingCount > 0 ? "Reject All" : "Undo Applied"}</span>
+          <span>{pendingCount > 0 ? "全部拒绝" : "撤销已应用"}</span>
         </button>
         <div class="pcb-chevron" class:pcb-chevron-open={isExpanded}>▸</div>
       </div>
@@ -533,26 +540,26 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                     onclick={() => togglePreview(entry.id)}
                     title={widgetContent !== null
                       ? isPreviewOpen
-                        ? "Hide widget preview"
-                        : "Preview widget"
+                        ? "隐藏 Widget 预览"
+                        : "预览 Widget"
                       : showsDiff
                         ? isPreviewOpen
-                          ? "Hide changes"
-                          : "Show changes"
+                          ? "隐藏更改"
+                          : "显示更改"
                         : isPreviewOpen
-                          ? "Hide content"
-                          : "Show content"}
+                          ? "隐藏内容"
+                          : "显示内容"}
                     aria-label={widgetContent !== null
                       ? isPreviewOpen
-                        ? `Hide preview of ${entry.change.path}`
-                        : `Preview ${entry.change.path}`
+                        ? `隐藏 ${entry.change.path} 的预览`
+                        : `预览 ${entry.change.path}`
                       : showsDiff
                         ? isPreviewOpen
-                          ? `Hide changes to ${entry.change.path}`
-                          : `Show changes to ${entry.change.path}`
+                          ? `隐藏对 ${entry.change.path} 的更改`
+                          : `显示对 ${entry.change.path} 的更改`
                         : isPreviewOpen
-                          ? `Hide content of ${entry.change.path}`
-                          : `Show content of ${entry.change.path}`}
+                          ? `隐藏 ${entry.change.path} 的内容`
+                          : `显示 ${entry.change.path} 的内容`}
                     aria-expanded={isPreviewOpen}
                     type="button"
                   >
@@ -564,7 +571,7 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                 </span>
                 {#if entry.status !== "pending"}
                   {@const appliedText =
-                    "Some of this change was applied to the note. Undo it to restore the note's original content."}
+                    "此更改的一部分已应用到笔记。撤销它以还原笔记的原始内容。"}
                   <!-- Not a proposal awaiting review: its groups were all resolved
                        individually and some accepted text is still in the note. -->
                   <span
@@ -576,14 +583,14 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                     onkeydown={(e) => e.key === "Enter" && explainBadge(e, appliedText)}
                   >
                     <span use:icon={"circle-alert"} style="--icon-size: 11px"></span>
-                    Partly applied
+                    部分已应用
                   </span>
                 {/if}
                 {#if staleEntryIds.has(entry.id)}
                   {@const staleText =
                     entry.change.type === "delete"
-                      ? "This note changed after the delete was proposed — the preview no longer matches what would be deleted. Accepting will fail; reject and ask the agent to re-stage it."
-                      : "This note changed after the change was proposed, so accepting it will fail. Reject it and ask the agent to re-apply its edit on the current content."}
+                      ? "此笔记在提出删除后发生了变化 — 预览已与将要删除的内容不符。接受将失败；请拒绝并让智能体重新暂存。"
+                      : "此笔记在提出更改后发生了变化，因此接受将失败。请拒绝它，并让智能体基于当前内容重新应用其编辑。"}
                   <span
                     class="pcb-stale"
                     title={staleText}
@@ -593,7 +600,7 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                     onkeydown={(e) => e.key === "Enter" && explainBadge(e, staleText)}
                   >
                     <span use:icon={"triangle-alert"} style="--icon-size: 11px"></span>
-                    Stale
+                    已过期
                   </span>
                 {/if}
                 {#if entry.change.type !== "create"}
@@ -618,7 +625,7 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                 {/if}
                 {#if isDeprivatizing(entry)}
                   {@const deprivatizingText =
-                    "This note is currently private. Moving it to this location takes it out of the privacy filter, so it will be indexed, searchable, and available to untrusted providers from then on."}
+                    "此笔记当前为私密。将其移动到该位置会使其脱离隐私过滤，此后它将被索引、可被搜索，并对不受信任的服务商可用。"}
                   <span
                     class="pcb-deprivatizing"
                     title={deprivatizingText}
@@ -628,11 +635,11 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                     onkeydown={(e) => e.key === "Enter" && explainBadge(e, deprivatizingText)}
                   >
                     <span use:icon={"shield-off"} style="--icon-size: 11px"></span>
-                    Leaves private
+                    脱离私密
                   </span>
                 {/if}
                 {#if otherThreadCount(entry) > 0}
-                  {@const crossThreadText = `${otherThreadCount(entry)} other chat${otherThreadCount(entry) !== 1 ? "s" : ""} also ${otherThreadCount(entry) !== 1 ? "have" : "has"} a pending edit to this file. Whichever is accepted first wins; the others may then fail to apply.`}
+                  {@const crossThreadText = `另有 ${otherThreadCount(entry)} 个会话也对此文件有待处理的编辑。先被接受的生效，其余的可能随后应用失败。`}
                   <span
                     class="pcb-cross-thread"
                     title={crossThreadText}
@@ -659,9 +666,9 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                       handleAccept(entry);
                     }}
                     title={staleEntryIds.has(entry.id)
-                      ? "Cannot accept — the note changed after this was proposed. Reject it and ask the agent to re-stage."
-                      : "Accept change"}
-                    aria-label="Accept change to {entry.change.path}"
+                      ? "无法接受 — 此笔记在提出更改后发生了变化。请拒绝它并让智能体重新暂存。"
+                      : "接受更改"}
+                    aria-label="接受对 {entry.change.path} 的更改"
                     type="button"
                     disabled={staleEntryIds.has(entry.id)}
                   >
@@ -673,8 +680,8 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                       e.stopPropagation();
                       handleReject(entry);
                     }}
-                    title="Reject change"
-                    aria-label="Reject change to {entry.change.path}"
+                    title="拒绝更改"
+                    aria-label="拒绝对 {entry.change.path} 的更改"
                     type="button"
                   >
                     <div use:icon={"x"} style="--icon-size: 12px"></div>
@@ -689,8 +696,8 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                       e.stopPropagation();
                       handleUndoApplied(entry);
                     }}
-                    title="Restore this note to its content from before the proposal"
-                    aria-label="Undo applied change to {entry.change.path}"
+                    title="将此笔记还原为提出更改前的内容"
+                    aria-label="撤销已应用到 {entry.change.path} 的更改"
                     type="button"
                   >
                     <div use:icon={"undo-2"} style="--icon-size: 12px"></div>
@@ -713,7 +720,7 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
                     type="button"
                   >
                     <span use:icon={"file-diff"} style="--icon-size: 11px"></span>
-                    {sourceDiffOpen ? "Hide source changes" : "Show source changes"}
+                    {sourceDiffOpen ? "隐藏源码更改" : "显示源码更改"}
                   </button>
                   {#if sourceDiffOpen}
                     <PendingDiffHunks {entry} stale={staleEntryIds.has(entry.id)} />
@@ -727,7 +734,7 @@ function previewChange(evt: Event, entry: PendingChangeEntry) {
             {:else if isPreviewOpen && previewContent !== null}
               <div class="pcb-preview">
                 {#if previewContent.trim() === ""}
-                  <div class="pcb-preview-empty">This note is empty.</div>
+                  <div class="pcb-preview-empty">此笔记为空。</div>
                 {:else}
                   <MarkdownRenderer content={previewContent} class="pcb-preview-body" />
                 {/if}

@@ -237,7 +237,7 @@ export async function deleteOrphanedDatabases(names: string[]): Promise<DeleteOr
 		} else if (result.status === "blocked") {
 			outcome.failed.push({
 				name,
-				reason: "blocked by another open connection (close other Obsidian windows for this vault and try again)",
+				reason: "被另一个已打开的连接阻塞（请关闭此仓库的其他 Obsidian 窗口后重试）",
 			});
 		} else {
 			outcome.failed.push({ name, reason: result.error.message });

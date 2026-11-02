@@ -59,7 +59,7 @@ export class ModelSelectionModal extends SvelteModal {
 
 	onOpen() {
 		// Sentence case per Obsidian's plugin UI guidelines.
-		this.setTitle(this.modelType === "chat" ? "Select chat model" : "Select embedding model");
+		this.setTitle(this.modelType === "chat" ? "选择聊天模型" : "选择嵌入模型");
 		this.mountComponent(
 			ModalProvider<{
 				modal: ModelSelectionModal;

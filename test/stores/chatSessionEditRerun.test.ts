@@ -151,8 +151,8 @@ describe("ChatSession edit/regenerate × pending changes", () => {
 		internals.abortController = new AbortController();
 		internals.running = true;
 
-		await expect(session.regenerateResponse(pair2.id)).rejects.toThrow(/already in progress/);
-		await expect(session.editMessage(pair2.id, "edited")).rejects.toThrow(/already in progress/);
+		await expect(session.regenerateResponse(pair2.id)).rejects.toThrow(/已有回复正在进行/);
+		await expect(session.editMessage(pair2.id, "edited")).rejects.toThrow(/已有回复正在进行/);
 
 		expect(store.getEntriesByToolCallId("tc-1")[0].status).toBe("pending");
 		expect(store.getEntriesByToolCallId("tc-2")[0].status).toBe("pending");

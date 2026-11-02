@@ -64,11 +64,11 @@ const scaleTokens = $derived(limit !== undefined && limit > 0 ? limit : Math.max
 // than a footnote; its neutral swatch says "not sent yet".
 const usageRows = $derived.by(() => {
 	return [
-		{ id: "system", label: "System prompt", tokens: breakdown.systemPromptTokens },
-		{ id: "human", label: "Your messages", tokens: breakdown.humanTokens },
-		{ id: "assistant", label: "Assistant", tokens: breakdown.assistantTokens },
-		{ id: "tool", label: "Tool results", tokens: breakdown.toolTokens },
-		{ id: "draft", label: "Draft & pending", tokens: breakdown.draftAndPendingTokens },
+		{ id: "system", label: "系统提示词", tokens: breakdown.systemPromptTokens },
+		{ id: "human", label: "你的消息", tokens: breakdown.humanTokens },
+		{ id: "assistant", label: "助手", tokens: breakdown.assistantTokens },
+		{ id: "tool", label: "工具结果", tokens: breakdown.toolTokens },
+		{ id: "draft", label: "草稿与待发送", tokens: breakdown.draftAndPendingTokens },
 	]
 		.filter((row) => row.tokens > 0)
 		.map((row) => ({ ...row, share: (row.tokens / scaleTokens) * 100 }));
@@ -94,11 +94,11 @@ const tooltipText = $derived.by(() => {
 	const percent = usagePercent.toFixed(0);
 	if (limit === undefined) {
 		const usedK = Math.round(used / 1000);
-		return `Context usage (est.): ${usedK}k tokens (limit unknown)`;
+		return `上下文用量（估算）：${usedK}k Token（上限未知）`;
 	}
 	const usedK = Math.round(used / 1000);
 	const limitK = Math.round(limit / 1000);
-	return `Context usage (est.): ${percent}% (${usedK}k / ${limitK}k)`;
+	return `上下文用量（估算）：${percent}%（${usedK}k / ${limitK}k）`;
 });
 
 function formatNumber(value: number): string {
@@ -108,8 +108,8 @@ function formatNumber(value: number): string {
 const usageLine = $derived.by(() => {
 	// Tested directly rather than via `hasKnownLimit`: narrowing does not flow through a
 	// derived boolean, which is the only reason this needed an assertion. Same condition.
-	if (limit === undefined || limit <= 0) return `${formatNumber(breakdown.totalTokens)} tokens · limit unknown`;
-	return `${formatNumber(breakdown.totalTokens)} of ${formatNumber(limit)} tokens`;
+	if (limit === undefined || limit <= 0) return `${formatNumber(breakdown.totalTokens)} Token · 上限未知`;
+	return `${formatNumber(breakdown.totalTokens)} / ${formatNumber(limit)} Token`;
 });
 
 // The real trigger, not a rounded "about 80%": it is max(80% of the window, 12k),
@@ -120,15 +120,15 @@ const compaction = $derived.by(() => {
 	const trigger = getSummarizationTriggerTokens(limit);
 	if (trigger === null || limit === undefined) {
 		return {
-			short: "Auto-compaction needs a known limit",
-			long: "Automatic summarization needs a model with a known context limit.",
+			short: "自动压缩需要已知的上限",
+			long: "自动摘要需要模型的上下文上限已知。",
 		};
 	}
 	const percent = Math.round((trigger / limit) * 100);
-	const withPercent = percent <= 100 ? ` (${percent}%)` : "";
+	const withPercent = percent <= 100 ? `（${percent}%）` : "";
 	return {
-		short: `Auto-compacts at ${formatCompact(trigger)}${withPercent}`,
-		long: `Older messages are summarized automatically at ${formatNumber(trigger)} tokens${withPercent}.`,
+		short: `在 ${formatCompact(trigger)}${withPercent} 时自动压缩`,
+		long: `较早的消息会在达到 ${formatNumber(trigger)} Token${withPercent} 时自动摘要。`,
 	};
 });
 
@@ -146,7 +146,7 @@ function formatCompact(value: number): string {
   sideOffset={6}
 >
   {#snippet trigger()}
-    <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100" aria-label="Open context token distribution">
+    <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100" aria-label="打开上下文 Token 分布">
       <!-- Track -->
       <circle class="s2b-context-ring-track" fill="none" stroke-width={strokeWidth} cx="50" cy="50" r={radius} />
       <!-- Usage arc -->
@@ -175,7 +175,7 @@ function formatCompact(value: number): string {
 
   <div class="context-usage-panel">
     <div class="context-usage-header">
-      <span class="context-usage-heading">Context usage (est.)</span>
+      <span class="context-usage-heading">上下文用量（估算）</span>
       <span class="context-usage-percent">{hasKnownLimit ? centerLabel : "—"}</span>
     </div>
     <div class="context-usage-line">{usageLine}</div>
@@ -207,9 +207,9 @@ function formatCompact(value: number): string {
     <div class="context-usage-footer">
       <span class="context-usage-note" aria-label={compaction.long}>{compaction.short}</span>
       <Button
-        buttonText="Summarize now"
+        buttonText="立即摘要"
         disabled={!canSummarizeNow}
-        tooltip={canSummarizeNow ? "Summarize older messages now" : "Nothing to summarize yet"}
+        tooltip={canSummarizeNow ? "立即摘要较早的消息" : "暂无可摘要的内容"}
         onClick={() => onSummarizeNow?.()}
       />
     </div>

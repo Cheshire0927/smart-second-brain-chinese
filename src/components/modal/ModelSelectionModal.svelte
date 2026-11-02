@@ -204,7 +204,7 @@ function getModelBranding(model: HydratedModel): {
 // Format cost (per 1M tokens)
 function formatCost(costPer1M?: number): string {
 	if (costPer1M === undefined) return "—";
-	if (costPer1M === 0) return "Free";
+	if (costPer1M === 0) return "免费";
 	if (costPer1M < 0.01) return `$${costPer1M.toFixed(4)}`;
 	return `$${costPer1M.toFixed(2)}`;
 }
@@ -300,7 +300,7 @@ function openProviderSetup() {
 
 function getProviderListDisplay(): string {
 	const names = configuredProviders.map((id) => getProviderDisplayName(id));
-	if (names.length === 0) return "your provider";
+	if (names.length === 0) return "你的服务商";
 	if (names.length === 1) return names[0];
 	if (names.length === 2) return `${names[0]} and ${names[1]}`;
 	return `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
@@ -310,7 +310,7 @@ function getProviderListDisplay(): string {
 <div class="model-selection-container">
   <div class="model-selection-layout">
     {#if availableVendors.length > 0}
-      <div class="model-provider-sidebar" aria-label="AI vendor filters">
+      <div class="model-provider-sidebar" aria-label="AI 厂商筛选">
         <button
           type="button"
           class="clickable-icon model-provider-btn"
@@ -319,8 +319,8 @@ function getProviderListDisplay(): string {
             showFavorites = !showFavorites;
             if (showFavorites) selectedConfiguredProvider = null;
           }}
-          title="Favorites"
-          aria-label="Favorites"
+          title="收藏"
+          aria-label="收藏"
           aria-pressed={showFavorites}
         >
           <Icon name="star" size="m" />
@@ -352,8 +352,8 @@ function getProviderListDisplay(): string {
           bind:this={searchInputEl}
           type="text"
           placeholder={modelType === "chat"
-            ? "Search chat models…"
-            : "Search embedding models…"}
+            ? "搜索聊天模型…"
+            : "搜索嵌入模型…"}
           bind:value={searchQuery}
           onkeydown={handleSearchKeydown}
           class="search-input"
@@ -362,7 +362,7 @@ function getProviderListDisplay(): string {
           <button
             type="button"
             class="clickable-icon clear-search"
-            aria-label="Clear search"
+            aria-label="清除搜索"
             onclick={() => (searchQuery = "")}
           >
             <Icon name="x" size="xs" />
@@ -374,15 +374,15 @@ function getProviderListDisplay(): string {
           class:is-loading={isLoadingModels}
           onclick={refreshModels}
           disabled={isLoadingModels}
-          aria-label="Re-fetch models from your configured providers"
-          title="Re-fetch models from your configured providers"
+          aria-label="从已配置的服务商重新获取模型"
+          title="从已配置的服务商重新获取模型"
         >
           <Icon name="refresh-cw" size="s" />
         </button>
       </div>
 
       {#if showConfiguredProviderFilters}
-        <div class="provider-filter-bar" aria-label="Configured provider filters">
+        <div class="provider-filter-bar" aria-label="已配置服务商筛选">
           {#each availableConfiguredProviders as providerFilter (providerFilter.id)}
             {@const ProviderLogo = providerFilter.logo}
             <button
@@ -448,8 +448,8 @@ function getProviderListDisplay(): string {
                           pluginData.toggleFavoriteModel(model.provider, model.variantKey);
                         }}
                         aria-pressed={isFavorite}
-                        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-                        title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                        aria-label={isFavorite ? "取消收藏" : "加入收藏"}
+                        title={isFavorite ? "取消收藏" : "加入收藏"}
                       >
                         <Icon name="star" size="s" />
                       </button>
@@ -463,28 +463,28 @@ function getProviderListDisplay(): string {
 
                   <div class="model-meta">
                     {#if model.kind === "chat"}
-                      <span class="meta-tag" title="Context window">
+                      <span class="meta-tag" title="上下文窗口">
                         {formatTokenLimit(model.contextWindow)} ctx
                       </span>
                     {:else}
-                      <span class="meta-tag" title="Max input tokens">
+                      <span class="meta-tag" title="最大输入 Token">
                         {formatTokenLimit(model.maxInputTokens)} max input
                       </span>
                     {/if}
 
                     {#if model.paramSize}
-                      <span class="meta-tag" title="Parameter size">
+                      <span class="meta-tag" title="参数规模">
                         {model.paramSize}
                       </span>
                     {/if}
                     {#if model.quantization}
-                      <span class="meta-tag" title="Quantization level">
+                      <span class="meta-tag" title="量化级别">
                         {model.quantization}
                       </span>
                     {/if}
 
                     {#if model.kind === "chat" && (model.pricing?.inputUsdPer1M !== undefined || model.pricing?.outputUsdPer1M !== undefined)}
-                      <span class="meta-tag" title="Cost per 1M tokens (in/out)">
+                      <span class="meta-tag" title="每 1M Token 费用（输入/输出）">
                         {formatCost(model.pricing?.inputUsdPer1M)}/{formatCost(
                           model.pricing?.outputUsdPer1M,
                         )}
@@ -492,7 +492,7 @@ function getProviderListDisplay(): string {
                     {/if}
 
                     {#if model.kind === "embedding" && model.pricing?.inputUsdPer1M !== undefined}
-                      <span class="meta-tag" title="Cost per 1M input tokens">
+                      <span class="meta-tag" title="每 1M 输入 Token 费用">
                         {formatCost(model.pricing.inputUsdPer1M)}
                       </span>
                     {/if}
@@ -528,12 +528,12 @@ function getProviderListDisplay(): string {
           </div>
         {:else}
           {#if showFavorites}
-            <div class="no-models">No favorite models yet. Click the star on any model to add it.</div>
+            <div class="no-models">暂无收藏模型。点击任意模型旁的星标即可收藏。</div>
           {:else if searchQuery || selectedVendor || selectedConfiguredProvider}
-            <div class="no-models">No models match your filters</div>
+            <div class="no-models">没有符合筛选条件的模型</div>
           {:else if configuredProviders.length === 0}
             <div class="no-models-guide">
-              <div class="no-models-title">No provider configured</div>
+              <div class="no-models-title">未配置服务商</div>
               <div class="no-models-desc">
                 Add an AI provider to discover {modelType === "embedding"
                   ? "embedding"
@@ -546,7 +546,7 @@ function getProviderListDisplay(): string {
             </div>
           {:else}
             <div class="no-models-guide">
-              <div class="no-models-title">No models found</div>
+              <div class="no-models-title">未找到模型</div>
               <div class="no-models-desc">
                 {#if modelType === "embedding"}
                   No embedding models were discovered for {getProviderListDisplay()}. Add embedding
@@ -565,7 +565,7 @@ function getProviderListDisplay(): string {
                 disabled={isLoadingModels}
               >
                 <Icon name="refresh-cw" size="s" />
-                {isLoadingModels ? "Refreshing…" : "Refresh models"}
+                {isLoadingModels ? "正在刷新…" : "刷新模型"}
               </button>
             </div>
           {/if}

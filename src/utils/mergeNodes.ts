@@ -183,7 +183,7 @@ export function buildCollapsedGraph(graph: GraphData, options: CollapseOptions =
 			path: id,
 			// The unsorted node states its size, since "how many notes never found a
 			// topic" is the finding it exists to surface.
-			label: isUnsorted ? `Unsorted · ${members.length}` : (topicLabels[cluster] ?? `Topic ${cluster}`),
+			label: isUnsorted ? `未分类 · ${members.length}` : (topicLabels[cluster] ?? `主题 ${cluster}`),
 			// Leave unpositioned topics at the origin sentinel so the canvas's own
 			// circle pre-layout scatters them instead.
 			x: positioned > 0 ? x / positioned : 0,

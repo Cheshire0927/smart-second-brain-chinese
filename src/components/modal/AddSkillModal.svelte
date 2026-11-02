@@ -32,8 +32,8 @@ type Mode = "create" | "import";
 let mode = $state<Mode>("create");
 
 const SKILL_MODE_TABS: SlidingTab<Mode>[] = [
-	{ id: "create", label: "Create new", icon: "plus" },
-	{ id: "import", label: "Import from URL", icon: "download" },
+	{ id: "create", label: "新建", icon: "plus" },
+	{ id: "import", label: "从 URL 导入", icon: "download" },
 ];
 
 let skillName = $state("");
@@ -53,16 +53,16 @@ const skillSlug = $derived(slugifySkillName(skillName));
 
 // Validate per Agent Skills spec
 const validation = $derived(() => {
-	if (!skillName.trim()) return { valid: false, error: "Name is required" };
+	if (!skillName.trim()) return { valid: false, error: "请填写名称" };
 
 	const nameResult = validateSkillName(skillSlug);
 	if (!nameResult.valid) {
-		return { valid: false, error: nameResult.errors[0]?.message || "Invalid name" };
+		return { valid: false, error: nameResult.errors[0]?.message || "名称无效" };
 	}
 
 	const descResult = validateDescription(skillDescription);
 	if (!descResult.valid) {
-		return { valid: false, error: descResult.errors[0]?.message || "Description is required" };
+		return { valid: false, error: descResult.errors[0]?.message || "请填写描述" };
 	}
 
 	return { valid: true, error: "" };
@@ -90,7 +90,7 @@ function toRawGitHubUrl(url: string): string {
 
 async function handleImport() {
 	if (!importUrl.trim()) {
-		importError = "Please enter a URL";
+		importError = "请输入 URL";
 		return;
 	}
 
@@ -112,7 +112,7 @@ async function handleImport() {
 		const { frontmatter, body } = parseFrontmatter(content);
 
 		if (!frontmatter.name || !frontmatter.description) {
-			throw new Error("Invalid SKILL.md: missing name or description in frontmatter");
+			throw new Error("SKILL.md 无效：frontmatter 缺少 name 或 description");
 		}
 
 		// Populate fields; keep the imported body so it's written into the new note verbatim.
@@ -124,7 +124,7 @@ async function handleImport() {
 		mode = "create";
 		importUrl = "";
 	} catch (err) {
-		importError = err instanceof Error ? err.message : "Failed to import skill";
+		importError = err instanceof Error ? err.message : "导入技能失败";
 	} finally {
 		importLoading = false;
 	}
@@ -155,7 +155,7 @@ async function handleSave() {
 	});
 
 	if (!result.valid) {
-		validationError = result.errors[0]?.message || "Failed to save skill";
+		validationError = result.errors[0]?.message || "保存技能失败";
 		return;
 	}
 
@@ -179,10 +179,10 @@ async function handleSave() {
   <SlidingTabs bind:value={mode} tabs={SKILL_MODE_TABS}>
     <Tabs.Content value="create">
       <SettingContainer
-        name="Name"
+        name="名称"
         desc={skillSlug && skillSlug !== skillName.toLowerCase()
           ? `Saved as: ${skillSlug}`
-          : "The skill's display name."}
+          : "技能的显示名称。"}
       >
         <Text
           id="add-skill-name"
@@ -194,14 +194,14 @@ async function handleSave() {
       </SettingContainer>
 
       <SettingContainer
-        name="Description"
-        desc="What this skill does and when to use it. After you add it, the skill's note opens so you can write the full instructions."
+        name="描述"
+        desc="说明技能的作用与适用场景。添加后会打开技能笔记，供你编写完整指令。"
       >
         <Text
           id="add-skill-description"
           inputType="text"
           value={skillDescription}
-          placeholder="Describe when to use this skill..."
+          placeholder="描述何时使用该技能…"
           onchange={(val) => (skillDescription = val)}
         />
       </SettingContainer>
@@ -214,7 +214,7 @@ async function handleSave() {
     <Tabs.Content value="import">
       <SettingContainer
         name="SKILL.md URL"
-        desc="Paste a GitHub URL to a SKILL.md file. Supports github.com and raw.githubusercontent.com URLs."
+        desc="粘贴指向 SKILL.md 文件的 GitHub URL，支持 github.com 与 raw.githubusercontent.com 链接。"
       >
         <Text
           id="add-skill-import-url"
@@ -227,11 +227,11 @@ async function handleSave() {
 
       <!-- SkillsMP is where skills are found; the docs explain the SKILL.md format an
            imported one has to satisfy, so both belong on this row. -->
-      <SettingContainer name="Browse skills" desc="Find community skills on skillsmp.com.">
+      <SettingContainer name="浏览技能" desc="在 skillsmp.com 查找社区技能。">
         {#snippet nameSuffix()}
-          <DocsLink doc="skills" subject="Skills" />
+          <DocsLink doc="skills" subject="技能" />
         {/snippet}
-        <ExternalLinkButton href={SKILLS_MARKETPLACE_URL} label="Open SkillsMP" />
+        <ExternalLinkButton href={SKILLS_MARKETPLACE_URL} label="打开 SkillsMP" />
       </SettingContainer>
 
       {#if importError}
@@ -243,16 +243,16 @@ async function handleSave() {
   <!-- Obsidian's own footer class, so the buttons sit where they do in every
        core modal instead of in a hand-rolled row. -->
   <div class="modal-button-container">
-    <Button buttonText="Cancel" onClick={() => modal.close()} />
+    <Button buttonText="取消" onClick={() => modal.close()} />
     {#if mode === "import"}
       <Button
-        buttonText={importLoading ? "Importing..." : "Import"}
+        buttonText={importLoading ? "正在导入…" : "导入"}
         cta={true}
         onClick={handleImport}
         disabled={importLoading || !importUrl.trim()}
       />
     {:else}
-      <Button buttonText="Add & open note" cta={true} onClick={handleSave} disabled={!isValid} />
+      <Button buttonText="添加并打开笔记" cta={true} onClick={handleSave} disabled={!isValid} />
     {/if}
   </div>
 </div>

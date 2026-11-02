@@ -37,7 +37,7 @@ export interface TimelineStep {
 function toUnifiedFromEvent(event: AssistantTimelineEvent): UnifiedToolCall {
 	return {
 		id: event.toolCallId ?? "",
-		name: event.toolName ?? "Unknown",
+		name: event.toolName ?? "未知",
 		input: event.input,
 		// A `tool_pending` event is a call whose arguments are still streaming, so it
 		// carries no input and must not claim to be running yet.

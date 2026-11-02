@@ -303,10 +303,10 @@ function getIncludedFileActions(entry: { isManual?: boolean }): Array<{
 	if (parsedMembership.isAdvanced) return [];
 
 	return entry.isManual
-		? [{ label: "Remove", onClick: removeManualPath }]
+		? [{ label: "移除", onClick: removeManualPath }]
 		: [
 				{
-					label: privacyMode === "private-by-default" ? "Keep private" : "Keep public",
+					label: privacyMode === "private-by-default" ? "保持私密" : "保持公开",
 					onClick: excludePath,
 				},
 			];
@@ -315,8 +315,8 @@ function getIncludedFileActions(entry: { isManual?: boolean }): Array<{
 /**
  * Complement-side rows. The managed tab's actions push a file *out* of the
  * managed set; these pull one *in*, so the labels are that tab's mirror image:
- * in private-by-default the complement is the private half ("Make accessible"),
- * in public-by-default it is the exposed half ("Make private"). A file that is
+ * in private-by-default the complement is the private half ("设为可访问"),
+ * in public-by-default it is the exposed half ("设为私密"). A file that is
  * here only because it was explicitly kept out gets the matching "Restore …"
  * label, so the button reads as undoing the earlier choice rather than as a new
  * unrelated one.
@@ -330,7 +330,7 @@ function getComplementFileActions(entry: { isExcluded?: boolean }): Array<{
 	if (entry.isExcluded) {
 		return [
 			{
-				label: privacyMode === "private-by-default" ? "Restore access" : "Restore private",
+				label: privacyMode === "private-by-default" ? "恢复访问" : "恢复私密",
 				onClick: restoreExcludedPath,
 			},
 		];
@@ -338,7 +338,7 @@ function getComplementFileActions(entry: { isExcluded?: boolean }): Array<{
 
 	return [
 		{
-			label: privacyMode === "private-by-default" ? "Make accessible" : "Make private",
+			label: privacyMode === "private-by-default" ? "设为可访问" : "设为私密",
 			onClick: addPathToManaged,
 		},
 	];
@@ -349,7 +349,7 @@ function getExcludedFileActions(): Array<{ label: string; onClick: (path: string
 
 	return [
 		{
-			label: privacyMode === "private-by-default" ? "Restore access" : "Restore private",
+			label: privacyMode === "private-by-default" ? "恢复访问" : "恢复私密",
 			onClick: restoreExcludedPath,
 		},
 	];
@@ -357,8 +357,8 @@ function getExcludedFileActions(): Array<{ label: string; onClick: (path: string
 
 const introBody = $derived.by(() =>
 	privacyMode === "private-by-default"
-		? "Untrusted providers can only access the files listed below. Everything else stays private unless the provider is marked as trusted."
-		: "Untrusted providers can access vault files by default, except for the files listed below as private. Trusted providers always bypass this restriction.",
+		? "不可信服务商只能访问下方列出的文件。除非将服务商标记为可信，其余文件一律保持私密。"
+		: "不可信服务商默认可访问仓库文件，但下方标为私密的文件除外。可信服务商始终不受此限制。",
 );
 // A private file is withheld *entirely* from an untrusted provider — path included.
 // Every vault-facing read tool filters on `shouldBlockFile` before the path reaches a
@@ -383,55 +383,55 @@ const introBody = $derived.by(() =>
 // Attachments also bypass the filter, but attaching is an explicit user act on a named
 // file, so it is not a surprise the way (1) is.
 const pathVisibilityNote =
-	"Private files are withheld from untrusted providers entirely — content, names and paths alike. " +
-	"Two exceptions: a private note that is open, selected, or graph-selected still has its path (and any " +
-	"selected text) sent with your message, and a private note's name can appear inside another note that " +
-	"links to it and isn't itself private. " +
-	"Rules here follow renames automatically, so you can freely rename or move files without breaking this list.";
+	"私密文件对不可信服务商完全隐藏——内容、名称与路径均不可见。" +
+	"两处例外：已打开、已选中或在图谱中选中的私密笔记，其路径（以及" +
+	"选中的文本）仍会随消息发送；另一篇未设为私密的笔记若链接到私密笔记，其名称也可能出现在" +
+	"该笔记中。" +
+	"此处的规则会自动跟随重命名，因此可以自由重命名或移动文件而不破坏列表。";
 const managedTitle = $derived.by(() =>
-	privacyMode === "private-by-default" ? "Files exposed to untrusted providers" : "Private files",
+	privacyMode === "private-by-default" ? "向不可信服务商开放的文件" : "私密文件",
 );
 /** The other half of the vault, named for what it means rather than "not managed". */
 const complementTitle = $derived.by(() =>
-	privacyMode === "private-by-default" ? "Private files" : "Files exposed to untrusted providers",
+	privacyMode === "private-by-default" ? "私密文件" : "向不可信服务商开放的文件",
 );
 const managedEmptyText = $derived.by(() =>
 	privacyMode === "private-by-default"
-		? "No files are exposed to untrusted providers yet."
-		: "No private files selected yet.",
+		? "尚未向不可信服务商开放任何文件。"
+		: "尚未选择私密文件。",
 );
 const includedEmptyText = $derived(
 	showingManaged
 		? managedEmptyText
 		: privacyMode === "private-by-default"
-			? "Every file is exposed to untrusted providers."
-			: "No files are exposed to untrusted providers.",
+			? "所有文件均向不可信服务商开放。"
+			: "没有文件向不可信服务商开放。",
 );
 const pickerModalTitle = $derived.by(() =>
-	privacyMode === "private-by-default" ? "Expose files" : "Add private files",
+	privacyMode === "private-by-default" ? "开放文件" : "添加私密文件",
 );
 const pickerText = $derived.by(() =>
 	privacyMode === "private-by-default"
 		? {
-				searchPlaceholder: "Search vault files",
-				searchAriaLabel: "Search files to expose",
-				defaultHeading: "Vault files",
-				defaultDescription: "Select one or more vault files that untrusted providers are allowed to access.",
-				emptySearchText: "No matching files found.",
-				confirmVerb: "Expose",
-				alreadySelectedBadgeLabel: "Already exposed",
+				searchPlaceholder: "搜索仓库文件",
+				searchAriaLabel: "搜索要开放的文件",
+				defaultHeading: "仓库文件",
+				defaultDescription: "选择一个或多个允许不可信服务商访问的仓库文件。",
+				emptySearchText: "未找到匹配的文件。",
+				confirmVerb: "开放",
+				alreadySelectedBadgeLabel: "已开放",
 			}
 		: {
-				searchPlaceholder: "Search vault files",
-				searchAriaLabel: "Search files to mark private",
-				defaultHeading: "Vault files",
-				defaultDescription: "Select one or more vault files to mark as private.",
-				emptySearchText: "No matching files found.",
-				confirmVerb: "Add",
-				alreadySelectedBadgeLabel: "Already private",
+				searchPlaceholder: "搜索仓库文件",
+				searchAriaLabel: "搜索要设为私密的文件",
+				defaultHeading: "仓库文件",
+				defaultDescription: "选择一个或多个要设为私密的仓库文件。",
+				emptySearchText: "未找到匹配的文件。",
+				confirmVerb: "添加",
+				alreadySelectedBadgeLabel: "已设为私密",
 			},
 );
-const excludedTitle = $derived.by(() => (privacyMode === "private-by-default" ? "Kept private" : "Kept public"));
+const excludedTitle = $derived.by(() => (privacyMode === "private-by-default" ? "保持私密" : "保持公开"));
 </script>
 
 <div class="privacy-modal-shell">
@@ -444,11 +444,11 @@ const excludedTitle = $derived.by(() => (privacyMode === "private-by-default" ? 
     <div class="privacy-mode-panel">
       <div class="privacy-mode-copy">
         <div class="privacy-mode-headline">
-          <div class="privacy-mode-title">Default access for untrusted providers</div>
+          <div class="privacy-mode-title">不可信服务商的默认访问权限</div>
           <button
             type="button"
             class="clickable-icon privacy-mode-info-toggle"
-            aria-label={showModeDetails ? "Hide details" : "What does this mean?"}
+            aria-label={showModeDetails ? "隐藏详情" : "这是什么意思？"}
             aria-expanded={showModeDetails}
             onclick={() => (showModeDetails = !showModeDetails)}
           >
@@ -461,7 +461,7 @@ const excludedTitle = $derived.by(() => (privacyMode === "private-by-default" ? 
         {/if}
       </div>
 
-      <div class="privacy-mode-toggle" role="tablist" aria-label="Privacy mode">
+      <div class="privacy-mode-toggle" role="tablist" aria-label="隐私模式">
         <button
           type="button"
           class="privacy-mode-button"
@@ -492,7 +492,7 @@ const excludedTitle = $derived.by(() => (privacyMode === "private-by-default" ? 
          around the pair rather than between them — they have to touch for the
          active tab to merge into the panel. -->
     <div class="privacy-list-section">
-      <div class="privacy-list-switch" role="tablist" aria-label="File list">
+      <div class="privacy-list-switch" role="tablist" aria-label="文件列表">
         <button
           type="button"
           role="tab"
@@ -534,22 +534,22 @@ const excludedTitle = $derived.by(() => (privacyMode === "private-by-default" ? 
           sectionTitle={null}
           includedEntries={activeEntries}
           {includedEmptyText}
-          searchPlaceholder="Filter files"
+          searchPlaceholder="过滤文件"
           maxVisibleEntries={showingManaged ? undefined : COMPLEMENT_ROW_LIMIT}
-          addButtonText="Add files"
+          addButtonText="添加文件"
           {pickerModalTitle}
           {pickerText}
           pickerExistingPaths={!parsedMembership.isAdvanced ? parsedMembership.draft.manualPaths : []}
           pickerIncludedPaths={includedFiles}
           onAddPaths={showingManaged && !parsedMembership.isAdvanced ? handleAddPaths : undefined}
           showFilterToggle={showingManaged}
-          filtersButtonText="Filters"
-          filterToggleAriaLabel="Toggle privacy filters"
+          filtersButtonText="过滤条件"
+          filterToggleAriaLabel="切换隐私过滤"
           isFilterActive={hasFilters}
           filterCount={parsedMembership.isAdvanced ? 1 : parsedMembership.draft.autoIncludeRules.length}
           onToggleFilters={() => (showFilters = !showFilters)}
           showFilterPanel={showingManaged && showFilters}
-          filterPanelLabel="Filters"
+          filterPanelLabel="过滤条件"
           filterBuilderFilter={parsedMembership.isAdvanced
       		? ensureGroup(cloneViewFilter(privacyFilter))
       		: buildPrivacyMembershipRulesEditorFilter(parsedMembership.draft.autoIncludeRules)}
@@ -568,7 +568,7 @@ const excludedTitle = $derived.by(() => (privacyMode === "private-by-default" ? 
   </div>
 
   <div class="modal-button-container">
-    <Button buttonText="Save" cta onClick={saveChanges} />
+    <Button buttonText="保存" cta onClick={saveChanges} />
   </div>
 </div>
 

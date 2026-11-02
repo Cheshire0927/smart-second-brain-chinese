@@ -24,7 +24,7 @@ async function handleCleanupPluginData() {
 		plugin.app,
 		get(t)("settings.clear_modal.title"),
 		get(t)("settings.clear_modal.description"),
-		"Delete",
+		"删除",
 	);
 	modal.open();
 	if (!(await modal.promise).confirmed) return;
@@ -47,19 +47,19 @@ async function handleCleanupPluginData() {
 		await pluginData.deleteData();
 		if (failed.length > 0) {
 			new Notice(
-				`Plugin data cleared, but the stored vectors for ${failed.join(", ")} could not be deleted. See the console for details.`,
+				`插件数据已清除，但 ${failed.join(", ")} 的存储向量无法删除。详情请查看控制台。`,
 			);
 		} else {
 			new Notice(get(t)("plugin_data_cleared"));
 		}
 	} catch (error) {
-		new Notice(error instanceof Error ? error.message : "Failed to clean plugin data");
+		new Notice(error instanceof Error ? error.message : "清理插件数据失败");
 	}
 }
 </script>
 
 <!-- Diagnostics -->
-<SettingGroup heading="Diagnostics">
+<SettingGroup heading="诊断">
   <SettingItem name={$t("settings.verbose")} desc={$t("settings.verbose_desc")}>
     <Toggle
       checked={pluginData.isVerbose}
@@ -69,12 +69,12 @@ async function handleCleanupPluginData() {
 </SettingGroup>
 
 <!-- Maintenance -->
-<SettingGroup heading="Maintenance">
+<SettingGroup heading="维护">
   <SettingItem
-    name="Release notes"
-    desc={`You are on version ${plugin.manifest.version}. See what changed in recent releases.`}
+    name="更新日志"
+    desc={`你当前使用版本 ${plugin.manifest.version}。查看近期版本的变更内容。`}
   >
-    <Button buttonText="Show release notes" onClick={() => void plugin.showReleaseNotes()} />
+    <Button buttonText="查看更新日志" onClick={() => void plugin.showReleaseNotes()} />
   </SettingItem>
 
   <!-- Docs first, GitHub as the escalation path: the troubleshooting guide is
@@ -82,19 +82,19 @@ async function handleCleanupPluginData() {
        is being withheld, …), so it answers most of what would otherwise arrive as
        an issue. -->
   <SettingItem
-    name="Troubleshooting guide"
-    desc="Common problems and how to resolve them — the agent not responding, unhelpful search results, withheld notes, missing MCP tools, and mobile-specific issues."
+    name="故障排查指南"
+    desc="常见问题及解决方法——智能体无响应、搜索结果不理想、笔记被隐藏、缺少 MCP 工具，以及移动端特有问题。"
   >
-    <DocsLink variant="button" doc="troubleshooting" label="Open guide" />
+    <DocsLink variant="button" doc="troubleshooting" label="打开指南" />
   </SettingItem>
 
   <SettingItem
-    name="Still stuck?"
-    desc="Look through existing GitHub issues to see whether the problem is already tracked. If it is not, open a new issue and include what you tried, any error messages, and steps to reproduce it."
+    name="仍未解决？"
+    desc="浏览已有的 GitHub issue，确认问题是否已被记录。若没有，请新建 issue 并附上你尝试过的方法、错误信息及复现步骤。"
   >
     <div class="flex gap-2 flex-wrap">
-      <ExternalLinkButton href={githubIssuesListUrl} label="View existing issues" />
-      <ExternalLinkButton href={githubIssuesNewUrl} label="Open new issue" />
+      <ExternalLinkButton href={githubIssuesListUrl} label="查看已有 issue" />
+      <ExternalLinkButton href={githubIssuesNewUrl} label="新建 issue" />
     </div>
   </SettingItem>
 

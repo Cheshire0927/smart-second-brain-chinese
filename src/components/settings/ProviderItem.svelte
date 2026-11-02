@@ -29,7 +29,7 @@ let isCheckingAuth = $derived(query.isPending || query.isFetching);
 let displayName = $derived(providerDefinition?.displayName ?? provider);
 let isTrusted = $derived(data.isProviderTrusted(provider));
 let authFailureMessage = $derived(
-	query.data && !query.data.auth.success ? query.data.auth.message : "Authentication failed",
+	query.data && !query.data.auth.success ? query.data.auth.message : "身份验证失败",
 );
 let Logo: Component<LogoProps> = $derived.by(() => {
 	if (providerDefinition?.logo) {
@@ -61,10 +61,10 @@ async function handleRemoveProvider() {
 	}
 
 	const { confirmed, checked } = await confirmDeleteWithOption(plugin.app, displayName, {
-		label: "Also delete the embeddings built with this provider",
-		description: `Frees the storage used by ${indexedNotes.toLocaleString()} indexed ${
-			indexedNotes === 1 ? "note" : "notes"
-		}. Leave this off to keep them — re-adding this provider reuses them instead of re-embedding, which can be slow and costly.`,
+		label: "同时删除此服务商构建的嵌入",
+		description: `释放 ${indexedNotes.toLocaleString()} 篇已索引${
+			indexedNotes === 1 ? "笔记" : "笔记"
+		}所占用的存储空间。不勾选则保留——重新添加此服务商会直接复用，而无需重新嵌入，后者可能缓慢且昂贵。`,
 	});
 	if (!confirmed) return;
 	await removeProvider(checked);
@@ -78,7 +78,7 @@ async function removeProvider(purgeEmbeddings = false) {
 		// the same slug ID doesn't inherit this one's stale "connected" verdict from cache.
 		removeProviderQueries(provider);
 	} catch (error) {
-		new Notice(error instanceof Error ? error.message : "Failed to remove provider");
+		new Notice(error instanceof Error ? error.message : "移除服务商失败");
 		return;
 	}
 
@@ -94,7 +94,7 @@ async function removeProvider(purgeEmbeddings = false) {
 	// the dialog would leave every vector on disk with no sign anything was skipped.
 	const vectorStore = plugin.vectorStoreService;
 	if (!vectorStore) {
-		new Notice("Provider removed. Its embeddings were kept — the index service is still starting up.");
+		new Notice("服务商已移除。其嵌入已保留——索引服务仍在启动中。");
 		return;
 	}
 
@@ -115,9 +115,9 @@ async function removeProvider(purgeEmbeddings = false) {
 
 	if (failed.length > 0) {
 		new Notice(
-			`Provider removed, but deleting ${failed.length} of ${orphanedIndexIds.length} embedding ${
-				orphanedIndexIds.length === 1 ? "index" : "indexes"
-			} failed: ${failed.join(", ")}. See the console for details.`,
+			`服务商已移除，但删除 ${failed.length} / ${orphanedIndexIds.length} 个嵌入${
+				orphanedIndexIds.length === 1 ? "索引" : "索引"
+			}失败：${failed.join(", ")}。详情请查看控制台。`,
 		);
 	}
 }
@@ -134,8 +134,8 @@ async function removeProvider(purgeEmbeddings = false) {
         <button
           type="button"
           class="provider-icon-button provider-status-indicator"
-          title="Checking auth"
-          aria-label="Checking auth"
+          title="正在验证身份"
+          aria-label="正在验证身份"
           disabled
         >
           <CircularLoader size={12} color="var(--text-muted)" />
@@ -144,8 +144,8 @@ async function removeProvider(purgeEmbeddings = false) {
         <button
           type="button"
           class="provider-icon-button provider-status-indicator provider-icon-indicator-success"
-          title="Authenticated. Click to retry connection"
-          aria-label="Authenticated. Click to retry connection"
+          title="已通过身份验证，点击重试连接"
+          aria-label="已通过身份验证，点击重试连接"
           onclick={refetch}
         >
           <span class="provider-status-icon" use:icon={"check-circle"}></span>
@@ -154,8 +154,8 @@ async function removeProvider(purgeEmbeddings = false) {
         <button
           type="button"
           class="provider-icon-button provider-status-indicator provider-icon-indicator-error"
-          title={`${authFailureMessage}. Click to retry connection`}
-          aria-label={`${authFailureMessage}. Click to retry connection`}
+          title={`${authFailureMessage}。点击重试连接`}
+          aria-label={`${authFailureMessage}。点击重试连接`}
           onclick={refetch}
         >
           <span class="provider-status-icon" use:icon={"x-circle"}></span>
@@ -165,8 +165,8 @@ async function removeProvider(purgeEmbeddings = false) {
       {#if isTrusted}
         <span
           class="provider-trust-tooltip"
-          title="Trusted with private notes"
-          aria-label="Trusted with private notes"
+          title="可信任处理私密笔记"
+          aria-label="可信任处理私密笔记"
         >
           <span class="provider-icon-indicator provider-icon-indicator-accent">
             <span class="provider-trust-icon" use:icon={"shield-check"}></span>
@@ -179,14 +179,14 @@ async function removeProvider(purgeEmbeddings = false) {
   {#snippet actions()}
     <Button
       iconId="settings"
-      ariaLabel="Configure provider"
-      tooltip="Configure provider"
+      ariaLabel="配置服务商"
+      tooltip="配置服务商"
       onClick={handleOpenSettings}
     />
     <Button
       iconId="trash"
-      ariaLabel="Remove provider"
-      tooltip="Remove provider"
+      ariaLabel="移除服务商"
+      tooltip="移除服务商"
       onClick={() => void handleRemoveProvider()}
     />
   {/snippet}

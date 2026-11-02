@@ -1159,7 +1159,7 @@ export class Agent {
 				if (error instanceof TypeError && error.message.includes("fetch")) {
 					const provider = selectedModel.provider;
 					Logger.debug(`${label}.error`, { runId, message: `Connection failed to ${provider}` });
-					throw new ProviderEndpointError(provider, "Connection refused - service may not be running");
+					throw new ProviderEndpointError(provider, "连接被拒绝 —— 服务可能未运行");
 				}
 
 				Logger.debug(`${label}.error`, {
@@ -1260,7 +1260,7 @@ export class Agent {
 			runId: this.generateId(),
 			input: { messages: [humanMessage] },
 			label: "agent.streamTokens",
-			noOutputError: "Agent streaming completed without producing a final output.",
+			noOutputError: "智能体流式输出已结束，但未产生最终结果。",
 			logStart: {
 				provider: resolved.selectedModel.provider,
 				model: resolved.selectedModel.name,
@@ -1306,7 +1306,7 @@ export class Agent {
 			input: { messages: [humanMessage] },
 			checkpointId,
 			label: "agent.editFromCheckpoint",
-			noOutputError: "Agent edit completed without producing a final output.",
+			noOutputError: "智能体编辑已结束，但未产生最终结果。",
 			logStart: {
 				checkpointId,
 				provider: resolved.selectedModel.provider,
@@ -1335,7 +1335,7 @@ export class Agent {
 			input: null,
 			checkpointId,
 			label: "agent.regenerateFromCheckpoint",
-			noOutputError: "Agent regeneration completed without producing a final output.",
+			noOutputError: "智能体重新生成已结束，但未产生最终结果。",
 			logStart: {
 				checkpointId,
 				provider: resolved.selectedModel.provider,

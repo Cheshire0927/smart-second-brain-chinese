@@ -27,7 +27,7 @@ interface Props {
 	 * "modal" — render the standalone-modal footer (Cancel / Reset / Save) and persist
 	 * only when Save is pressed (preserves the old ToolConfigModal UX).
 	 * "none" — no footer; persist on every field commit (inline usage in the agent-level
-	 * ToolsModal). A "Reset to default" link is shown when the config is non-default.
+	 * ToolsModal). A "恢复默认" link is shown when the config is non-default.
 	 */
 	footer?: "modal" | "none";
 	/** Called when the standalone modal saves (footer="modal"). */
@@ -104,20 +104,20 @@ const chatModelSupportsVision = !!chatModel?.modelConfig?.supportsVision;
 const chatModelSupportsPdf = chatModelSupportsVision && !!chatModel && NATIVE_PDF_PROVIDERS.has(chatModel.provider);
 
 function autoLabel(capability: boolean): string {
-	if (!chatModelLabel) return "Auto (no chat model)";
+	if (!chatModelLabel) return "自动（无聊天模型）";
 	return capability ? `Auto (${chatModelLabel})` : `Auto (${chatModelLabel} — not supported)`;
 }
 
 const imageProcessorModeOptions = $derived<{ display: string; value: ProcessorMode }[]>([
 	{ display: autoLabel(chatModelSupportsVision), value: "auto" },
-	{ display: "Custom", value: "custom" },
-	{ display: "Disabled", value: "disabled" },
+	{ display: "自定义", value: "custom" },
+	{ display: "已禁用", value: "disabled" },
 ]);
 
 const pdfProcessorModeOptions = $derived<{ display: string; value: ProcessorMode }[]>([
 	{ display: autoLabel(chatModelSupportsPdf), value: "auto" },
-	{ display: "Custom", value: "custom" },
-	{ display: "Disabled", value: "disabled" },
+	{ display: "自定义", value: "custom" },
+	{ display: "已禁用", value: "disabled" },
 ]);
 
 function handleImageModeChange(mode: ProcessorMode) {
@@ -203,7 +203,7 @@ const isAtDefault = $derived.by(() => {
 		// Pinned to the default: the description isn't user-editable, and two tools swap
 		// theirs automatically (read_content by processor capability, search_notes by
 		// whether an embedding index exists). Comparing the live value would make an
-		// untouched config look "non-default" and offer a pointless "Reset to default".
+		// untouched config look "non-default" and offer a pointless "恢复默认".
 		description: defaultConfig.description,
 		maxResults,
 		imageProcessorKey: processorKey(imageProcessor),
@@ -330,10 +330,10 @@ function openProcessorSelectionModal(currentProcessor: ChatModel | null, onSelec
     -->
   {:else if capturedToolId === "read_content"}
     <SettingGroup
-      heading="Vision processors"
-      headingDesc="Configure how images and PDFs encountered during tool use are processed. Auto uses the chat model if it supports vision."
+      heading="视觉处理器"
+      headingDesc="配置工具使用过程中遇到的图片与 PDF 的处理方式。选择「自动」时，若聊天模型支持视觉则使用该模型。"
     >
-      <SettingContainer name="Image processor" desc="Vision model to analyze images found in notes.">
+      <SettingContainer name="图片处理器" desc="用于分析笔记中图片的视觉模型。">
         <div class="processor-control">
           <Dropdown
             type="options"
@@ -354,13 +354,13 @@ function openProcessorSelectionModal(currentProcessor: ChatModel | null, onSelec
               {#if imageProcessor}
                 <span>{imageProcessor.provider}/{imageProcessor.model}</span>
               {:else}
-                <span class="text-[--text-muted]">Select model…</span>
+                <span class="text-[--text-muted]">选择模型…</span>
               {/if}
             </Button>
           {/if}
         </div>
       </SettingContainer>
-      <SettingContainer name="PDF Processor" desc="Vision model for enhanced PDF analysis (charts, tables, diagrams).">
+      <SettingContainer name="PDF 处理器" desc="用于增强 PDF 分析（图表、表格、示意图）的视觉模型。">
         <div class="processor-control">
           <Dropdown
             type="options"
@@ -381,7 +381,7 @@ function openProcessorSelectionModal(currentProcessor: ChatModel | null, onSelec
               {#if pdfProcessor}
                 <span>{pdfProcessor.provider}/{pdfProcessor.model}</span>
               {:else}
-                <span class="text-[--text-muted]">Select model…</span>
+                <span class="text-[--text-muted]">选择模型…</span>
               {/if}
             </Button>
           {/if}
@@ -391,10 +391,10 @@ function openProcessorSelectionModal(currentProcessor: ChatModel | null, onSelec
   {:else if capturedToolId === "fetch_url"}
     <!-- no tool-specific settings -->
   {:else if capturedToolId === "web_search"}
-    <SettingGroup heading="Web search">
+    <SettingGroup heading="联网搜索">
       <SettingContainer
-        name="Provider"
-        desc="Search provider used by this tool. The provider and API key are shared across all agents that enable web_search."
+        name="服务商"
+        desc="此工具使用的搜索服务商。服务商与 API 密钥在所有启用 web_search 的智能体间共享。"
       >
         <Dropdown
           type="options"
@@ -405,12 +405,12 @@ function openProcessorSelectionModal(currentProcessor: ChatModel | null, onSelec
       </SettingContainer>
       {#if pluginData.webSearchProvider}
         <SettingContainer
-          name={pluginData.webSearchProvider === "firecrawl" ? "API Key (optional)" : "API Key"}
+          name={pluginData.webSearchProvider === "firecrawl" ? "API 密钥（可选）" : "API 密钥"}
           desc={pluginData.webSearchProvider === "brave"
-            ? "Brave Search API key from api.search.brave.com."
+            ? "来自 api.search.brave.com 的 Brave Search API 密钥。"
             : pluginData.webSearchProvider === "tavily"
-              ? "Tavily API key from app.tavily.com."
-              : "Optional — add a Firecrawl API key (fc-…) for higher rate limits. Leave empty to use the keyless tier."}
+              ? "来自 app.tavily.com 的 Tavily API 密钥。"
+              : "可选——填入 Firecrawl API 密钥（fc-…）以获得更高的速率限制。留空则使用免密钥档位。"}
         >
           <SecretSelect
             value={pluginData.webSearchApiKeyId}
@@ -424,13 +424,13 @@ function openProcessorSelectionModal(currentProcessor: ChatModel | null, onSelec
 
   {#if footer === "modal"}
     <div class="tool-config-actions">
-      <Button buttonText="Cancel" onClick={() => onCancel?.()} />
+      <Button buttonText="取消" onClick={() => onCancel?.()} />
       <div class="flex-1"></div>
       {#if showResetToDefault}
-        <Button buttonText="Reset to default" onClick={handleResetToDefault} />
+        <Button buttonText="恢复默认" onClick={handleResetToDefault} />
       {/if}
       {#if isDirty}
-        <Button buttonText="Save" cta={true} onClick={handleSave} />
+        <Button buttonText="保存" cta={true} onClick={handleSave} />
       {/if}
     </div>
   {:else if showResetToDefault}

@@ -42,14 +42,14 @@ export function validateSkillName(name: string): ValidationResult {
 	const errors: ValidationError[] = [];
 
 	if (!name || name.length === 0) {
-		errors.push({ field: "name", message: "Name is required" });
+		errors.push({ field: "name", message: "名称为必填项" });
 		return { valid: false, errors };
 	}
 
 	if (name.length > MAX_NAME_LENGTH) {
 		errors.push({
 			field: "name",
-			message: `Name must be at most ${MAX_NAME_LENGTH} characters (got ${name.length})`,
+			message: `名称最多 ${MAX_NAME_LENGTH} 个字符（当前 ${name.length} 个）`,
 		});
 	}
 
@@ -57,7 +57,7 @@ export function validateSkillName(name: string): ValidationResult {
 		errors.push({
 			field: "name",
 			message:
-				"Name must be lowercase alphanumeric with hyphens, cannot start/end with hyphen or have consecutive hyphens",
+				"名称只能使用小写字母、数字和连字符，不能以连字符开头或结尾，也不能出现连续连字符",
 		});
 	}
 
@@ -73,14 +73,14 @@ export function validateDescription(description: string): ValidationResult {
 	const errors: ValidationError[] = [];
 
 	if (!description || description.trim().length === 0) {
-		errors.push({ field: "description", message: "Description is required" });
+		errors.push({ field: "description", message: "描述为必填项" });
 		return { valid: false, errors };
 	}
 
 	if (description.length > MAX_DESCRIPTION_LENGTH) {
 		errors.push({
 			field: "description",
-			message: `Description must be at most ${MAX_DESCRIPTION_LENGTH} characters (got ${description.length})`,
+			message: `描述最多 ${MAX_DESCRIPTION_LENGTH} 个字符（当前 ${description.length} 个）`,
 		});
 	}
 
@@ -98,7 +98,7 @@ function validateCompatibility(compatibility: string | undefined): ValidationRes
 	if (compatibility && compatibility.length > MAX_COMPATIBILITY_LENGTH) {
 		errors.push({
 			field: "compatibility",
-			message: `Compatibility must be at most ${MAX_COMPATIBILITY_LENGTH} characters (got ${compatibility.length})`,
+			message: `compatibility 最多 ${MAX_COMPATIBILITY_LENGTH} 个字符（当前 ${compatibility.length} 个）`,
 		});
 	}
 
@@ -117,7 +117,7 @@ export function validateNameMatchesDirectory(name: string, directoryName: string
 	if (name !== directoryName) {
 		errors.push({
 			field: "name",
-			message: `Skill name "${name}" must match directory name "${directoryName}"`,
+			message: `技能名称“${name}”必须与目录名“${directoryName}”一致`,
 		});
 	}
 

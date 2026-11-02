@@ -109,7 +109,7 @@ let isLoading = $state(false);
  * and don't set this). Used to short-circuit the atom toggle and prevent racing state writes.
  */
 let isLeidenRunning = $state(false);
-let loadingMessage = $state("Building graph...");
+let loadingMessage = $state("正在构建图谱…");
 let defaultClusterLabels: Record<number, string> = $state({});
 
 /** Fine topic → parent topic nesting derived from the two levels. */
@@ -543,7 +543,7 @@ async function buildGraph() {
 	currentBuild = ac;
 	const localBuildVersion = ++buildVersion;
 	isLoading = true;
-	loadingMessage = "Building graph...";
+	loadingMessage = "正在构建图谱…";
 
 	try {
 		// Restored caches must be in place before this build reads them: the
@@ -1437,9 +1437,9 @@ async function handleOpenPaths(paths: string[]) {
 	if (paths.length > OPEN_ALL_CONFIRM_THRESHOLD) {
 		const modal = new ConfirmModal(
 			plugin.app,
-			"Open all notes",
-			`This opens ${paths.length} notes in new tabs. Closing them again is manual.`,
-			`Open ${paths.length} tabs`,
+			"打开全部笔记",
+			`这会打开 ${paths.length} 篇笔记，每个占一个新标签页，之后需要手动逐个关闭。`,
+			`打开 ${paths.length} 个标签页`,
 		);
 		modal.open();
 		if (!(await modal.promise).confirmed) return;
@@ -1478,7 +1478,7 @@ async function handleSendToChat() {
 		// … plus a one-shot signal so the just-opened/focused chat grabs focus.
 		messenger.pendingGraphNotes = [...paths];
 	} else {
-		new Notice("Chat is not initialized yet. Please open a chat first.");
+		new Notice("聊天尚未初始化，请先打开一个聊天会话。");
 	}
 }
 
@@ -1497,8 +1497,8 @@ function handleClearSelection() {
  * every surface calls a topic exactly what its pill did. */
 function clusterLabel(cluster: number): string {
 	return cluster === UNSORTED_CLUSTER
-		? "Unsorted"
-		: (effectiveClusterLabels[cluster] ?? segments[cluster]?.label ?? `Topic ${cluster}`);
+		? "未归类"
+		: (effectiveClusterLabels[cluster] ?? segments[cluster]?.label ?? `主题 ${cluster}`);
 }
 
 /**
@@ -2231,8 +2231,8 @@ async function runTopicLabeling(options: { force?: boolean } = {}) {
 		).length;
 		if (withheld > 0) {
 			showActionNotice(
-				`Private note titles were withheld from ${withheld} ${withheld === 1 ? "topic" : "topics"}. Trust the graph model's provider to include them.`,
-				settingsAction("general", "Open provider settings"),
+				`${withheld} 个主题中的私密笔记标题已做隐藏处理。若要包含它们，请信任图谱模型所用服务商。`,
+				settingsAction("general", "打开服务商设置"),
 			);
 		}
 	}
@@ -2285,8 +2285,8 @@ function handleLabelTopics() {
 	if (!settings.graphChatModel) {
 		// The breadcrumb is the link now, so it comes out of the message text.
 		showActionNotice(
-			"No graph chat model selected, so topics can't be named.",
-			settingsAction("graph", "Open graph settings"),
+			"尚未选择图谱聊天模型，无法为主题命名。",
+			settingsAction("graph", "打开图谱设置"),
 		);
 		return;
 	}
@@ -2520,11 +2520,9 @@ function handleHoverPreview(event: MouseEvent, path: string, targetEl: HTMLEleme
              *how much*, and the mid-dot joins them as the independent facts
              they are — the same composition " · immersed" already uses. -->
         <strong title={selectedTopicLabels.join(", ")}>{selectedTopicLabels.join(", ")}</strong>
-        · {selectedPaths.length}
-        {selectedPaths.length === 1 ? "note" : "notes"} selected{isImmersed ? " · immersed" : ""}
+        · {selectedPaths.length} 篇笔记已选中{isImmersed ? " · 沉浸中" : ""}
       {:else}
-        <strong>{selectedPaths.length}</strong>
-        {selectedPaths.length === 1 ? "note" : "notes"} selected{isImmersed ? " · immersed" : ""}
+        <strong>{selectedPaths.length}</strong> 篇笔记已选中{isImmersed ? " · 沉浸中" : ""}
       {/if}
     {:else if immerseTopicLabels}
       <!-- Immersed into topics: name them. The count is what the graph already
@@ -2536,11 +2534,11 @@ function handleHoverPreview(event: MouseEvent, path: string, targetEl: HTMLEleme
            selected, what mode you are in), which is right when the left side is
            a count. A topic name isn't independent of the mode — it's the thing
            immersed into — so it reads as the object of the verb instead. -->
-      Immersed into
+      已沉浸于
       <strong title={immerseTopicLabels.join(", ")}>{immerseTopicLabels.join(", ")}</strong>
     {:else}
       <strong>{noteNodeCount}</strong>
-      {noteNodeCount === 1 ? "note" : "notes"} · immersed
+      篇笔记 · 沉浸中
     {/if}
   {/snippet}
 
@@ -2560,13 +2558,12 @@ function handleHoverPreview(event: MouseEvent, path: string, targetEl: HTMLEleme
     <div class="graph-immerse-banner">
       <span class="selection-count">
         {#if immerseTopicLabels}
-          Immersed into
+          已沉浸于
           <strong>{immerseTopicLabels.join(", ")}</strong>
         {:else}
           <!-- A raw lasso has no name to give, so fall back to the size of what
                you're in — the same thing the desktop bar says in this case. -->
-          Immersed · <strong>{noteNodeCount}</strong>
-          {noteNodeCount === 1 ? "note" : "notes"}
+          沉浸中 · <strong>{noteNodeCount}</strong> 篇笔记
         {/if}
       </span>
     </div>
@@ -2595,7 +2592,7 @@ function handleHoverPreview(event: MouseEvent, path: string, targetEl: HTMLEleme
         open={true}
         onClose={handleClearSelection}
         draggable={false}
-        ariaLabel="Graph selection"
+        ariaLabel="图谱选区"
       >
         <!-- Same structure as the settings sheet: a heading outside a
              `.setting-items` card holding the rows, so the two sheets read as
@@ -2603,7 +2600,7 @@ function handleHoverPreview(event: MouseEvent, path: string, targetEl: HTMLEleme
         <div class="selection-sheet setting-group">
           <div class="selection-sheet-header">
             <span class="selection-count">{@render selectionCount()}</span>
-            <Button iconId="x" onClick={handleClearSelection} tooltip="Clear selection" />
+            <Button iconId="x" onClick={handleClearSelection} tooltip="清除选择" />
           </div>
           <div class="selection-sheet-actions setting-items">
             <!-- Promoted from icon-only to a labelled row. It rendered at
@@ -2611,39 +2608,39 @@ function handleHoverPreview(event: MouseEvent, path: string, targetEl: HTMLEleme
                  it sat next to a destructive one. -->
             <Button
               iconId="scan"
-              buttonText="Zoom to selection"
+              buttonText="缩放到选区"
               onClick={handleZoomToSelection}
-              tooltip="Move the camera to fit the selected notes"
+              tooltip="移动视图以完整显示选中的笔记"
             />
             {#if selectedTopicsCollapseAction !== null}
               <Button
                 iconId={selectedTopicsCollapseAction === "collapse" ? "chevrons-down-up" : "chevrons-up-down"}
-                buttonText={selectedTopicsCollapseAction === "collapse" ? "Collapse" : "Expand"}
+                buttonText={selectedTopicsCollapseAction === "collapse" ? "折叠" : "展开"}
                 onClick={() => void handleCollapseSelectedTopics()}
                 tooltip={selectedTopicsCollapseAction === "collapse"
-                  ? "Fold the selected topics into single nodes"
-                  : "Unfold the selected topics back into notes"}
+                  ? "把选中的主题折叠为单个节点"
+                  : "把选中的主题展开回笔记"}
               />
             {/if}
             <Button
               iconId="scan-search"
-              buttonText="Immerse"
+              buttonText="沉浸"
               onClick={handleImmerse}
-              tooltip="Rebuild graph with selected notes only"
+              tooltip="只用选中的笔记重建图谱"
             />
             {#if !hasOpenChat}
               <Button
                 iconId="message-square"
-                buttonText="Open in chat"
+                buttonText="在聊天中打开"
                 onClick={handleSendToChat}
-                tooltip="Reveal the chat and attach the selected notes"
+                tooltip="打开聊天并附上选中的笔记"
               />
             {/if}
             <Button
               iconId="copy-plus"
-              buttonText="Open all"
+              buttonText="打开全部"
               onClick={handleOpenAllSelected}
-              tooltip="Open all selected notes in new tabs"
+              tooltip="在新标签页中打开所有选中的笔记"
             />
           </div>
         </div>
@@ -2656,7 +2653,7 @@ function handleHoverPreview(event: MouseEvent, path: string, targetEl: HTMLEleme
              the count keeps that split legible, and leaves both icon-only buttons
              bracketing the labelled actions rather than sitting among them. -->
         {#if selectedPaths.length > 0}
-          <Button iconId="scan" onClick={handleZoomToSelection} tooltip="Zoom to selection (F)" />
+          <Button iconId="scan" onClick={handleZoomToSelection} tooltip="缩放到选区 (F)" />
         {/if}
         <div class="selection-divider"></div>
         <div class="selection-actions">
@@ -2667,42 +2664,42 @@ function handleHoverPreview(event: MouseEvent, path: string, targetEl: HTMLEleme
                    not carry a different glyph. -->
               <Button
                 iconId={selectedTopicsCollapseAction === "collapse" ? "chevrons-down-up" : "chevrons-up-down"}
-                buttonText={selectedTopicsCollapseAction === "collapse" ? "Collapse" : "Expand"}
+                buttonText={selectedTopicsCollapseAction === "collapse" ? "折叠" : "展开"}
                 onClick={() => void handleCollapseSelectedTopics()}
                 tooltip={withKey(
                   selectedTopicsCollapseAction === "collapse"
-                    ? "Fold the selected topics into single nodes"
-                    : "Unfold the selected topics back into notes",
+                    ? "把选中的主题折叠为单个节点"
+                    : "把选中的主题展开回笔记",
                   "C",
                 )}
               />
             {/if}
             <Button
               iconId="scan-search"
-              buttonText="Immerse"
+              buttonText="沉浸"
               onClick={handleImmerse}
-              tooltip={withKey("Rebuild graph with selected notes only", "I")}
+              tooltip={withKey("只用选中的笔记重建图谱", "I")}
             />
             {#if !hasOpenChat}
               <Button
                 iconId="message-square"
-                buttonText="Open in chat"
+                buttonText="在聊天中打开"
                 onClick={handleSendToChat}
-                tooltip={withKey("Reveal the chat and attach the selected notes", "A")}
+                tooltip={withKey("打开聊天并附上选中的笔记", "A")}
               />
             {/if}
             <Button
               iconId="copy-plus"
-              buttonText="Open all"
+              buttonText="打开全部"
               onClick={handleOpenAllSelected}
-              tooltip={withKey("Open all selected notes in new tabs", "O")}
+              tooltip={withKey("在新标签页中打开所有选中的笔记", "O")}
             />
 
             <!-- Icon-only: dismissing isn't one of the verbs you came here for, so
                  it reads as an affordance on the bar rather than a peer action. -->
-            <Button iconId="x" onClick={handleClearSelection} tooltip="Clear selection (Esc)" />
+            <Button iconId="x" onClick={handleClearSelection} tooltip="清除选择 (Esc)" />
           {:else}
-            <Button buttonText="Exit" onClick={handleExitImmerse} tooltip="Exit immerse (Esc)" />
+            <Button buttonText="退出" onClick={handleExitImmerse} tooltip="退出沉浸 (Esc)" />
           {/if}
         </div>
       </div>

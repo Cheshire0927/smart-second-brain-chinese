@@ -93,9 +93,9 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 	// =========================================================================
 	setupInstructions: {
 		steps: [
-			"Create an API key from OpenAI's Dashboard",
-			"Ensure your OpenAI account has credits loaded",
-			"Paste the API key below (starts with 'sk-')",
+			"在 OpenAI Dashboard 中创建 API 密钥",
+			"确认你的 OpenAI 账户已充值",
+			"将 API 密钥粘贴到下方（以 'sk-' 开头）",
 		],
 		link: {
 			url: "https://platform.openai.com/api-keys",
@@ -109,7 +109,7 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 	oauth: {
 		label: "ChatGPT",
 		icon: "log-in",
-		description: "Open a browser window to complete ChatGPT/Codex authorization.",
+		description: "在浏览器中打开窗口完成 ChatGPT/Codex 授权。",
 		signIn: async () => {
 			await signInWithOpenAICodex();
 			return { kind: "session" };
@@ -125,22 +125,22 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 	// =========================================================================
 	auth: {
 		apiKey: {
-			label: "API Key",
-			description: "Your OpenAI API key for authentication",
+			label: "API 密钥",
+			description: "用于身份验证的 OpenAI API 密钥",
 			kind: "secret",
 			required: true,
 			placeholder: "sk-...",
 		},
 		baseUrl: {
-			label: "Base URL",
-			description: "Custom API endpoint (leave empty for default OpenAI)",
+			label: "基础 URL",
+			description: "自定义 API 端点（留空则使用 OpenAI 默认端点）",
 			kind: "text",
 			required: false,
 			placeholder: "https://api.openai.com/v1",
 		},
 		headers: {
-			label: "Custom Headers",
-			description: "Additional headers as JSON (optional)",
+			label: "自定义请求头",
+			description: "以 JSON 填写的附加请求头（可选）",
 			kind: "textarea",
 			required: false,
 			placeholder: '{"X-Custom-Header": "value"}',
@@ -158,7 +158,7 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 				apiKey: async () => {
 					const session = await getValidOpenAICodexSession();
 					if (!session) {
-						throw new Error("ChatGPT sign-in required");
+						throw new Error("需要登录 ChatGPT");
 					}
 					return session.accessToken;
 				},
@@ -207,7 +207,7 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 				apiKey: async () => {
 					const session = await getValidOpenAICodexSession();
 					if (!session) {
-						throw new Error("ChatGPT sign-in required");
+						throw new Error("需要登录 ChatGPT");
 					}
 					return session.accessToken;
 				},
@@ -237,7 +237,7 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 
 	createEmbeddingInstance: (auth: AuthObject, modelId: string) => {
 		if (auth.authMode === "codex") {
-			throw new Error("Codex sign-in does not support embeddings");
+			throw new Error("Codex 登录不支持嵌入模型");
 		}
 
 		const config: Record<string, unknown> = {
@@ -271,13 +271,13 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 		if (auth.authMode === "codex") {
 			const session = await getValidOpenAICodexSession();
 			if (!session) {
-				return { valid: false, error: "Sign in with ChatGPT to use OpenAI via Codex" };
+				return { valid: false, error: "请登录 ChatGPT 以通过 Codex 使用 OpenAI" };
 			}
 			return { valid: true };
 		}
 
 		if (!auth.apiKey?.trim()) {
-			return { valid: false, error: "API key is required" };
+			return { valid: false, error: "需要 API 密钥" };
 		}
 
 		const baseUrl =
@@ -301,7 +301,7 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 			});
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			return { valid: false, error: `Connection failed: ${message}` };
+			return { valid: false, error: `连接失败：${message}` };
 		}
 
 		if (response.ok) {
@@ -323,10 +323,10 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 		}
 
 		if (response.status === 401 || response.status === 403 || errorCode === "invalid_api_key") {
-			return { valid: false, error: errorMessage || `Authentication failed (${response.status})` };
+			return { valid: false, error: errorMessage || `身份验证失败（${response.status}）` };
 		}
 
-		return { valid: false, error: errorMessage || errorBody || `Request failed with status ${response.status}` };
+		return { valid: false, error: errorMessage || errorBody || `请求失败，状态码 ${response.status}` };
 	},
 
 	discoverModels: async (auth: AuthObject): Promise<string[]> => {
@@ -357,7 +357,7 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 		}
 
 		if (!auth.apiKey) {
-			throw new Error("OpenAI model discovery requires an API key.");
+			throw new Error("发现 OpenAI 模型需要 API 密钥。");
 		}
 
 		const baseUrl =
@@ -380,7 +380,7 @@ export const openaiProvider: EmbeddingProviderDefinition = {
 
 		if (!response.ok) {
 			const errorBody = await safeReadText(response);
-			throw new Error(`Model discovery failed: ${errorBody || response.statusText}`);
+			throw new Error(`模型发现失败：${errorBody || response.statusText}`);
 		}
 
 		const payload = (await response.json()) as OpenAIModelResponse;

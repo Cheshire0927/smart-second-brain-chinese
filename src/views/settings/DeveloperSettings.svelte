@@ -17,7 +17,7 @@ const plugin = getPlugin();
 const DEFAULT_LANGSMITH_ENDPOINT = "https://api.smith.langchain.com";
 let langSmithEndpointDraft = $state(pluginData.langSmithEndpoint);
 let langSmithCheckState = $state<"idle" | "pending" | "success" | "error">("idle");
-let langSmithCheckMessage = $state("Check LangSmith connection");
+let langSmithCheckMessage = $state("检查 LangSmith 连接");
 
 $effect(() => {
 	if (langSmithCheckState !== "pending") {
@@ -46,7 +46,7 @@ function replayOnboardingIntro() {
 	// also closes Settings first (activateOnboardingView's own behavior), matching
 	// what a real first run looks like when the plugin is enabled from Settings.
 	void plugin.activateOnboardingView();
-	new Notice("Onboarding reset and reopened — the intro will replay from the start.");
+	new Notice("引导已重置并重新打开——将从头重播介绍动画。");
 }
 
 function restoreDismissedRecommendations() {
@@ -54,8 +54,8 @@ function restoreDismissedRecommendations() {
 	pluginData.restoreDismissedRecommendations();
 	new Notice(
 		count > 0
-			? `Restored ${count} dismissed recommendation${count === 1 ? "" : "s"}.`
-			: "No dismissed recommendations to restore.",
+			? `已恢复 ${count} 条已忽略的推荐${count === 1 ? "" : ""}。`
+			: "没有可恢复的已忽略推荐。",
 	);
 }
 
@@ -64,8 +64,8 @@ function restoreIntegrationPrivacyWarning() {
 	pluginData.suppressIntegrationPrivacyWarning = false;
 	new Notice(
 		wasSuppressed
-			? "Integration privacy warning restored — it will show again next time an integration is enabled."
-			: "Integration privacy warning was not suppressed.",
+			? "集成隐私警告已恢复——下次启用集成时会再次显示。"
+			: "集成隐私警告此前未被隐藏。",
 	);
 }
 
@@ -90,7 +90,7 @@ async function handleCheckLangSmithConnection() {
 	const apiKey = pluginData.langSmithApiKey;
 	if (!pluginData.langSmithApiKeyId || !apiKey) {
 		langSmithCheckState = "error";
-		langSmithCheckMessage = "Select a LangSmith API key secret first";
+		langSmithCheckMessage = "请先选择 LangSmith API 密钥";
 		new Notice(langSmithCheckMessage);
 		return;
 	}
@@ -103,13 +103,13 @@ async function handleCheckLangSmithConnection() {
 		validationUrl = new URL("/api/v1/sessions?limit=1", `${endpoint}/`).toString();
 	} catch {
 		langSmithCheckState = "error";
-		langSmithCheckMessage = "Invalid LangSmith endpoint URL";
+		langSmithCheckMessage = "LangSmith 端点 URL 无效";
 		new Notice(langSmithCheckMessage);
 		return;
 	}
 
 	langSmithCheckState = "pending";
-	langSmithCheckMessage = "Checking LangSmith connection...";
+	langSmithCheckMessage = "正在检查 LangSmith 连接……";
 
 	try {
 		const obsidianFetch = createObsidianFetch(window.fetch.bind(window));
@@ -123,7 +123,7 @@ async function handleCheckLangSmithConnection() {
 
 		if (response.ok) {
 			langSmithCheckState = "success";
-			langSmithCheckMessage = "LangSmith connection successful";
+			langSmithCheckMessage = "LangSmith 连接成功";
 			new Notice(langSmithCheckMessage);
 			return;
 		}
@@ -131,40 +131,40 @@ async function handleCheckLangSmithConnection() {
 		const responseText = (await response.text()).trim();
 		if (response.status === 401 || response.status === 403) {
 			langSmithCheckState = "error";
-			langSmithCheckMessage = "LangSmith rejected the API key";
+			langSmithCheckMessage = "LangSmith 拒绝了此 API 密钥";
 		} else if (response.status === 404) {
 			langSmithCheckState = "error";
-			langSmithCheckMessage = "LangSmith endpoint did not expose the expected API";
+			langSmithCheckMessage = "LangSmith 端点未提供预期的 API";
 		} else {
 			langSmithCheckState = "error";
 			langSmithCheckMessage = responseText
-				? `LangSmith check failed (${response.status}): ${responseText}`
-				: `LangSmith check failed with status ${response.status}`;
+				? `LangSmith 检查失败（${response.status}）：${responseText}`
+				: `LangSmith 检查失败，状态码 ${response.status}`;
 		}
 		new Notice(langSmithCheckMessage);
 	} catch (error) {
 		langSmithCheckState = "error";
-		langSmithCheckMessage = error instanceof Error ? error.message : "Failed to reach LangSmith";
-		new Notice(`LangSmith check failed: ${langSmithCheckMessage}`);
+		langSmithCheckMessage = error instanceof Error ? error.message : "无法连接到 LangSmith";
+		new Notice(`LangSmith 检查失败：${langSmithCheckMessage}`);
 	}
 }
 </script>
 
 <!-- Onboarding -->
-<SettingGroup heading="Onboarding">
+<SettingGroup heading="引导">
   <SettingItem
-    name="Replay onboarding intro"
-    desc="Reset the splash animation and completion flags — the Welcome view plays its intro again, and auto-opens on startup as if this were a first run (until a provider is configured)."
+    name="重播引导介绍"
+    desc="重置开场动画与完成标志——欢迎视图会再次播放介绍，并像首次运行一样在启动时自动打开（直到配置了服务商）。"
   >
-    <Button buttonText="Reset intro" iconId="rotate-ccw" onClick={replayOnboardingIntro} />
+    <Button buttonText="重置介绍" iconId="rotate-ccw" onClick={replayOnboardingIntro} />
   </SettingItem>
 </SettingGroup>
 
 <!-- Chat -->
-<SettingGroup heading="Chat">
+<SettingGroup heading="聊天">
   <SettingItem
-    name="Show raw tool input/output"
-    desc="Reveal the exact tool arguments and raw output blob in chat tool-call rows. Off by default — users see only the plain-language summary and the friendly structured result."
+    name="显示工具原始输入/输出"
+    desc="在聊天的工具调用行中显示确切的工具参数与原始输出内容。默认关闭——用户只会看到通俗摘要与友好的结构化结果。"
   >
     <Toggle
       checked={pluginData.showToolIODetails}
@@ -173,22 +173,22 @@ async function handleCheckLangSmithConnection() {
   </SettingItem>
 
   <SettingItem
-    name="Restore dismissed recommendations"
-    desc="Bring back every suggested query, plugin skill nudge, and updated-default notice dismissed from a new chat's empty state."
+    name="恢复已忽略的推荐"
+    desc="恢复新聊天空白页中所有被忽略的推荐查询、插件技能提示和默认值更新通知。"
   >
     <Button
-      buttonText="Restore"
+      buttonText="恢复"
       iconId="rotate-ccw"
       onClick={restoreDismissedRecommendations}
     />
   </SettingItem>
 
   <SettingItem
-    name="Restore integration privacy warning"
-    desc="Undo 'Don't ask again' on the warning shown before enabling a plugin integration's code-exec tool (it bypasses per-provider privacy rules)."
+    name="恢复集成隐私警告"
+    desc="撤销在启用插件集成的代码执行工具前所显示警告上的「不再询问」（该工具会绕过按服务商设定的隐私规则）。"
   >
     <Button
-      buttonText="Restore"
+      buttonText="恢复"
       iconId="rotate-ccw"
       onClick={restoreIntegrationPrivacyWarning}
     />
@@ -196,10 +196,10 @@ async function handleCheckLangSmithConnection() {
 </SettingGroup>
 
 <!-- Observability -->
-<SettingGroup heading="Observability">
+<SettingGroup heading="可观测性">
   <SettingItem
-    name="LangSmith integration"
-    desc="Enable LangSmith telemetry for debugging and tracing"
+    name="LangSmith 集成"
+    desc="启用 LangSmith 遥测以进行调试与追踪"
   >
     <Toggle
       checked={pluginData.enableLangSmith}
@@ -209,8 +209,8 @@ async function handleCheckLangSmithConnection() {
 
   {#if pluginData.enableLangSmith}
     <SettingItem
-      name="API key"
-      desc="Select an Obsidian keychain secret for LangSmith authentication"
+      name="API 密钥"
+      desc="选择一个 Obsidian 钥匙串密钥用于 LangSmith 身份验证"
     >
       <SecretSelect
         value={pluginData.langSmithApiKeyId}
@@ -219,7 +219,7 @@ async function handleCheckLangSmithConnection() {
       />
     </SettingItem>
 
-    <SettingItem name="Project name" desc="Project name to attribute runs">
+    <SettingItem name="项目名称" desc="用于归属运行记录的项目名称">
       <Text
         placeholder="obsidian-agent"
         inputType="text"
@@ -228,11 +228,11 @@ async function handleCheckLangSmithConnection() {
       />
     </SettingItem>
 
-    <SettingItem name="Endpoint URL" desc="Override LangSmith API base URL (optional)">
+    <SettingItem name="端点 URL" desc="覆盖 LangSmith API 的基础 URL（可选）">
       <div class="flex items-center gap-2 w-full">
         <Button
           iconId={getLangSmithCheckIcon()}
-          ariaLabel="Check LangSmith API key and endpoint"
+          ariaLabel="检查 LangSmith API 密钥与端点"
           tooltip={langSmithCheckMessage}
           styles={getLangSmithCheckButtonStyles()}
           disabled={langSmithCheckState === "pending"}

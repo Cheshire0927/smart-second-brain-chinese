@@ -9,5 +9,6 @@
 		},
 		"verbose": "Developer Console logging",
 		"verbose_desc": "Enable verbose logging in the Developer Console."
-	}
+	},
+	"plugin_data_cleared": "Plugin data cleared"
 }

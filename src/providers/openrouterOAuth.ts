@@ -133,7 +133,7 @@ async function verifyCallbackServer(): Promise<void> {
 		method: "GET",
 	});
 	if (response.status !== 200 || response.text !== "ok") {
-		throw new Error("OpenRouter callback server healthcheck failed");
+		throw new Error("OpenRouter 回调服务健康检查失败");
 	}
 }
 
@@ -336,7 +336,7 @@ function navigateToAuthorizeUrl(url: string): void {
  */
 export async function signInWithOpenRouter(): Promise<string> {
 	if (pendingOpenRouterAuth) {
-		throw new Error("An OpenRouter sign-in flow is already in progress");
+		throw new Error("已有一个 OpenRouter 登录流程正在进行");
 	}
 
 	const isDesktop = Platform.isDesktopApp;

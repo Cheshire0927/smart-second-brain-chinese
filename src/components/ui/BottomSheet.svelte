@@ -305,7 +305,7 @@ const sheetHeight = $derived.by(() => {
         class="s2b-sheet-handle"
         role="slider"
         aria-orientation="vertical"
-        aria-label="Resize panel"
+        aria-label="调整面板高度"
         aria-valuemin={0}
         aria-valuemax={detents.length - 1}
         aria-valuenow={detentIndex}

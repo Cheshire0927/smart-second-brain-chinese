@@ -47,7 +47,7 @@ async function loadPrompt() {
 	isLoading = false;
 }
 
-// "Use default" is a commit, not a preview step — apply and close immediately.
+// "使用默认值" is a commit, not a preview step — apply and close immediately.
 function handleUseDefault() {
 	accessors.setPrompt?.(defaultPrompt);
 	modal.close();
@@ -65,21 +65,21 @@ function handleOpenNote() {
   <p class="system-prompt-description">{description}</p>
 
   {#if isLoading}
-    <div class="system-prompt-loading">Loading prompt…</div>
+    <div class="system-prompt-loading">正在加载提示词…</div>
   {:else if readOnly}
     <div class="system-prompt-preview-container">
       <pre class="system-prompt-preview">{promptValue}</pre>
     </div>
   {:else if isAtDefault}
-    <div class="system-prompt-loading">This note matches the current default.</div>
+    <div class="system-prompt-loading">此笔记与当前默认版本一致。</div>
   {:else}
     <div class="prompt-diff-container">
       <div class="prompt-diff-pane">
-        <div class="prompt-diff-pane-label">Yours</div>
+        <div class="prompt-diff-pane-label">你的版本</div>
         <pre class="prompt-diff-text">{@html renderDiffSide(promptValue, defaultPrompt, "old")}</pre>
       </div>
       <div class="prompt-diff-pane">
-        <div class="prompt-diff-pane-label">Default</div>
+        <div class="prompt-diff-pane-label">默认</div>
         <pre class="prompt-diff-text">{@html renderDiffSide(promptValue, defaultPrompt, "new")}</pre>
       </div>
     </div>
@@ -87,13 +87,13 @@ function handleOpenNote() {
 
   {#if !readOnly}
     <div class="system-prompt-actions">
-      <Button buttonText="Cancel" onClick={() => modal.close()} />
+      <Button buttonText="取消" onClick={() => modal.close()} />
       <div class="flex-1"></div>
       {#if accessors.notePath}
-        <Button buttonText="Open note" onClick={handleOpenNote} />
+        <Button buttonText="打开笔记" onClick={handleOpenNote} />
       {/if}
       {#if !isLoading && !isAtDefault}
-        <Button buttonText="Use default" cta={true} onClick={handleUseDefault} />
+        <Button buttonText="使用默认值" cta={true} onClick={handleUseDefault} />
       {/if}
     </div>
   {/if}

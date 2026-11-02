@@ -96,7 +96,7 @@ function updateAgentName(name: string) {
 	const oldDir = agentDir(agentId);
 	pluginData.updateAgent(agentId, { name });
 	void plugin.promptFilesService?.renameAgentDir(agentId, oldDir);
-	modal.setTitle(`Edit Agent: ${name || "Untitled"}`);
+	modal.setTitle(`Edit Agent: ${name || "未命名"}`);
 }
 
 function updateAgentIcon(icon: string) {
@@ -247,7 +247,7 @@ function openAgentNote() {
 
 // Whether this agent's definition note has drifted from the shipped default. Reads the
 // prompt-file cache, which is reactive (kept fresh by writes and the vault-change handler), so
-// "Use default" in the diff modal hides the button again. When false, we hide the "Diff with
+// "使用默认值" in the diff modal hides the button again. When false, we hide the "Diff with
 // default" button — matching the skill guidance behaviour (diff only shown when drifted).
 const promptDrifted = $derived.by(() => {
 	if (!selectedAgent) return false;
@@ -271,9 +271,9 @@ function openRenderedSystemPromptModal() {
 		plugin,
 		{ getPrompt: async () => plugin.agentManager.assembleSystemPrompt() },
 		{
-			title: "Final System Prompt",
+			title: "最终系统提示词",
 			description:
-				"Preview the fully assembled system prompt after dynamic tool guidance and skills are injected.",
+				"预览注入动态工具指引与技能后完整组装的系统提示词。",
 			readOnly: true,
 		},
 	).open();
@@ -312,7 +312,7 @@ const coreSkills = $derived(
 // Community-plugin skills are only shown when their linked plugin is actually installed
 // in this vault. A skill for an uninstalled plugin has no working exec tool and nothing
 // the user can act on, so it is hidden entirely (installed-but-disabled still shows,
-// with a "Not enabled" affordance).
+// with a "未启用" affordance).
 const pluginSkills = $derived(skills.filter((skill) => skill.category === "plugin" && isSkillPluginInstalled(skill)));
 const customSkills = $derived(skills.filter((skill) => skill.category === "custom"));
 
@@ -322,7 +322,7 @@ async function refreshSkillsList() {
 }
 
 onMount(() => {
-	modal.setTitle(`Edit Agent: ${selectedAgent?.name ?? "Agent"}`);
+	modal.setTitle(`Edit Agent: ${selectedAgent?.name ?? "智能体"}`);
 	void refreshSkillsList();
 
 	// A plugin installed/enabled in Obsidian's settings while this modal is open won't
@@ -351,7 +351,7 @@ onMount(() => {
 function openSkillNote(skillId: string) {
 	const metadata = plugin.skillsService?.getCachedSkills().get(skillId);
 	if (!metadata) {
-		new Notice("Could not find this skill's file.");
+		new Notice("找不到该技能的文件。");
 		return;
 	}
 	const skillPath = normalizePath(`${metadata.path}/SKILL.md`);
@@ -400,14 +400,14 @@ async function toggleSkill(skillId: string, newEnabled: boolean) {
 			if (!plugin.agentManager?.isPluginInstalled(linkedPlugin)) {
 				showActionNotice(
 					`The ${skill.displayName} plugin isn't installed yet.`,
-					obsidianSettingsAction("community-plugins", "Browse community plugins"),
+					obsidianSettingsAction("community-plugins", "浏览社区插件"),
 				);
 				return;
 			}
 			if (!plugin.agentManager?.isPluginEnabled(linkedPlugin)) {
 				showActionNotice(
 					`The ${skill.displayName} plugin is installed but not enabled.`,
-					obsidianSettingsAction("community-plugins", "Open community plugins"),
+					obsidianSettingsAction("community-plugins", "打开社区插件"),
 				);
 				return;
 			}
@@ -509,7 +509,7 @@ async function toggleAutoIntegration(pluginId: string, displayName: string, newE
 		if (!skillId) {
 			const service = plugin.skillsService;
 			if (!service) {
-				new Notice("Skills are still initializing — try again in a moment.");
+				new Notice("技能仍在初始化，请稍后重试。");
 				return;
 			}
 			try {
@@ -538,10 +538,10 @@ async function toggleAutoIntegration(pluginId: string, displayName: string, newE
 }
 
 function getMCPToolsBadgeLabel(serverId: string, toolsState?: MCPServerToolsState): string {
-	if (toolsState?.loading) return "Loading tools";
-	if (toolsState?.error) return "Tool load error";
+	if (toolsState?.loading) return "正在加载工具";
+	if (toolsState?.error) return "工具加载失败";
 	if (toolsState?.tools) return `${toolsState.tools.length} tools`;
-	return "Load tools";
+	return "加载工具";
 }
 
 function getToolEnabled(toolId: BuiltInToolId): boolean {
@@ -584,7 +584,7 @@ function handleSubAgentToggle(refId: string) {
 }
 
 function getSubAgentModelLabel(agent: AgentConfig): string {
-	const model = agent.chatModel ? agent.chatModel.model : "No model configured";
+	const model = agent.chatModel ? agent.chatModel.model : "未配置模型";
 	return agent.id === agentId ? `${model} · isolated copy of this agent` : model;
 }
 
@@ -677,7 +677,7 @@ async function fetchServerTools(serverId: string) {
 	} catch (err) {
 		mcpServerTools[serverId] = {
 			loading: false,
-			error: err instanceof Error ? err.message : "Failed to fetch tools",
+			error: err instanceof Error ? err.message : "获取工具失败",
 			tools: [],
 		};
 	}
@@ -704,13 +704,13 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
 {#if selectedAgent}
   <div class="agent-editor-container">
     <div class="agent-editor-pane">
-      <SettingGroup heading="General">
-        <SettingItem name="Name" desc="This agent's display name and icon">
+      <SettingGroup heading="常规">
+        <SettingItem name="名称" desc="此智能体的显示名称与图标">
           <PickerPopover
             bind:open={isAgentIconPickerOpen}
             triggerClass="agent-icon-trigger"
             contentClass="agent-icon-popover"
-            tooltip="Change icon"
+            tooltip="更换图标"
             side="bottom"
             align="start"
             sideOffset={8}
@@ -725,12 +725,12 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
               <Search
                 class="agent-icon-search"
                 value={agentIconQuery}
-                placeholder="Search built-in icons"
+                placeholder="搜索内置图标"
                 onchange={(value: string) => (agentIconQuery = value)}
               />
 
               <div class="agent-icon-results-header">
-                <span>{agentIconQuery.trim() ? `Built-in icons (${matchingAgentIconCount})` : "Popular icons"}</span>
+                <span>{agentIconQuery.trim() ? `Built-in icons (${matchingAgentIconCount})` : "常用图标"}</span>
               </div>
 
               <div class="agent-icon-grid">
@@ -764,20 +764,20 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
           <Text
             inputType="text"
             class="agent-overview-name-input"
-            placeholder="Agent name"
+            placeholder="智能体名称"
             value={selectedAgent.name}
             onblur={(value: string) => updateAgentName(value)}
           />
         </SettingItem>
 
-        <SettingItem name="Chat model" desc="Primary model this agent uses for conversation">
+        <SettingItem name="聊天模型" desc="此智能体用于对话的主模型">
           <ModelSettingControl
             available={models.hasProviders && models.hasModels}
             loading={models.hasProviders && models.isLoadingModels}
-            configureLabel={!models.hasProviders ? "Configure Provider" : "Configure Models"}
-            unavailableHint={!models.hasProviders ? "No AI provider is configured yet." : undefined}
+            configureLabel={!models.hasProviders ? "配置服务商" : "配置模型"}
+            unavailableHint={!models.hasProviders ? "尚未配置 AI 服务商。" : undefined}
             onConfigure={() => models.openSettings(() => modal.close())}
-            placeholder="Select a model"
+            placeholder="选择模型"
             selectedLabel={currentModelDisplay?.model ?? null}
             selectedLogo={currentModelDisplay?.logo ?? null}
             onSelect={openModelSelectionModal}
@@ -791,23 +791,23 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
              The memory FOLDER (Agents/Memories/) stays global, shared by every agent, because
              remembered facts are properties of the user, not of one agent. -->
         <SettingItem
-          name="System prompt"
-          desc="This agent's instructions, including how it uses memory, stored as its own AGENT.md note in your vault"
+          name="系统提示词"
+          desc="此智能体的指令（含记忆使用方式），作为独立的 AGENT.md 笔记存放在仓库中"
         >
           <div class="flex items-center gap-2 justify-end">
             <Button
               iconId="pencil"
-              ariaLabel="Open agent note"
-              tooltip="Open agent note"
+              ariaLabel="打开智能体笔记"
+              tooltip="打开智能体笔记"
               onClick={openAgentNote}
             />
             {#if promptDrifted}
-              <Button buttonText="Diff with default" onClick={openPromptDiff} />
+              <Button buttonText="与默认对比" onClick={openPromptDiff} />
             {/if}
             <Button
               iconId="eye"
-              ariaLabel="View final assembled prompt"
-              tooltip="View final assembled prompt"
+              ariaLabel="查看最终组装的提示词"
+              tooltip="查看最终组装的提示词"
               onClick={openRenderedSystemPromptModal}
             />
           </div>
@@ -818,30 +818,30 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
              vault) — so configuration lives here at the agent level rather than behind any single
              skill's row. -->
         <SettingItem
-          name="Tools"
-          desc="Enable, rename, and configure the individual tools your skills attach. A tool is only usable when at least one enabled skill provides it."
+          name="工具"
+          desc="启用、重命名并配置技能附带的各个工具。只有当至少一个已启用技能提供该工具时，它才可用。"
         >
-          <Button buttonText="Manage" onClick={openToolsModal} />
+          <Button buttonText="管理" onClick={openToolsModal} />
         </SettingItem>
 
         <SettingItem
-          name="Summarization model"
-          desc="Model used to compress older chat history when the context window fills up"
+          name="总结模型"
+          desc="上下文窗口占满时用于压缩较早聊天记录的模型"
         >
           <div class="agent-model-setting">
             <ModelSettingControl
               available={models.hasProviders && models.hasModels}
               loading={models.hasProviders && models.isLoadingModels}
-              configureLabel={!models.hasProviders ? "Configure Provider" : "Configure Models"}
+              configureLabel={!models.hasProviders ? "配置服务商" : "配置模型"}
               unavailableHint={!models.hasProviders
-                ? "No AI provider is configured yet."
+                ? "尚未配置 AI 服务商。"
                 : undefined}
               onConfigure={() => models.openSettings(() => modal.close())}
-              placeholder="Auto (same as chat model)"
+              placeholder="自动（同聊天模型）"
               selectedLabel={currentSummarizationModelDisplay?.model ?? null}
               selectedLogo={currentSummarizationModelDisplay?.logo ?? null}
               onSelect={openSummarizationModelSelectionModal}
-              secondaryLabel={selectedAgent.summarizationModel ? "Reset" : undefined}
+              secondaryLabel={selectedAgent.summarizationModel ? "重置" : undefined}
               onSecondary={selectedAgent.summarizationModel ? resetSummarizationModel : undefined}
             />
             {#if summarizationContextWindowWarning}
@@ -851,26 +851,26 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
         </SettingItem>
 
         <SettingItem
-          name="Title generation model"
-          desc="Model used to generate conversation titles from the first user message"
+          name="标题生成模型"
+          desc="根据第一条用户消息生成对话标题的模型"
         >
           <ModelSettingControl
             available={models.hasProviders && models.hasModels}
             loading={models.hasProviders && models.isLoadingModels}
-            configureLabel={!models.hasProviders ? "Configure Provider" : "Configure Models"}
-            unavailableHint={!models.hasProviders ? "No AI provider is configured yet." : undefined}
+            configureLabel={!models.hasProviders ? "配置服务商" : "配置模型"}
+            unavailableHint={!models.hasProviders ? "尚未配置 AI 服务商。" : undefined}
             onConfigure={() => models.openSettings(() => modal.close())}
-            placeholder="Auto (same as chat model)"
+            placeholder="自动（同聊天模型）"
             selectedLabel={currentTitleModelDisplay?.model ?? null}
             selectedLogo={currentTitleModelDisplay?.logo ?? null}
             onSelect={openTitleModelSelectionModal}
-            secondaryLabel={selectedAgent.titleModel ? "Reset" : undefined}
+            secondaryLabel={selectedAgent.titleModel ? "重置" : undefined}
             onSecondary={selectedAgent.titleModel ? resetTitleModel : undefined}
           />
         </SettingItem>
       </SettingGroup>
 
-      <SettingGroup heading="Core skills">
+      <SettingGroup heading="核心技能">
         <div class="setting-item agent-section-intro">
           <div class="setting-item-info">
             <div class="setting-item-description">
@@ -895,7 +895,7 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
             {/snippet}
             {#snippet nameSuffix()}
               {#if !pluginAvailable}
-                <Badge label="Core plugin disabled" tone="warning" />
+                <Badge label="核心插件已禁用" tone="warning" />
               {/if}
             {/snippet}
             <Button
@@ -913,7 +913,7 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
         {/each}
       </SettingGroup>
 
-      <SettingGroup heading="Integrations">
+      <SettingGroup heading="集成">
         <div class="setting-item agent-section-intro">
           <div class="setting-item-info">
             <div class="setting-item-description">
@@ -935,13 +935,13 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
             {#snippet nameSuffix()}
               {#if !pluginAvailable}
                 <Badge
-                  label="Not enabled"
+                  label="未启用"
                   tone="warning"
                   interactive
                   onclick={() => openPluginPage(ext.linkedPluginId ?? ext.id)}
                 />
               {:else if execIntegration && ext.enabled}
-                <Badge label="API scripting" tone="muted" />
+                <Badge label="API 脚本" tone="muted" />
               {/if}
             {/snippet}
             <Button
@@ -969,14 +969,14 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
         {#each autoDiscoveredIntegrations as integ (integ.pluginId)}
           <SettingItem
             name={integ.displayName}
-            desc="Auto-discovered plugin exposing a public API. Enabling creates an editable API-scripting skill — the agent introspects the API before calling it. Runs on the main thread (not sandboxed)."
+            desc="自动发现暴露公开 API 的插件。启用后会创建一个可编辑的 API 脚本技能——智能体会在调用前探查该 API。运行于主线程（非沙箱）。"
           >
             {#snippet namePrefix()}
               <Icon name={getPluginIcon(integ.pluginId)} size="s" />
             {/snippet}
             {#snippet nameSuffix()}
               {#if integ.execEnabled}
-                <Badge label="API scripting" tone="muted" />
+                <Badge label="API 脚本" tone="muted" />
               {/if}
             {/snippet}
             <!--
@@ -997,7 +997,7 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
         {/each}
       </SettingGroup>
 
-      <SettingGroup heading="Subagents">
+      <SettingGroup heading="子智能体">
         <div class="setting-item agent-section-intro">
           <div class="setting-item-info">
             <div class="setting-item-description">
@@ -1016,7 +1016,7 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
             name={candidate.id === agentId ? `${candidate.name} (this agent)` : candidate.name}
             desc={hasModel
               ? getSubAgentModelLabel(candidate)
-              : "No chat model configured — cannot be used as a subagent"}
+              : "未配置聊天模型，无法用作子智能体"}
           >
             {#snippet namePrefix()}
               <Icon name={candidate.icon?.trim() || DEFAULT_AGENT_ICON} size="s" />
@@ -1030,7 +1030,7 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
         {/each}
       </SettingGroup>
 
-      <SettingGroup heading="Custom">
+      <SettingGroup heading="自定义">
         <div class="setting-item agent-section-intro">
           <div class="setting-item-info">
             <div class="setting-item-description">
@@ -1040,9 +1040,9 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
         </div>
 
         <!-- Custom skills — the user's own skills + MCP servers, each sub-group with its
-             own "Add" button on the heading row. -->
-        <SettingContainer name="Skills" isHeading>
-          <Button buttonText="Add skill" onClick={openAddSkillModal} />
+             own "添加" button on the heading row. -->
+        <SettingContainer name="技能" isHeading>
+          <Button buttonText="添加技能" onClick={openAddSkillModal} />
         </SettingContainer>
         {#each customSkills as ext (ext.id)}
           <ManagedEntityItem
@@ -1073,16 +1073,16 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
           </ManagedEntityItem>
         {/each}
         {#if customSkills.length === 0}
-          <div class="setting-item-description skill-empty-state">No custom skills yet</div>
+          <div class="setting-item-description skill-empty-state">暂无自定义技能</div>
         {/if}
 
         <!-- A heading row rather than a section with an intro paragraph, so the docs
              link takes the compact icon form here. -->
-        <SettingContainer name="MCP servers" isHeading>
+        <SettingContainer name="MCP 服务器" isHeading>
           {#snippet nameSuffix()}
-            <DocsLink doc="mcp" subject="MCP servers" />
+            <DocsLink doc="mcp" subject="MCP 服务器" />
           {/snippet}
-          <Button buttonText="Add server" onClick={openAddMCPServer} />
+          <Button buttonText="添加服务器" onClick={openAddMCPServer} />
         </SettingContainer>
         {#if mcpServerIds.length > 0}
           <div class="mcp-servers-list">
@@ -1094,7 +1094,7 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
                 class="mcp-entity"
                 name={config.displayName}
                 desc={config.url}
-                meta="Remote HTTP MCP server"
+                meta="远程 HTTP MCP 服务器"
               >
                 {#snippet badges()}
                   <Badge label="HTTP" tone="accent" />
@@ -1118,18 +1118,18 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
                   {#if isExpanded && toolsState}
                     <div class="mcp-tools-list">
                       {#if toolsState.loading}
-                        <div class="mcp-tools-loading">Loading tools...</div>
+                        <div class="mcp-tools-loading">正在加载工具…</div>
                       {:else if toolsState.error}
                         <div class="mcp-tools-error">
                           <Icon name="alert-circle" size="s" />
                           <span>{toolsState.error}</span>
                           <button
                             class="mcp-tools-retry"
-                            onclick={() => void fetchServerTools(serverId)}>Retry</button
+                            onclick={() => void fetchServerTools(serverId)}>重试</button
                           >
                         </div>
                       {:else if toolsState.tools.length === 0}
-                        <div class="mcp-tools-empty">No tools available</div>
+                        <div class="mcp-tools-empty">暂无可用工具</div>
                       {:else}
                         {#each toolsState.tools as tool (tool.name)}
                           <div class="mcp-tool-item">
@@ -1328,7 +1328,7 @@ function getServerToolsState(serverId: string): MCPServerToolsState | undefined 
   }
 
   /* Muted text like `ManagedEntitySection`'s empty state. Aligns with the
-     "Skills" / "MCP servers" heading rows above it rather than the card edge:
+     "技能" / "MCP 服务器" heading rows above it rather than the card edge:
      the message stands in for the whole list block, so it should line up with
      that block's heading. (The `.skill-entity` / `.mcp-entity` rows zero their
      own side padding because they carry their own internal inset — an empty

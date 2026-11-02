@@ -80,13 +80,13 @@ let savingFiles = $state(false);
 /** Drag-and-drop state */
 let isDragging = $state(false);
 let dragCounter = 0;
-let dragMessage = $state("Drop files here");
+let dragMessage = $state("将文件拖放到此处");
 let dragHasIssue = $state(false);
 // On mobile there's no keyboard shortcut at all — Enter is always a newline
 // there (see the `onEnter` handler below) and the send button is the only
 // way to submit, so there's nothing to hint. On desktop Enter sends except on a
 // list line, where it continues the list and Mod+Enter sends.
-const sendShortcutHint = isMobileUI() ? "" : `↵ · ${Platform.isMacOS ? "⌘↵" : "Ctrl+↵"} in a list`;
+const sendShortcutHint = isMobileUI() ? "" : `↵ · 列表内使用 ${Platform.isMacOS ? "⌘↵" : "Ctrl+↵"}`;
 let containerEl: HTMLDivElement | undefined = $state();
 // Floor for the input card when the composer runs out of pane height: its
 // controls plus one editor line. Summed from the rows around the editor, never
@@ -137,7 +137,7 @@ const sendButtonStyle = $derived.by(() => {
 	].join("; ");
 });
 
-const DEFAULT_DRAG_MESSAGE = "Drop files here";
+const DEFAULT_DRAG_MESSAGE = "将文件拖放到此处";
 
 const ACCEPTED_EXTENSIONS = new Set(["txt", "md", "csv", "json", "png", "jpg", "jpeg", "gif", "webp", "pdf"]);
 const IMAGE_EXTENSIONS = new Set(["png", "jpg", "jpeg", "gif", "webp"]);
@@ -345,7 +345,7 @@ async function seedEditAttachments(restored: ChatAttachment[]) {
 		const file = plugin.app.vault.getAbstractFileByPath(att.vaultPath);
 		if (!(file instanceof TFile)) {
 			new Notice(
-				`Attachment "${att.name}" no longer exists in the vault — it won't be part of the edited message.`,
+				`附件“${att.name}”在仓库中已不存在 — 它不会包含在编辑后的消息中。`,
 			);
 			continue;
 		}
@@ -479,8 +479,8 @@ $effect(() => {
 	// The text stays in the composer, so nothing is lost by explaining and stopping.
 	if (!hasChatModel) {
 		showActionNotice(
-			"Select a chat model to send this.",
-			selectChatModelAction("Select model", selectedAgentWriteTarget),
+			"请先选择聊天模型后再发送。",
+			selectChatModelAction("选择模型", selectedAgentWriteTarget),
 		);
 		return;
 	}
@@ -574,7 +574,7 @@ function initializeEditor() {
 		value: inputValue,
 		// Orients first-time users toward the product's actual job — chatting
 		// with the vault — instead of the generic "Type a message...".
-		placeholder: "Ask about your notes...",
+		placeholder: "就你的笔记提问…",
 		cls: "chat-markdown-editor",
 		enterVimInsertMode: true,
 		onPaste: (event) => {
@@ -628,13 +628,13 @@ function initializeEditor() {
 
 function attemptSend() {
 	if (savingFiles) {
-		new Notice("Please wait for attachments to finish saving");
+		new Notice("请等待附件保存完成");
 	} else if (!hasChatModel) {
 		// Reachable from the keyboard even though the button is disabled.
 		// The picker is the only way forward, so offer it rather than just saying no.
 		showActionNotice(
-			"Select a chat model before sending.",
-			selectChatModelAction("Select model", selectedAgentWriteTarget),
+			"发送前请先选择聊天模型。",
+			selectChatModelAction("选择模型", selectedAgentWriteTarget),
 		);
 	} else if (canSendMessage) {
 		if (isEditing) {
@@ -643,7 +643,7 @@ function attemptSend() {
 			sendMessage();
 		}
 	} else {
-		new Notice("Add text or attach a file before sending");
+		new Notice("请先输入文本或附加文件再发送");
 	}
 }
 
@@ -659,15 +659,15 @@ function cancelActiveEdit() {
 function saveEdit() {
 	if (!session || editingPairId === null) return;
 	if (savingFiles) {
-		new Notice("Please wait for attachments to finish saving");
+		new Notice("请等待附件保存完成");
 		return;
 	}
 	if (!hasContentToSend) {
-		new Notice("Add text or attach a file before saving");
+		new Notice("请先输入文本或附加文件再保存");
 		return;
 	}
 	if (!hasChatModel) {
-		new Notice("Select a chat model before saving.");
+		new Notice("保存前请先选择聊天模型。");
 		return;
 	}
 
@@ -676,7 +676,7 @@ function saveEdit() {
 	// message's attachment list, so text is optional exactly as it is on send.
 	const contentToSave = inputValue.trim().length > 0 ? inputValue : "Please analyze the attached files.";
 	session.editMessage(pairId, contentToSave, [...attachments]).catch((error) => {
-		new Notice(error instanceof Error ? error.message : "Failed to save edit");
+		new Notice(error instanceof Error ? error.message : "保存编辑失败");
 	});
 	// Not session.cancelEdit() — that's for an abandoned edit; this one succeeded.
 	// The draft that was stashed before the edit began is simply gone: the user
@@ -703,19 +703,19 @@ function saveEdit() {
 
 function sendMessage() {
 	if (savingFiles) {
-		new Notice("Please wait for attachments to finish saving");
+		new Notice("请等待附件保存完成");
 		return;
 	}
 	if (!hasContentToSend) {
-		new Notice("Add text or attach a file before sending");
+		new Notice("请先输入文本或附加文件再发送");
 		return;
 	}
 	if (!hasChatModel) {
-		new Notice("Select a chat model before sending.");
+		new Notice("发送前请先选择聊天模型。");
 		return;
 	}
 	if (!session) {
-		new Notice("Chat is not ready yet");
+		new Notice("聊天尚未就绪");
 		return;
 	}
 
@@ -729,7 +729,7 @@ function sendMessage() {
 			activeGraphNotes.length > 0 ? [...activeGraphNotes] : undefined,
 		)
 		.catch((error) => {
-			new Notice(error instanceof Error ? error.message : "Failed to send message");
+			new Notice(error instanceof Error ? error.message : "消息发送失败");
 		});
 	attachments = [];
 	attachmentSizes = new Map();
@@ -749,7 +749,7 @@ async function summarizeNow() {
 	try {
 		await session.summarizeHistoryNow();
 	} catch (error) {
-		new Notice(error instanceof Error ? error.message : "Failed to summarize history");
+		new Notice(error instanceof Error ? error.message : "历史摘要失败");
 	}
 }
 
@@ -809,7 +809,7 @@ async function getUniqueAttachmentPath(
 		attempt++;
 	}
 
-	throw new Error("Unable to allocate a unique attachment filename.");
+	throw new Error("无法分配唯一的附件文件名。");
 }
 
 /** Shared logic: save File objects to vault and add as attachments */
@@ -834,34 +834,34 @@ async function processFiles(files: File[]) {
 		for (const [index, sourceFile] of files.entries()) {
 			const file = withFallbackAttachmentName(sourceFile, index);
 			const ext = extensionFromFile(file);
-			if (!ACCEPTED_EXTENSIONS.has(ext)) {
-				new Notice(`Unsupported file type: .${ext}`);
-				continue;
-			}
+		if (!ACCEPTED_EXTENSIONS.has(ext)) {
+			new Notice(`不支持的文件类型：.${ext}`);
+			continue;
+		}
 
-			const isImage = ["png", "jpg", "jpeg", "gif", "webp"].includes(ext);
-			if (isImage && selectedModelSupportsVision === false) {
-				const modelName = selectedChatModel?.model ?? "the selected model";
-				new Notice(
-					`Image attachments require a vision-capable model. Switch models to attach images (current: ${modelName}).`,
-				);
-				continue;
-			}
+		const isImage = ["png", "jpg", "jpeg", "gif", "webp"].includes(ext);
+		if (isImage && selectedModelSupportsVision === false) {
+			const modelName = selectedChatModel?.model ?? "当前所选模型";
+			new Notice(
+				`图片附件需要支持视觉的模型。请切换模型后再附加图片（当前：${modelName}）。`,
+			);
+			continue;
+		}
 
-			if (isImage && selectedModelSupportsVision === undefined && !warnedUnknownVision) {
-				warnedUnknownVision = true;
-				new Notice("Model vision support is unknown; image analysis may fail for this model.");
-			}
+		if (isImage && selectedModelSupportsVision === undefined && !warnedUnknownVision) {
+			warnedUnknownVision = true;
+			new Notice("该模型的视觉能力未知，图片分析可能失败。");
+		}
 
-			if (file.size > MAX_FILE_SIZE_BYTES) {
-				new Notice(`File too large: ${file.name} exceeds 15 MB per-file limit.`);
-				continue;
-			}
+		if (file.size > MAX_FILE_SIZE_BYTES) {
+			new Notice(`文件过大：${file.name} 超过单文件 15 MB 限制。`);
+			continue;
+		}
 
-			if (totalBytes + file.size > MAX_TOTAL_ATTACHMENTS_BYTES) {
-				new Notice("Total attachment size exceeds 25 MB limit for one message.");
-				continue;
-			}
+		if (totalBytes + file.size > MAX_TOTAL_ATTACHMENTS_BYTES) {
+			new Notice("单条消息的附件总大小超过 25 MB 限制。");
+			continue;
+		}
 
 			const { vaultPath } = await getUniqueAttachmentPath(attachDir, file.name);
 
@@ -886,7 +886,7 @@ async function processFiles(files: File[]) {
 			if (hasPreview(mime)) publishPreview(vaultPath, await createPreviewUrl(buffer, mime));
 		}
 	} catch (error) {
-		new Notice(`Failed to attach file: ${error instanceof Error ? error.message : String(error)}`);
+		new Notice(`附加文件失败：${error instanceof Error ? error.message : String(error)}`);
 	} finally {
 		savingFiles = false;
 	}
@@ -896,40 +896,40 @@ async function attachVaultFile(file: TFile): Promise<boolean> {
 	const ext = file.extension.toLowerCase();
 
 	if (!ACCEPTED_EXTENSIONS.has(ext)) {
-		new Notice(`Unsupported file type: .${ext}`);
+		new Notice(`不支持的文件类型：.${ext}`);
 		return false;
 	}
 
 	const isImage = ["png", "jpg", "jpeg", "gif", "webp"].includes(ext);
 	if (isImage && selectedModelSupportsVision === false) {
-		const modelName = selectedChatModel?.model ?? "the selected model";
+		const modelName = selectedChatModel?.model ?? "当前所选模型";
 		showActionNotice(
-			`Image attachments require a vision-capable model (current: ${modelName}).`,
-			selectChatModelAction("Switch model", selectedAgentWriteTarget),
+			`图片附件需要支持视觉的模型（当前：${modelName}）。`,
+			selectChatModelAction("切换模型", selectedAgentWriteTarget),
 		);
 		return false;
 	}
 
 	if (isImage && selectedModelSupportsVision === undefined) {
-		new Notice("Model vision support is unknown; image analysis may fail for this model.");
+		new Notice("该模型的视觉能力未知，图片分析可能失败。");
 	}
 
 	try {
 		const size = file.stat.size;
 
 		if (size > MAX_FILE_SIZE_BYTES) {
-			new Notice(`File too large: ${file.name} exceeds 15 MB per-file limit.`);
+			new Notice(`文件过大：${file.name} 超过单文件 15 MB 限制。`);
 			return false;
 		}
 
 		const totalBytes = [...attachmentSizes.values()].reduce((sum, s) => sum + s, 0);
 		if (totalBytes + size > MAX_TOTAL_ATTACHMENTS_BYTES) {
-			new Notice("Total attachment size exceeds 25 MB limit for one message.");
+			new Notice("单条消息的附件总大小超过 25 MB 限制。");
 			return false;
 		}
 
 		if (attachments.some((att) => att.vaultPath === file.path)) {
-			new Notice(`${file.name} is already attached.`);
+			new Notice(`${file.name} 已附加。`);
 			return false;
 		}
 
@@ -945,7 +945,7 @@ async function attachVaultFile(file: TFile): Promise<boolean> {
 
 		return true;
 	} catch (error) {
-		new Notice(`Failed to attach file: ${error instanceof Error ? error.message : String(error)}`);
+		new Notice(`附加文件失败：${error instanceof Error ? error.message : String(error)}`);
 		return false;
 	}
 }
@@ -954,7 +954,7 @@ async function attachVaultFilesByPath(paths: string[]) {
 	if (paths.length === 0) return;
 
 	if (savingFiles) {
-		new Notice("Please wait for the current attachments to finish saving.");
+		new Notice("请等待当前附件保存完成。");
 		return;
 	}
 
@@ -966,12 +966,12 @@ async function attachVaultFilesByPath(paths: string[]) {
 		for (const path of paths) {
 			const abstract = app.vault.getAbstractFileByPath(path);
 			if (!abstract) {
-				new Notice(`File not found: ${path}`);
+				new Notice(`找不到文件：${path}`);
 				continue;
 			}
 
 			if (!(abstract instanceof TFile)) {
-				new Notice(`Only files can be attached: ${path}`);
+				new Notice(`只能附加文件：${path}`);
 				continue;
 			}
 
@@ -1007,7 +1007,7 @@ async function onEditorPaste(event: ClipboardEvent) {
 
 	event.preventDefault();
 	if (savingFiles) {
-		new Notice("Please wait for the current attachments to finish saving.");
+		new Notice("请等待当前附件保存完成。");
 		return;
 	}
 
@@ -1017,7 +1017,7 @@ async function onEditorPaste(event: ClipboardEvent) {
 async function onFileAttachment(event: Event) {
 	const input = event.target as HTMLInputElement;
 	if (savingFiles) {
-		new Notice("Please wait for the current attachments to finish saving.");
+		new Notice("请等待当前附件保存完成。");
 		input.value = "";
 		return;
 	}
@@ -1034,9 +1034,9 @@ function openVaultPicker() {
 	new SearchModal(getPlugin().app, {
 		picker: {
 			pickerText: {
-				searchPlaceholder: "Search vault files to attach...",
-				confirmVerb: "Attach",
-				selectionLabel: "to attach",
+				searchPlaceholder: "搜索仓库文件以附加…",
+				confirmVerb: "附加",
+				selectionLabel: "待附加",
 			},
 			pickerExistingPaths: attachments.map((att) => att.vaultPath),
 			onAddPaths: (paths) => attachVaultFilesByPath(paths),
@@ -1095,9 +1095,9 @@ function getDragFeedback(dataTransfer?: DataTransfer | null): {
 	}
 
 	if (hasImage && selectedModelSupportsVision === false) {
-		const modelName = selectedChatModel?.model ?? "current model";
+		const modelName = selectedChatModel?.model ?? "当前模型";
 		return {
-			message: `Images are not supported by ${modelName}. Switch to a vision-capable model.`,
+			message: `${modelName} 不支持图片。请切换到支持视觉的模型。`,
 			hasIssue: true,
 			shouldBlockDrop: true,
 		};
@@ -1105,7 +1105,7 @@ function getDragFeedback(dataTransfer?: DataTransfer | null): {
 
 	if (hasClearlyUnsupported) {
 		return {
-			message: "Some files may be unsupported (accepted: txt, md, csv, json, images, pdf).",
+			message: "部分文件可能不受支持（支持：txt、md、csv、json、图片、pdf）。",
 			hasIssue: true,
 			shouldBlockDrop: false,
 		};
@@ -1155,7 +1155,7 @@ export async function handleDrop(event: DragEvent) {
 	resetDragState();
 
 	if (savingFiles) {
-		new Notice("Please wait for the current attachments to finish saving.");
+		new Notice("请等待当前附件保存完成。");
 		return;
 	}
 
@@ -1206,12 +1206,12 @@ function canPromoteVisibleNoteToAttachment(note: VisibleNote): boolean {
 /** Promote the active visible note to a content attachment (inline its bytes/content). */
 async function promoteVisibleNoteToAttachment(note: VisibleNote) {
 	if (!canPromoteVisibleNoteToAttachment(note)) {
-		new Notice(`Unsupported file type: .${note.file.extension.toLowerCase()}`);
+		new Notice(`不支持的文件类型：.${note.file.extension.toLowerCase()}`);
 		return;
 	}
 
 	if (savingFiles) {
-		new Notice("Please wait for the current attachments to finish saving.");
+		new Notice("请等待当前附件保存完成。");
 		return;
 	}
 
@@ -1233,10 +1233,10 @@ async function promoteVisibleNoteToAttachment(note: VisibleNote) {
     <button
       class="provider-unreachable-banner flex flex-row items-center gap-1.5 text-xs cursor-pointer"
       onclick={models.refetchProviders}
-      title="Click to retry connection"
+      title="点击重试连接"
     >
       <div class="h-icon-xs shrink-0" use:icon={"alert-triangle"} style="--icon-size: var(--icon-xs)"></div>
-      <span>Cannot connect to {selectedChatModel.provider} — click to retry</span>
+      <span>无法连接到 {selectedChatModel.provider} — 点击重试</span>
     </button>
   {/if}
   <PendingChangesBar {threadPath} />
@@ -1282,7 +1282,7 @@ async function promoteVisibleNoteToAttachment(note: VisibleNote) {
         attachmentPreviewUrls={previewUrls}
       />
       {#if savingFiles}
-        <div class="text-xs text-text-muted flex items-center">Saving...</div>
+        <div class="text-xs text-text-muted flex items-center">正在保存…</div>
       {/if}
     </div>
 
@@ -1349,8 +1349,8 @@ async function promoteVisibleNoteToAttachment(note: VisibleNote) {
         {#if !session || session.messageState === MessageState.idle}
           {#if isEditing && isMobileUI()}
             <Button
-              ariaLabel="Cancel edit"
-              tooltip="Cancel edit"
+              ariaLabel="取消编辑"
+              tooltip="取消编辑"
               onClick={cancelActiveEdit}
               styles="chat-input-icon-button clickable-icon mr-2"
               iconId="x"
@@ -1358,16 +1358,16 @@ async function promoteVisibleNoteToAttachment(note: VisibleNote) {
           {/if}
           <Button
             disabled={!canSendMessage || savingFiles}
-            ariaLabel={isEditing ? "save edit" : "send message"}
+            ariaLabel={isEditing ? "保存编辑" : "发送消息"}
             tooltip={!hasChatModel
-              ? "Select a chat model first"
+              ? "请先选择聊天模型"
               : isEditing
                 ? sendShortcutHint
-                  ? `Save edit (${sendShortcutHint})`
-                  : "Save edit"
+                  ? `保存编辑（${sendShortcutHint}）`
+                  : "保存编辑"
                 : sendShortcutHint
-                  ? `Send message (${sendShortcutHint})`
-                  : "Send message"}
+                  ? `发送消息（${sendShortcutHint}）`
+                  : "发送消息"}
             onClick={attemptSend}
             dataTestId="send-message-button"
             styles="send-message-button p-0 border-none cursor-pointer flex items-center justify-center shrink-0 transition-all duration-200 disabled:cursor-not-allowed"
@@ -1376,8 +1376,8 @@ async function promoteVisibleNoteToAttachment(note: VisibleNote) {
           />
         {:else if session.messageState === MessageState.answering}
           <Button
-            ariaLabel="stop streaming"
-            tooltip="Stop streaming"
+            ariaLabel="停止流式输出"
+            tooltip="停止流式输出"
             onClick={() => session?.stopStreaming()}
             styles="send-message-button p-0 border-none cursor-pointer flex items-center justify-center shrink-0 transition-all duration-200"
             style={sendButtonStyle}

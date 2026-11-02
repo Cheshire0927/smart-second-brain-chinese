@@ -96,7 +96,7 @@ function restoreForm(snapshot: FormSnapshot) {
 	headers = snapshot.headers;
 }
 
-// Connection probe. There is no "Test connection" button: like the provider
+// Connection probe. There is no "测试连接" button: like the provider
 // setup modal, the connection is checked automatically whenever the URL or
 // headers change, and the verdict lives in the footer next to the actions.
 //
@@ -182,7 +182,7 @@ $effect(() => {
 });
 
 onMount(() => {
-	modal.setTitle(isEditing ? `Edit MCP Server: ${capturedExistingConfig?.displayName}` : "Add MCP Server");
+	modal.setTitle(isEditing ? `Edit MCP Server: ${capturedExistingConfig?.displayName}` : "添加 MCP 服务器");
 });
 
 function parseHeaders(input: string): Record<string, string> {
@@ -217,16 +217,16 @@ function parseHeaders(input: string): Record<string, string> {
  */
 function applyImportedJson(text: string): string | null {
 	const raw = text.trim();
-	if (!raw) return "Paste a configuration first";
+	if (!raw) return "请先粘贴配置";
 
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(raw);
 	} catch (err) {
-		return `Invalid JSON: ${err instanceof Error ? err.message : "could not parse"}`;
+		return `Invalid JSON: ${err instanceof Error ? err.message : "无法解析"}`;
 	}
 	if (!parsed || typeof parsed !== "object") {
-		return "Configuration must be a JSON object";
+		return "配置必须是 JSON 对象";
 	}
 
 	const root = parsed as Record<string, unknown>;
@@ -246,10 +246,10 @@ function applyImportedJson(text: string): string | null {
 			([, v]) => v && typeof v === "object",
 		);
 		if (entries.length === 0) {
-			return "No server entries found in the configuration";
+			return "配置中未找到服务器条目";
 		}
 		if (entries.length > 1) {
-			return "Configuration contains multiple servers — paste one at a time";
+			return "配置包含多个服务器，请一次粘贴一个";
 		}
 		entryKey = entries[0][0];
 		entry = entries[0][1] as Record<string, unknown>;
@@ -257,7 +257,7 @@ function applyImportedJson(text: string): string | null {
 		// Bare single-server object with no wrapper.
 		entry = scope;
 	} else {
-		return "Could not find an MCP server definition (expected an `mcpServers` or `servers` object)";
+		return "未找到 MCP 服务器定义（应为 `mcpServers` 或 `servers` 对象）";
 	}
 
 	// `transport` is ours, `type` is VS Code's; fall back to inferring from
@@ -270,10 +270,10 @@ function applyImportedJson(text: string): string | null {
 	const isStdio = declared === "stdio" || (!declared && !hasUrl && hasCommand);
 
 	if (isStdio) {
-		return "This is a local command (stdio) server. Smart Second Brain only connects to MCP servers over HTTP.";
+		return "这是本地命令（stdio）服务器。Smart Second Brain 仅通过 HTTP 连接 MCP 服务器。";
 	}
 	if (!hasUrl) {
-		return "Remote server entry is missing a `url`";
+		return "远程服务器条目缺少 `url`";
 	}
 
 	// Only name an unnamed form — never clobber a name the user already typed.
@@ -350,8 +350,8 @@ function handleConfigPaste(event: ClipboardEvent): boolean {
 	importError = null;
 	importUndo = before;
 	importNotice = name.trim()
-		? "Imported from pasted JSON."
-		: "Imported from pasted JSON — enter a name for this server.";
+		? "已从粘贴的 JSON 导入。"
+		: "已从粘贴的 JSON 导入——请为此服务器填写名称。";
 	return true;
 }
 
@@ -365,28 +365,28 @@ function undoImport() {
 
 function validateForm(): string | null {
 	if (!name.trim()) {
-		return "Name is required";
+		return "请填写名称";
 	}
 
 	const newServerId = generateServerId(name);
 	if (!newServerId) {
-		return "Name must contain at least one letter or number";
+		return "名称必须至少包含一个字母或数字";
 	}
 
 	// Check for duplicate ID (only when creating new or changing name)
 	if (!isEditing || newServerId !== capturedServerId) {
 		if (accessors.hasServer(newServerId)) {
-			return "A server with this name already exists";
+			return "同名服务器已存在";
 		}
 	}
 
 	if (!url.trim()) {
-		return "URL is required";
+		return "请填写 URL";
 	}
 	try {
 		new URL(url.trim());
 	} catch {
-		return "Invalid URL format";
+		return "URL 格式无效";
 	}
 
 	return null;
@@ -431,7 +431,7 @@ async function handleDelete() {
 function describeProbeError(err: unknown): string {
 	const message = err instanceof Error ? err.message : String(err);
 	const cause = message.replace(/^Failed to connect to [^"]*"[^"]*":\s*/, "").replace(/^Error:\s*/, "");
-	return cause.trim() || "Connection failed";
+	return cause.trim() || "连接失败";
 }
 
 /**
@@ -491,7 +491,7 @@ async function probeConnection(key: string, target: string, headerText: string):
       <Icon name="check-circle" />
       <span>{importNotice}</span>
       {#if importUndo}
-        <button type="button" class="mcp-banner-action" onclick={undoImport}>Undo</button>
+        <button type="button" class="mcp-banner-action" onclick={undoImport}>撤销</button>
       {/if}
     </div>
   {:else if importError}
@@ -510,7 +510,7 @@ async function probeConnection(key: string, target: string, headerText: string):
        right-hand column — the reason the old markup reached for ModalField,
        whose larger label weight made those fields read as headings. -->
   <SettingGroup>
-    <SettingContainer name="Name" desc="A name for this MCP server">
+    <SettingContainer name="名称" desc="此 MCP 服务器的名称">
       <Text
         id="mcp-server-name"
         inputType="text"
@@ -525,8 +525,8 @@ async function probeConnection(key: string, target: string, headerText: string):
            space to duplicate a shortcut people reach for by reflex. -->
       <SettingContainer
         class="mcp-row--stacked"
-        name="Server URL"
-        desc="The URL of the MCP server — or paste the server's JSON config to fill this form"
+        name="服务器 URL"
+        desc="MCP 服务器的 URL——也可粘贴服务器的 JSON 配置自动填表"
       >
         <!-- Committed on blur/Enter, not per keystroke — see the probe notes in
              the script for why the connection check must not chase typing. -->
@@ -542,8 +542,8 @@ async function probeConnection(key: string, target: string, headerText: string):
 
       <SettingContainer
         class="mcp-row--stacked"
-        name="Headers"
-        desc="Optional — one per line, Header-Name: value"
+        name="请求头"
+        desc="可选——每行一条，格式为 Header-Name: value"
       >
         <TextArea
           id="mcp-server-headers"
@@ -580,7 +580,7 @@ async function probeConnection(key: string, target: string, headerText: string):
        button, so a destructive click isn't adjacent to the one people aim for. -->
   <div class="modal-button-container mcp-actions">
     {#if isEditing}
-      <Button buttonText="Delete" styles="mod-warning" onClick={handleDelete} />
+      <Button buttonText="删除" styles="mod-warning" onClick={handleDelete} />
     {/if}
     <div class="mcp-connection-status" role="status" aria-live="polite">
       {#if connectionStatus === "held"}
@@ -594,26 +594,26 @@ async function probeConnection(key: string, target: string, headerText: string):
         </span>
       {:else if connectionStatus === "checking"}
         <CircularLoader size={16} color="var(--text-muted)" />
-        <span class="mcp-connection-text">Checking connection…</span>
+        <span class="mcp-connection-text">正在检查连接…</span>
       {:else if connectionStatus === "connected"}
         <span class="mcp-connection-icon is-success"><Icon name="check-circle" size="xs" /></span>
         <span class="mcp-connection-text is-success">
           {discoveredTools.length === 0
-            ? "Connected — no tools offered"
+            ? "已连接——未提供任何工具"
             : `Connected — ${discoveredTools.length} tool${discoveredTools.length === 1 ? "" : "s"}`}
         </span>
       {:else if connectionStatus === "failed"}
         <span class="mcp-connection-icon is-error"><Icon name="x-circle" size="xs" /></span>
-        <span class="mcp-connection-text is-error">{probe?.error ?? "Connection failed"}</span>
+        <span class="mcp-connection-text is-error">{probe?.error ?? "连接失败"}</span>
       {:else}
-        <span class="mcp-connection-text is-muted">Enter the server URL — the connection is checked automatically.</span>
+        <span class="mcp-connection-text is-muted">填写服务器 URL——连接会自动检查。</span>
       {/if}
     </div>
     <!-- Kept together so a long status wraps its own text instead of splitting
          the confirm pair onto two lines. -->
     <div class="mcp-actions-primary">
-      <Button buttonText="Cancel" onClick={() => modal.close()} />
-      <Button buttonText={isEditing ? "Save" : "Add Server"} cta={canSave} disabled={!canSave} onClick={handleSave} />
+      <Button buttonText="取消" onClick={() => modal.close()} />
+      <Button buttonText={isEditing ? "保存" : "添加服务器"} cta={canSave} disabled={!canSave} onClick={handleSave} />
     </div>
   </div>
 </div>
@@ -724,7 +724,7 @@ async function probeConnection(key: string, target: string, headerText: string):
     gap: 8px;
     /* Core gives the footer a large top margin for modals whose body sits flush
        against it; here the flex gap already provides the spacing, so the two
-       stacked and left a visible hole between "Test connection" and the buttons. */
+       stacked and left a visible hole between "测试连接" and the buttons. */
     margin-top: 0;
   }
 

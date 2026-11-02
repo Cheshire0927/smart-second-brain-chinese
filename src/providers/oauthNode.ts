@@ -26,7 +26,7 @@ type CreateServer = typeof import("node:http").createServer;
 export function requireNodeHttp(): CreateServer {
 	const req = (window as { require?: (id: string) => unknown }).require;
 	if (typeof req !== "function") {
-		throw new Error("OAuth sign-in requires a desktop environment (node:http is unavailable).");
+		throw new Error("OAuth 登录需要桌面环境（node:http 不可用）。");
 	}
 	const http = req("http") as { createServer: CreateServer };
 	return http.createServer;

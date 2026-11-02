@@ -57,19 +57,19 @@ export const SUGGESTED_QUERIES: SuggestedQuery[] = [
 	{
 		id: "help-overview",
 		icon: "sparkles",
-		label: "What can you help me with?",
+		label: "你能帮我做什么？",
 	},
 	{
 		id: "summarize-recent",
 		icon: "clock",
-		label: "Summarize my recent notes",
+		label: "总结我最近的笔记",
 		requires: "search",
 	},
 	{
 		id: "find-notes",
 		icon: "search",
-		label: "Find notes about a topic",
-		query: "Find my notes about ",
+		label: "查找某个主题的笔记",
+		query: "查找我的笔记：关于 ",
 		requires: "search",
 	},
 ];
@@ -113,19 +113,19 @@ export const INTEGRATION_SUGGESTIONS: IntegrationSuggestion[] = [
 		id: "int-tasknotes",
 		pluginId: "tasknotes",
 		icon: "check-square",
-		label: "What tasks are due this week?",
+		label: "本周有哪些任务到期？",
 	},
 	{
 		id: "int-tasks",
 		pluginId: "obsidian-tasks-plugin",
 		icon: "check-square",
-		label: "What tasks are overdue?",
+		label: "哪些任务已逾期？",
 	},
 	{
 		id: "int-dataview",
 		pluginId: "dataview",
 		icon: "code",
-		label: "Show a table of my notes by tag",
+		label: "按标签用表格展示我的笔记",
 	},
 ];
 

@@ -30,7 +30,7 @@ export class ConfirmModal extends Modal {
 		app: App,
 		private readonly title: string,
 		private readonly message: string,
-		private readonly confirmLabel = "Delete",
+		private readonly confirmLabel = "删除",
 		private readonly checkbox?: ConfirmCheckbox,
 	) {
 		super(app);
@@ -64,7 +64,7 @@ export class ConfirmModal extends Modal {
 
 		const buttonRow = this.contentEl.createDiv({ cls: "modal-button-container" });
 
-		buttonRow.createEl("button", { text: "Cancel" }).addEventListener("click", () => {
+		buttonRow.createEl("button", { text: "取消" }).addEventListener("click", () => {
 			this.resolved = true;
 			this.resolve({ confirmed: false, checked: false });
 			this.close();
@@ -90,7 +90,7 @@ export class ConfirmModal extends Modal {
 
 /** Show an Obsidian-native confirmation dialog. Resolves `true` if confirmed. */
 export async function confirmDelete(app: App, entityName: string): Promise<boolean> {
-	const modal = new ConfirmModal(app, "Confirm deletion", `Delete "${entityName}"?`);
+	const modal = new ConfirmModal(app, "确认删除", `删除 "${entityName}"？`);
 	modal.open();
 	return (await modal.promise).confirmed;
 }
@@ -103,9 +103,9 @@ export function confirmDeleteWithOption(
 	app: App,
 	entityName: string,
 	checkbox: ConfirmCheckbox,
-	message = `Delete "${entityName}"?`,
+	message = `删除 "${entityName}"？`,
 ): Promise<ConfirmResult> {
-	const modal = new ConfirmModal(app, "Confirm deletion", message, "Delete", checkbox);
+	const modal = new ConfirmModal(app, "确认删除", message, "删除", checkbox);
 	modal.open();
 	return modal.promise;
 }

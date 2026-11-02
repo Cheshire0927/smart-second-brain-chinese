@@ -122,7 +122,7 @@ export function showSettingsLinkNotice(
 // ---------------------------------------------------------------------------
 
 /** Navigate to one of the plugin's own settings tabs. */
-export function settingsAction(tab: PluginSettingsTabId, label = "Open settings"): NoticeAction {
+export function settingsAction(tab: PluginSettingsTabId, label = "打开设置"): NoticeAction {
 	return {
 		label,
 		run: () => {
@@ -144,7 +144,7 @@ export function obsidianSettingsAction(tabId: string, label: string): NoticeActi
 }
 
 /** Open the provider setup modal on the picker step (precedent: ChatRecommendations.svelte). */
-export function addProviderAction(label = "Add a provider"): NoticeAction {
+export function addProviderAction(label = "添加服务商"): NoticeAction {
 	return {
 		label,
 		run: async () => {
@@ -157,7 +157,7 @@ export function addProviderAction(label = "Add a provider"): NoticeAction {
 }
 
 /** Open the provider setup modal for an existing provider (precedent: ProviderItem.svelte). */
-export function editProviderAction(providerId: string, label = "Check provider settings"): NoticeAction {
+export function editProviderAction(providerId: string, label = "检查服务商设置"): NoticeAction {
 	return {
 		label,
 		run: async () => {
@@ -183,7 +183,7 @@ export function editProviderAction(providerId: string, label = "Check provider s
  * between the notice appearing and the click) must NOT fall through to the global agent,
  * or a stale notice silently rewrites an unrelated one.
  */
-export function selectChatModelAction(label = "Select a model", agentId?: string): NoticeAction {
+export function selectChatModelAction(label = "选择模型", agentId?: string): NoticeAction {
 	return {
 		label,
 		run: async () => {
@@ -201,7 +201,7 @@ export function selectChatModelAction(label = "Select a model", agentId?: string
 			if (!agent) {
 				// Only reachable when the targeted agent was deleted after the notice fired.
 				// Say so rather than dropping the click, which would read as a dead link.
-				new Notice("That agent no longer exists. Pick a model from the agent you want to use.");
+				new Notice("该智能体已不存在，请在你想使用的智能体中选择模型。");
 				return;
 			}
 
@@ -216,7 +216,7 @@ export function selectChatModelAction(label = "Select a model", agentId?: string
 				// also picks up a chatModel that changed while the picker was open.
 				const target = data.getAgent(agent.id);
 				if (!target) {
-					new Notice("That agent no longer exists, so the model wasn't saved.");
+					new Notice("该智能体已不存在，模型未保存。");
 					return;
 				}
 				data.updateAgent(target.id, {
@@ -233,7 +233,7 @@ export function selectChatModelAction(label = "Select a model", agentId?: string
  */
 export function configureEmbedIndexAction(
 	purpose: "search" | "graph",
-	label = "Configure embedding index",
+	label = "配置嵌入索引",
 ): NoticeAction {
 	return {
 		label,
@@ -269,7 +269,7 @@ export function configureEmbedIndexAction(
 }
 
 /** Open the agent editor (precedent: AgentPopover.svelte). */
-export function editAgentAction(agentId: string, label = "Edit agent"): NoticeAction {
+export function editAgentAction(agentId: string, label = "编辑智能体"): NoticeAction {
 	return {
 		label,
 		run: async () => {
@@ -282,7 +282,7 @@ export function editAgentAction(agentId: string, label = "Edit agent"): NoticeAc
 }
 
 /** Open the indexing report for an index (precedent: EmbeddingIndexSection.svelte). */
-export function indexingReportAction(indexId: string, label = "View report"): NoticeAction {
+export function indexingReportAction(indexId: string, label = "查看报告"): NoticeAction {
 	return {
 		label,
 		run: async () => {
@@ -295,7 +295,7 @@ export function indexingReportAction(indexId: string, label = "View report"): No
 }
 
 /** Open a vault note in a new tab (precedent: AgentEditorModal.svelte's `openSkillNote`). */
-export function openNoteAction(path: string, label = "Open note"): NoticeAction {
+export function openNoteAction(path: string, label = "打开笔记"): NoticeAction {
 	return {
 		label,
 		run: () => {
@@ -306,7 +306,7 @@ export function openNoteAction(path: string, label = "Open note"): NoticeAction 
 }
 
 /** Reveal an existing chat or create one (precedent: SmartGraphView.svelte's chat reveal). */
-export function openChatAction(label = "Open chat"): NoticeAction {
+export function openChatAction(label = "打开聊天"): NoticeAction {
 	return {
 		label,
 		run: async () => {

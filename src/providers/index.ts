@@ -24,32 +24,32 @@ const PROVIDER_TEMPLATES: readonly ProviderTemplateDefinition[] = [
 	{
 		id: "openai",
 		displayName: "OpenAI",
-		description: "OpenAI models via ChatGPT sign-in or an API key.",
+		description: "通过 ChatGPT 登录或 API 密钥使用 OpenAI 模型。",
 	},
 	{
 		id: "openai-compatible",
-		displayName: "Custom",
-		description: "Flexible OpenAI-style provider for OpenAI and compatible endpoints.",
+		displayName: "自定义",
+		description: "灵活的 OpenAI 风格服务商，可用于 OpenAI 及兼容端点。",
 	},
 	{
 		id: "anthropic",
 		displayName: "Anthropic",
-		description: "Claude models via Anthropic's API.",
+		description: "通过 Anthropic API 使用 Claude 模型。",
 	},
 	{
 		id: "ollama",
 		displayName: "Ollama",
-		description: "Local Ollama models over the Ollama API.",
+		description: "通过 Ollama API 使用本地 Ollama 模型。",
 	},
 	{
 		id: "omlx",
 		displayName: "oMLX",
-		description: "Local MLX models on your Mac via oMLX's OpenAI-compatible server.",
+		description: "通过 oMLX 的 OpenAI 兼容服务在 Mac 上使用本地 MLX 模型。",
 	},
 	{
 		id: "openrouter",
 		displayName: "OpenRouter",
-		description: "OpenRouter account and model catalog.",
+		description: "OpenRouter 账户与模型目录。",
 	},
 ] as const;
 

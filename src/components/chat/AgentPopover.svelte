@@ -60,7 +60,7 @@ function openAgentEditor(agentId: string) {
 }
 
 function createNewAgent() {
-	const agent = data.createAgent("New Agent");
+	const agent = data.createAgent("新智能体");
 	data.selectedAgentId = agent.id;
 	// Seed the base prompt note immediately so it exists in the vault before the editor opens.
 	void plugin.promptFilesService?.ensureAgentPrompt(agent.id);
@@ -74,13 +74,13 @@ function createNewAgent() {
     onClick={() => openAgentEditor("default-agent")}
     styles="clickable-icon flex flex-row items-center gap-1"
   >
-    <div class="text-[--text-muted] text-xs">Configure Agent</div>
+    <div class="text-[--text-muted] text-xs">配置智能体</div>
   </Button>
 {:else}
   <PickerPopover
     bind:open={isOpen}
     bind:element={customAnchor}
-    tooltip="Agent options"
+    tooltip="智能体选项"
     dataTestId="agent-select-button"
     triggerStyles="clickable-icon model-select-btn"
     triggerClass="agent-popover-trigger"
@@ -96,7 +96,7 @@ function createNewAgent() {
         <span class="agent-pill-icon">
           <Icon name={getAgentIcon(selectedAgent)} size="xs" />
         </span>
-        <span class="agent-pill-label">{selectedAgent?.name ?? "S2B Agent"}</span>
+        <span class="agent-pill-label">{selectedAgent?.name ?? "S2B 智能体"}</span>
       </span>
     {/snippet}
 
@@ -107,7 +107,7 @@ function createNewAgent() {
         active={isSelected}
         onClick={() => selectAgent(agent)}
         onActionClick={() => openAgentEditor(agent.id)}
-        actionTitle="Edit agent"
+        actionTitle="编辑智能体"
       >
         {#snippet leading()}
           <span class="agent-option-icon">
@@ -121,7 +121,7 @@ function createNewAgent() {
 
         {#if isDefault}
           {#snippet meta()}
-            default
+            默认
           {/snippet}
         {/if}
 
@@ -139,13 +139,13 @@ function createNewAgent() {
 
     <div class="picker-popover-separator menu-separator"></div>
 
-    <PickerOptionRow onClick={createNewAgent} actionTitle="Create agent">
+    <PickerOptionRow onClick={createNewAgent} actionTitle="创建智能体">
       {#snippet leading()}
         <Icon name="plus" size="xs" />
       {/snippet}
 
       {#snippet content()}
-        New Agent
+        新建智能体
       {/snippet}
     </PickerOptionRow>
   </PickerPopover>

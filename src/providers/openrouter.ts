@@ -79,7 +79,7 @@ export const openrouterProvider: EmbeddingProviderDefinition = {
 	// Setup Instructions
 	// =========================================================================
 	setupInstructions: {
-		steps: ["Create an account at OpenRouter", "Generate an API key from the Keys page", "Paste the API key below"],
+		steps: ["在 OpenRouter 注册账户", "在 Keys 页面生成 API 密钥", "将 API 密钥粘贴到下方"],
 		link: {
 			url: "https://openrouter.ai/keys",
 			text: "OpenRouter Keys",
@@ -92,7 +92,7 @@ export const openrouterProvider: EmbeddingProviderDefinition = {
 	oauth: {
 		label: "OpenRouter",
 		icon: "log-in",
-		description: "Authorize in your browser to connect without manually creating an API key.",
+		description: "在浏览器中完成授权即可连接，无需手动创建 API 密钥。",
 		signIn: async () => ({ kind: "apiKey", apiKey: await signInWithOpenRouter() }),
 		cancelSignIn: cancelOpenRouterSignIn,
 		supportsApiKey: true,
@@ -108,15 +108,15 @@ export const openrouterProvider: EmbeddingProviderDefinition = {
 	// =========================================================================
 	auth: {
 		apiKey: {
-			label: "API Key",
-			description: "Your OpenRouter API key for authentication",
+			label: "API 密钥",
+			description: "用于身份验证的 OpenRouter API 密钥",
 			kind: "secret",
 			required: true,
 			placeholder: "sk-or-...",
 		},
 		headers: {
-			label: "Custom Headers",
-			description: "Additional headers as JSON (optional)",
+			label: "自定义请求头",
+			description: "以 JSON 填写的附加请求头（可选）",
 			kind: "textarea",
 			required: false,
 			placeholder: '{"X-Custom-Header": "value"}',
@@ -185,7 +185,7 @@ export const openrouterProvider: EmbeddingProviderDefinition = {
 
 	validateAuth: async (auth: AuthObject): Promise<AuthValidationResult> => {
 		if (!auth.apiKey?.trim()) {
-			return { valid: false, error: "API key is required" };
+			return { valid: false, error: "需要 API 密钥" };
 		}
 
 		const headers: Record<string, string> = {
@@ -221,23 +221,23 @@ export const openrouterProvider: EmbeddingProviderDefinition = {
 			if (response.status === 401 || response.status === 403) {
 				return {
 					valid: false,
-					error: errorMessage || `Authentication failed (${response.status})`,
+					error: errorMessage || `身份验证失败（${response.status}）`,
 				};
 			}
 
 			return {
 				valid: false,
-				error: errorMessage || response.text || `Request failed with status ${response.status}`,
+				error: errorMessage || response.text || `请求失败，状态码 ${response.status}`,
 			};
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			return { valid: false, error: `Connection failed: ${message}` };
+			return { valid: false, error: `连接失败：${message}` };
 		}
 	},
 
 	discoverModels: async (auth: AuthObject): Promise<string[]> => {
 		if (!auth.apiKey?.trim()) {
-			throw new Error("OpenRouter model discovery requires an API key.");
+			throw new Error("发现 OpenRouter 模型需要 API 密钥。");
 		}
 
 		const headers: Record<string, string> = {
@@ -257,7 +257,7 @@ export const openrouterProvider: EmbeddingProviderDefinition = {
 
 		if (!response.ok) {
 			const errorBody = await safeReadText(response);
-			throw new Error(`Model discovery failed: ${errorBody || response.statusText}`);
+			throw new Error(`模型发现失败：${errorBody || response.statusText}`);
 		}
 
 		const payload = (await response.json()) as OpenRouterModelResponse;
@@ -271,7 +271,7 @@ export const openrouterProvider: EmbeddingProviderDefinition = {
 
 	discoverEmbeddingModels: async (auth: AuthObject): Promise<string[]> => {
 		if (!auth.apiKey?.trim()) {
-			throw new Error("OpenRouter embedding model discovery requires an API key.");
+			throw new Error("发现 OpenRouter 嵌入模型需要 API 密钥。");
 		}
 
 		const headers: Record<string, string> = {
@@ -304,7 +304,7 @@ export const openrouterProvider: EmbeddingProviderDefinition = {
 
 			if (!response.ok) {
 				const errorBody = await safeReadText(response);
-				throw new Error(`Embedding model discovery failed: ${errorBody || response.statusText}`);
+				throw new Error(`嵌入模型发现失败：${errorBody || response.statusText}`);
 			}
 
 			const payload = (await response.json()) as OpenRouterModelResponse;

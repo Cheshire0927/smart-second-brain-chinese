@@ -15,7 +15,7 @@ export class AddSkillModal extends SvelteModal {
 	}
 
 	onOpen() {
-		this.setTitle("Add Custom Skill");
+		this.setTitle("添加自定义技能");
 		// The modal is just a couple of text fields now (instructions are written in the opened
 		// note), so let it size to its content instead of forcing a tall fixed height.
 		this.mountComponent(

@@ -67,14 +67,14 @@ export class ProviderSetupModal extends Modal {
 	refreshTitle(displayName = this.resolveDisplayName()) {
 		// While picking a provider, keep a neutral title.
 		if (this.createdDraft && !this.templateId) {
-			this.setTitle("Add Provider");
+			this.setTitle("添加服务商");
 			return;
 		}
 		if (this.createdDraft) {
-			this.setTitle("Setup Provider");
+			this.setTitle("设置服务商");
 			return;
 		}
-		this.setTitle(`Edit ${displayName}`);
+		this.setTitle(`编辑 ${displayName}`);
 	}
 
 	onOpen() {

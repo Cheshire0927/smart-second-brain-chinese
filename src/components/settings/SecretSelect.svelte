@@ -51,8 +51,8 @@ $effect(() => {
 		// Reuse the local handler rather than opening AddSecretModal directly: it also
 		// refreshes the list and clears the notified/attempt flags on success.
 		showActionNotice(
-			`Secret "${value}" not found in Obsidian Keychain.`,
-			{ label: "Add a secret", run: handleAddSecret },
+			`在 Obsidian 钥匙串中找不到密钥「${value}」。`,
+			{ label: "添加密钥", run: handleAddSecret },
 			10000,
 		);
 		hasNotifiedMissing = true;
@@ -95,7 +95,7 @@ function handleAddSecret() {
 
 // Dropdown options
 let dropdownOptions = $derived([
-	{ display: "(Nothing selected)", value: "" },
+	{ display: "（未选择）", value: "" },
 	...secrets.map((secretId) => ({
 		display: secretId,
 		value: secretId,
@@ -131,7 +131,7 @@ let selectedValue = $derived(secrets.includes(value) ? value : "");
           sideOffset={5}
           class="z-50 rounded bg-[--background-modifier-hover] px-2 py-1 text-xs shadow-md"
         >
-          Add new secret
+          添加新密钥
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>

@@ -248,7 +248,7 @@ async function enablePlugin(nudge: PluginNudge): Promise<void> {
 	if (!skillId) {
 		const service = plugin.skillsService;
 		if (!service) {
-			new Notice("Skills are still initializing — try again in a moment.");
+			new Notice("技能仍在初始化中 — 请稍后再试。");
 			return;
 		}
 		try {
@@ -256,15 +256,15 @@ async function enablePlugin(nudge: PluginNudge): Promise<void> {
 		} catch (error) {
 			Logger.error(`[ChatRecommendations] seedIntegrationSkill failed for ${nudge.pluginId}:`, error);
 			showActionNotice(
-				`Could not create skill for ${nudge.displayName}: ${extractErrorMessage(error)}`,
-				editAgentAction(agent.id, "Open agent skills"),
+				`无法为 ${nudge.displayName} 创建技能：${extractErrorMessage(error)}`,
+				editAgentAction(agent.id, "打开智能体技能"),
 			);
 			return;
 		}
 		if (!skillId) {
 			showActionNotice(
-				`Could not create skill for ${nudge.displayName}.`,
-				editAgentAction(agent.id, "Open agent skills"),
+				`无法为 ${nudge.displayName} 创建技能。`,
+				editAgentAction(agent.id, "打开智能体技能"),
 			);
 			return;
 		}
@@ -275,7 +275,7 @@ async function enablePlugin(nudge: PluginNudge): Promise<void> {
 	}
 	data.setAgentSkillEnabled(agent.id, skillId, true);
 	data.setAgentPluginExecEnabled(agent.id, toExecToolId(nudge.pluginId), true);
-	new Notice(`Enabled ${nudge.displayName} for ${agent.name}.`);
+	new Notice(`已为 ${agent.name} 启用 ${nudge.displayName}。`);
 	// pluginNudges recomputes off the persisted agent state and drops this entry.
 }
 
@@ -324,8 +324,8 @@ function reviewNotice(notice: UpdateNotice): void {
        it visibly jumps to centre the moment that happens. A fixed position reads
        as stable. -->
   <div class="greeting">
-    <p class="greeting-title">Start a new conversation</p>
-    <p class="greeting-sub">Ask me anything about your notes.</p>
+    <p class="greeting-title">开始新的对话</p>
+    <p class="greeting-sub">关于你的笔记，尽管问我。</p>
   </div>
 
   {#if noModelSelected}
@@ -335,11 +335,11 @@ function reviewNotice(notice: UpdateNotice): void {
         ></span>
         <span class="model-cta-text">
           {#if noProviderConfigured}
-            <span class="model-cta-title">Add an AI provider</span>
-            <span class="model-cta-sub">Connect a provider to start chatting.</span>
+            <span class="model-cta-title">添加 AI 服务商</span>
+            <span class="model-cta-sub">连接一个服务商即可开始聊天。</span>
           {:else}
-            <span class="model-cta-title">Select a chat model</span>
-            <span class="model-cta-sub">Choose a model to start chatting.</span>
+            <span class="model-cta-title">选择聊天模型</span>
+            <span class="model-cta-sub">选择一个模型即可开始聊天。</span>
           {/if}
         </span>
       </button>
@@ -364,7 +364,7 @@ function reviewNotice(notice: UpdateNotice): void {
           <button
             type="button"
             class="dismiss-chip"
-            aria-label={`Dismiss "${s.label}"`}
+            aria-label={`忽略“${s.label}”`}
             onclick={() => dismiss(s.id)}
           >
             <span use:icon={"x"} style="--icon-size: 13px"></span>
@@ -385,26 +385,24 @@ function reviewNotice(notice: UpdateNotice): void {
                  assert an edit the user never made. -->
             {#if notice.customized === false}
               {#if notice.agentName}
-                The default {notice.label} changed, but <strong>{notice.agentName}</strong>'s copy
-                couldn't be updated automatically.
+                默认的 {notice.label} 已变更，但 <strong>{notice.agentName}</strong> 的副本无法自动更新。
               {:else}
-                The default {notice.label} changed, but your copy couldn't be updated automatically.
+                默认的 {notice.label} 已变更，但你的副本无法自动更新。
               {/if}
             {:else if notice.agentName}
-              The default {notice.label} changed. <strong>{notice.agentName}</strong>'s customized
-              version was kept.
+              默认的 {notice.label} 已变更。已保留 <strong>{notice.agentName}</strong> 的自定义版本。
             {:else}
-              The default {notice.label} changed. Your customized version was kept.
+              默认的 {notice.label} 已变更。已保留你的自定义版本。
             {/if}
           </span>
           <button type="button" class="s2b-notice-action" onclick={() => reviewNotice(notice)}>
-            Review
+            查看
           </button>
           <button
             type="button"
             class="dismiss-chip clickable-icon"
-            aria-label={`Dismiss ${notice.label} update notice`}
-            title="Dismiss this notice"
+            aria-label={`忽略${notice.label}更新通知`}
+            title="忽略此通知"
             onclick={() => dismiss(notice.id)}
           >
             <span use:icon={"x"} style="--icon-size: 13px"></span>
@@ -434,7 +432,7 @@ function reviewNotice(notice: UpdateNotice): void {
               {/each}
             </span>
             <span class="s2b-notice-text">
-              <strong>{pluginNudges.length}</strong> plugin integrations available for this agent.
+              此智能体有 <strong>{pluginNudges.length}</strong> 个插件集成可用。
             </span>
             <button
               type="button"
@@ -445,7 +443,7 @@ function reviewNotice(notice: UpdateNotice): void {
                 nudgesExpanded = true;
               }}
             >
-              Review
+              查看
             </button>
             <!-- Bulk action, so it is NOT the bare `×` every other row uses: a chip
                  identical to the per-row dismiss would give no hint that it clears the
@@ -453,11 +451,11 @@ function reviewNotice(notice: UpdateNotice): void {
             <button
               type="button"
               class="nudge-dismiss-all"
-              aria-label={`Dismiss all ${pluginNudges.length} plugin integration suggestions`}
-              title={`Dismiss all ${pluginNudges.length} suggestions`}
+              aria-label={`忽略全部 ${pluginNudges.length} 个插件集成建议`}
+              title={`忽略全部 ${pluginNudges.length} 条建议`}
               onclick={dismissAllPluginNudges}
             >
-              Dismiss all
+              全部忽略
             </button>
           </div>
         {:else}
@@ -465,16 +463,16 @@ function reviewNotice(notice: UpdateNotice): void {
             <div class="s2b-notice">
               <span class="s2b-notice-icon" use:icon={nudge.icon} style="--icon-size: 14px"></span>
               <span class="s2b-notice-text">
-                Enable the <strong>{nudge.displayName}</strong> skill for this agent.
+                为此智能体启用 <strong>{nudge.displayName}</strong> 技能。
               </span>
               <button type="button" class="s2b-notice-action" onclick={() => void enablePlugin(nudge)}>
-                Enable
+                启用
               </button>
               <button
                 type="button"
                 class="dismiss-chip clickable-icon"
-                aria-label={`Dismiss ${nudge.displayName} suggestion`}
-                title="Dismiss this suggestion"
+                aria-label={`忽略 ${nudge.displayName} 建议`}
+                title="忽略此建议"
                 onclick={() => dismiss(nudge.id)}
               >
                 <span use:icon={"x"} style="--icon-size: 13px"></span>
@@ -494,7 +492,7 @@ function reviewNotice(notice: UpdateNotice): void {
                 nudgesExpanded = false;
               }}
             >
-              Show less
+              收起
             </button>
           {/if}
         {/if}
@@ -506,10 +504,10 @@ function reviewNotice(notice: UpdateNotice): void {
     <button
       type="button"
       class="dismiss-all"
-      aria-label="Dismiss all suggestions"
+      aria-label="忽略全部建议"
       onclick={() => dismiss(DISMISS_ALL_ID)}
     >
-      Dismiss all
+      全部忽略
     </button>
   {/if}
 </div>

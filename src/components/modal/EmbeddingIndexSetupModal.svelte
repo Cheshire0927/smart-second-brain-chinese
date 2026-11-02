@@ -95,12 +95,12 @@ function openModelSelection() {
 
 function handleSave() {
 	if (!selectedModel) {
-		error = "Select an embedding model.";
+		error = "请选择一个嵌入模型。";
 		return;
 	}
 
 	if (!Number.isFinite(batchSize)) {
-		error = "Batch size must be a number.";
+		error = "批大小必须是数字。";
 		return;
 	}
 
@@ -137,19 +137,19 @@ async function handleImport() {
 </script>
 
 <div class="embedding-index-setup-modal">
-  <div class="modal-intro">Pick a model, then adjust the batch size if needed.</div>
+  <div class="modal-intro">选择一个模型，然后按需调整批大小。</div>
 
   <div class="settings-panel">
-    <SettingContainer name="Embedding model" desc="Used to build and refresh this index.">
+    <SettingContainer name="嵌入模型" desc="用于构建和刷新此索引。">
       <ModelSettingControl
         available={availableModels.hasProviders && availableModels.hasEmbedModels}
         loading={availableModels.hasProviders && availableModels.isLoadingModels}
-        configureLabel={!availableModels.hasProviders ? "Configure Provider" : "Configure Models"}
+        configureLabel={!availableModels.hasProviders ? "配置服务商" : "配置模型"}
         unavailableHint={!availableModels.hasProviders
-          ? "No AI provider is configured yet."
-          : "No embedding models found for your providers."}
+          ? "尚未配置 AI 服务商。"
+          : "在你的服务商中未找到嵌入模型。"}
         onConfigure={() => availableModels.openSettings(() => modal.close(), { needsEmbedding: true })}
-        placeholder="Select a model"
+        placeholder="选择模型"
         selectedLabel={selectedModelLabel}
         selectedLogo={selectedModelLogo}
         onSelect={openModelSelection}
@@ -157,7 +157,7 @@ async function handleImport() {
     </SettingContainer>
 
     <SettingContainer
-      name="Batch size"
+      name="批大小"
       desc={`Notes per embedding request. Lower values are safer for local models; higher values are better for hosted providers. Range: ${MIN_EMBEDDING_BATCH_SIZE}-${MAX_EMBEDDING_BATCH_SIZE}.`}
     >
       <Text
@@ -173,12 +173,12 @@ async function handleImport() {
 
     {#if onImport}
       <SettingContainer
-        name="Import existing index"
-        desc="Load an index exported from another vault instead of building one. Rebuilding is only needed if the export is outdated."
+        name="导入已有索引"
+        desc="加载从其他仓库导出的索引，而不重新构建。仅当导出文件过时才需要重建。"
       >
         <Button
           iconId="upload"
-          buttonText={isImporting ? "Importing…" : "Import"}
+          buttonText={isImporting ? "正在导入…" : "导入"}
           disabled={isImporting}
           onClick={() => void handleImport()}
         />
@@ -194,8 +194,8 @@ async function handleImport() {
 </div>
 
 <div class="modal-button-container">
-  <Button buttonText="Cancel" onClick={() => modal.close()} />
-  <Button buttonText="Start indexing" cta={true} onClick={handleSave} disabled={!selectedModel} />
+  <Button buttonText="取消" onClick={() => modal.close()} />
+  <Button buttonText="开始建立索引" cta={true} onClick={handleSave} disabled={!selectedModel} />
 </div>
 
 <style>

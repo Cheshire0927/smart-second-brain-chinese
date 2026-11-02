@@ -270,7 +270,7 @@ export class LexicalSearchService {
 			await this.miniSearch.flush();
 			this.bulkAttempts.clear();
 			if (notice) {
-				notice.setMessage(`✓ Search index updated: ${added} notes`);
+				notice.setMessage(`✓ 搜索索引已更新：${added} 条笔记`);
 				window.setTimeout(() => notice.hide(), 3000);
 			}
 		} catch (error) {
@@ -323,7 +323,7 @@ export class LexicalSearchService {
 		const container = el.createDiv({ cls: "s2b-indexing-notice" });
 		container.createDiv({
 			cls: "s2b-indexing-status",
-			text: `Indexing notes for search: ${processed}/${total}`,
+			text: `正在为搜索建立笔记索引：${processed}/${total}`,
 		});
 
 		const progressContainer = container.createDiv({ cls: "s2b-indexing-progress" });

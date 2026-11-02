@@ -34,15 +34,15 @@ function formatDate(date: string): string {
 <div class="s2b-release-notes">
   <div class="s2b-release-notes-logo" role="presentation">{@html logoSvg}</div>
   {#if latest}
-    <h1 class="s2b-release-notes-title">What's new in {latest.version}</h1>
+    <h1 class="s2b-release-notes-title">{latest.version} 更新内容</h1>
     {#if latest.date}
-      <p class="s2b-release-notes-date">Released on {formatDate(latest.date)}</p>
+      <p class="s2b-release-notes-date">发布于 {formatDate(latest.date)}</p>
     {/if}
     <div class="markdown-rendered" use:markdown={latest.body}></div>
   {/if}
 
   {#if earlier.length > 0}
-    <h2 class="s2b-release-notes-earlier">Earlier releases</h2>
+    <h2 class="s2b-release-notes-earlier">更早的版本</h2>
     {#each earlier as section, index (section.version)}
       <details class="s2b-release-notes-section" open={index + 1 < expanded}>
         <summary>
@@ -56,7 +56,7 @@ function formatDate(date: string): string {
     {/each}
   {/if}
 
-  <p class="s2b-release-notes-footer"><a href={RELEASES_URL}>All releases on GitHub</a></p>
+  <p class="s2b-release-notes-footer"><a href={RELEASES_URL}>在 GitHub 上查看全部发布</a></p>
 </div>
 
 <style>

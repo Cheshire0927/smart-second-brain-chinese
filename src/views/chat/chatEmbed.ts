@@ -130,7 +130,7 @@ class ChatEmbed extends MarkdownRenderChild {
 				void unmount(this.component);
 				this.component = undefined;
 			}
-			this.containerEl.setText("Could not load chat preview.");
+			this.containerEl.setText("无法加载聊天预览。");
 		}
 	}
 

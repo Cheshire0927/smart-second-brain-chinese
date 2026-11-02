@@ -214,7 +214,7 @@ function openHotkeysSettings() {
 	};
 	const setting = app.setting;
 	if (!setting?.open || !setting?.openTabById) {
-		new Notice("Couldn't open Hotkeys — open Settings → Hotkeys and search for “Search notes”.");
+		new Notice("无法打开快捷键设置 —— 请手动打开设置 → 快捷键，并搜索“搜索笔记”。");
 		return;
 	}
 
@@ -256,11 +256,10 @@ function openHotkeysSettings() {
 			{@html logoSvg}
 		</div>
 		<h1 class="s2b-onboarding-title" class:s2b-fade-in={playIntro} style="--s2b-order: 0">
-			Welcome to Smart Second Brain
+			欢迎使用 Smart Second Brain
 		</h1>
 		<p class="s2b-onboarding-subtitle" class:s2b-fade-in={playIntro} style="--s2b-order: 1">
-			Turn your vault into an AI-assisted second brain — search smarter, explore connections in a graph,
-			and chat with your notes.
+			把你的仓库变成一个 AI 辅助的第二大脑 —— 更聪明地搜索，在图谱中探索关联，还能和你的笔记聊天。
 		</p>
 	</header>
 
@@ -268,13 +267,13 @@ function openHotkeysSettings() {
 		<div class="s2b-onboarding-pillar" class:s2b-fade-in={playIntro} style="--s2b-order: 2">
 			<span class="s2b-onboarding-pillar-icon" use:icon={"search"} aria-hidden="true"></span>
 			<div>
-				<div class="s2b-onboarding-pillar-title">Smarter search</div>
+				<div class="s2b-onboarding-pillar-title">更聪明的搜索</div>
 				<div class="s2b-onboarding-pillar-desc">
-					Find notes by title, content, tags, and folders — with fuzzy matching. No setup needed. Add
-					an embedding model later for semantic search.
+					按标题、正文、标签和文件夹查找笔记 —— 支持模糊匹配。无需任何设置。之后可以再添加 Embedding
+					模型来启用语义搜索。
 					{#if !isMobileUI()}
-						Or <button class="s2b-onboarding-link" onclick={openHotkeysSettings}>set a hotkey</button
-						> for instant access.
+						或者<button class="s2b-onboarding-link" onclick={openHotkeysSettings}>设置一个快捷键</button
+						>，随时一键打开。
 					{/if}
 				</div>
 				<!-- A hotkey is meaningless on a phone with no keyboard, so the quick
@@ -287,7 +286,7 @@ function openHotkeysSettings() {
 				     the description where it read as another paragraph. -->
 				{#if isMobileUI()}
 					<label class="s2b-onboarding-navbar-toggle">
-						<span>Open from the navbar magnifier instead of the quick switcher</span>
+						<span>从导航栏的放大镜打开，而不是快速切换器</span>
 						<Toggle
 							checked={data.overrideMobileNavbarSearch}
 							onchange={(checked) => (data.overrideMobileNavbarSearch = checked)}
@@ -299,19 +298,19 @@ function openHotkeysSettings() {
 		<div class="s2b-onboarding-pillar" class:s2b-fade-in={playIntro} style="--s2b-order: 3">
 			<span class="s2b-onboarding-pillar-icon" use:icon={"git-fork"} aria-hidden="true"></span>
 			<div>
-				<div class="s2b-onboarding-pillar-title">Smarter graph</div>
+				<div class="s2b-onboarding-pillar-title">更聪明的图谱</div>
 				<div class="s2b-onboarding-pillar-desc">
-					See how your notes connect and cluster into topics. No setup needed.
+					看清笔记之间如何关联、如何聚成一个个主题。无需任何设置。
 				</div>
 			</div>
 		</div>
 		<div class="s2b-onboarding-pillar" class:s2b-fade-in={playIntro} style="--s2b-order: 4">
 			<span class="s2b-onboarding-pillar-icon" use:icon={"message-square"} aria-hidden="true"></span>
 			<div>
-				<div class="s2b-onboarding-pillar-title">Chat with your notes</div>
+				<div class="s2b-onboarding-pillar-title">与笔记聊天</div>
 				<div class="s2b-onboarding-pillar-desc">
-					Ask questions grounded in your vault, with web search and plugins like Dataview and Tasks
-					integrated in. Needs an AI provider — set one up below.
+					基于你的仓库提问，内置联网搜索，并集成了 Dataview、Tasks
+					等插件。需要一个 AI 服务商 —— 在下面完成设置即可。
 				</div>
 			</div>
 		</div>
@@ -331,17 +330,17 @@ function openHotkeysSettings() {
 				aria-hidden="true"
 			></span>
 			<div class="s2b-onboarding-step-body">
-				<div class="s2b-onboarding-step-title">Connect an AI provider</div>
+				<div class="s2b-onboarding-step-title">连接一个 AI 服务商</div>
 				<div class="s2b-onboarding-step-desc">
 					{#if hasProvider}
-						Provider connected. You can add or manage providers in settings.
+						服务商已连接。你可以在设置中新增或管理服务商。
 					{:else}
-						Connect OpenAI, Anthropic, Ollama, OpenRouter, or any OpenAI-compatible endpoint.
+						连接 OpenAI、Anthropic、Ollama、OpenRouter，或任何兼容 OpenAI 的接口。
 					{/if}
 				</div>
 			</div>
 			<Button
-				buttonText={hasProvider ? "Add another" : "Connect provider"}
+				buttonText={hasProvider ? "再添加一个" : "连接服务商"}
 				cta={!hasProvider}
 				onClick={openProviderSetup}
 			/>
@@ -361,19 +360,19 @@ function openHotkeysSettings() {
 				aria-hidden="true"
 			></span>
 			<div class="s2b-onboarding-step-body">
-				<div class="s2b-onboarding-step-title">Choose a chat model</div>
+				<div class="s2b-onboarding-step-title">选择聊天模型</div>
 				<div class="s2b-onboarding-step-desc">
 					{#if !hasProvider}
-						Connect a provider first, then pick a model to chat with.
+						请先连接服务商，再选择一个用于聊天的模型。
 					{:else if hasChatModel}
-						Using <strong>{selectedAgent?.chatModel?.model}</strong>. You're all set to start chatting.
+						正在使用 <strong>{selectedAgent?.chatModel?.model}</strong>。一切就绪，可以开始聊天了。
 					{:else}
-						Pick a model from your connected provider to enable chat.
+						从已连接的服务商中选择一个模型，以启用聊天。
 					{/if}
 				</div>
 			</div>
 			<Button
-				buttonText={hasChatModel ? "Change model" : "Choose model"}
+				buttonText={hasChatModel ? "更换模型" : "选择模型"}
 				cta={hasProvider && !hasChatModel}
 				disabled={!hasProvider}
 				onClick={openChatModelSetup}
@@ -398,36 +397,37 @@ function openHotkeysSettings() {
 		<div>
 			<div class="s2b-onboarding-privacy-title">
 				{#if privacyCase === "public"}
-					Your notes are shared by default
+					你的笔记默认处于共享状态
 				{:else if privacyCase === "all-trusted"}
-					Note access is granted
+					笔记访问权限已授予
 				{:else if privacyCase === "none-trusted" || privacyCase === "some-trusted"}
-					Your notes are still private
+					你的笔记仍是私密的
 				{:else}
-					Note access is private by default
+					笔记访问权限默认为私密
 				{/if}
 			</div>
 			<div class="s2b-onboarding-privacy-desc">
 				{#if privacyCase === "no-provider"}
-					Your notes are <strong>not</strong> shared with AI providers unless you allow it. Once you
-					connect a provider above, you can grant it access — nothing leaves your vault before then.
+					除非你主动允许，你的笔记<strong>不会</strong>分享给 AI 服务商。在上面的步骤连接服务商后，你可以授予它访问权限
+					—— 在那之前，没有任何内容会离开你的仓库。
 				{:else if privacyCase === "public"}
-					Note access is set to <strong>public by default</strong>, so providers can read your notes
-					except the ones you exclude. <button class="s2b-onboarding-link" onclick={openPrivacySettings}
-						>Review note access</button
-					>.
-				{:else if privacyCase === "all-trusted"}
-					{configuredProviders.length === 1 ? "Your provider is" : "Your providers are"} marked
-					<strong>trusted</strong>, so the agent can read your notes. <button
+					笔记访问权限已设为<strong>默认公开</strong>，因此服务商可以读取你的笔记，但你排除的笔记除外。<button
 						class="s2b-onboarding-link"
-						onclick={openPrivacySettings}>Review note access</button
-					> to keep specific notes private.
+						onclick={openPrivacySettings}>检查笔记访问权限</button
+					>。
+				{:else if privacyCase === "all-trusted"}
+					{configuredProviders.length === 1 ? "你的服务商已" : "你的服务商均已"}被标记为
+					<strong>受信任</strong>，智能体因此可以读取你的笔记。<button
+						class="s2b-onboarding-link"
+						onclick={openPrivacySettings}>检查笔记访问权限</button
+					>，以便让特定笔记保持私密。
 				{:else}
-					<strong>{untrustedLabel}</strong> can't read your notes yet — chat will work, but answers
-					won't be grounded in your vault. Mark
-					{untrustedNames.length === 1 ? "it" : "them"} as <strong>trusted</strong> in provider settings,
-					or <button class="s2b-onboarding-link" onclick={openPrivacySettings}>change note access</button
-					> to allow all providers.
+					<strong>{untrustedLabel}</strong> 目前还无法读取你的笔记 ——
+					聊天仍然可用，但回答不会以你的仓库为依据。请在服务商设置中将{untrustedNames.length === 1 ? "它" : "它们"}标记为
+					<strong>受信任</strong>，或者<button
+						class="s2b-onboarding-link"
+						onclick={openPrivacySettings}>调整笔记访问权限</button
+					>以允许所有服务商。
 				{/if}
 			</div>
 		</div>
@@ -438,21 +438,21 @@ function openHotkeysSettings() {
 		     user sees, so it is where a link to the full documentation has the most
 		     reach, but it must not compete with the two actions on the right. -->
 		<div class="s2b-onboarding-footer-secondary">
-			<Button buttonText="Skip" onClick={skip} />
+			<Button buttonText="跳过" onClick={skip} />
 			<a
 				class="s2b-onboarding-link"
 				href={DOCS.home}
 				target="_blank"
-				rel="noopener noreferrer">Documentation ↗</a
+				rel="noopener noreferrer">使用文档 ↗</a
 			>
 		</div>
 		<div class="s2b-onboarding-footer-primary">
-			<Button buttonText="Explore the graph" onClick={exploreGraph} />
+			<Button buttonText="探索图谱" onClick={exploreGraph} />
 			<Button
-				buttonText="Start chatting"
+				buttonText="开始聊天"
 				cta={true}
 				disabled={!hasChatModel}
-				tooltip={hasChatModel ? undefined : "Connect a provider and add a chat model first"}
+				tooltip={hasChatModel ? undefined : "请先连接服务商并添加聊天模型"}
 				onClick={startChatting}
 			/>
 		</div>

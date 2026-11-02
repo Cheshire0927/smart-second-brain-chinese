@@ -33,7 +33,7 @@ let {
 </script>
 
 {#if loading}
-  <span class="text-[--text-muted] text-sm">Loading models…</span>
+  <span class="text-[--text-muted] text-sm">正在加载模型……</span>
 {:else if !available && configureLabel && onConfigure}
   <!-- Labelled, not icon-only: a bare gear reads as "configure this dropdown" and its meaning
        lived only in the tooltip/aria-label, which touch devices never surface. -->

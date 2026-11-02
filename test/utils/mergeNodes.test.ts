@@ -183,7 +183,7 @@ describe("buildCollapsedGraph", () => {
 
 		expect(collapsed.nodes.find((n) => n.id === topicNodeId(0))?.label).toBe("Marine Biology");
 		// Unlabelled topics still get something readable.
-		expect(collapsed.nodes.find((n) => n.id === topicNodeId(1))?.label).toBe("Topic 1");
+		expect(collapsed.nodes.find((n) => n.id === topicNodeId(1))?.label).toBe("主题 1");
 	});
 
 	it("produces stable ids across repeated builds", () => {
@@ -255,7 +255,7 @@ describe("buildCollapsedGraph", () => {
 
 			const unsorted = collapsed.nodes.find((n) => n.id === topicNodeId(UNSORTED_CLUSTER));
 			expect(unsorted).toBeDefined();
-			expect(unsorted?.label).toBe("Unsorted · 2");
+			expect(unsorted?.label).toBe("未分类 · 2");
 			expect(unsorted?.memberPaths?.sort()).toEqual(["loner1", "loner2"]);
 		});
 

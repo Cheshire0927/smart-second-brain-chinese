@@ -124,7 +124,7 @@ function normalizeLinks(containerEl: HTMLElement) {
 	// Copy button styling
 	for (const copyBtn of containerEl.querySelectorAll(".copy-code-button")) {
 		copyBtn.className = "clickable-icon";
-		copyBtn.setAttribute("aria-label", "Copy code");
+		copyBtn.setAttribute("aria-label", "复制代码");
 	}
 
 	// Normalize internal links

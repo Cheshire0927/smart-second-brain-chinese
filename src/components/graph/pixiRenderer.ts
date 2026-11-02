@@ -1490,19 +1490,19 @@ export class PixiRenderer {
 			const notes = node.memberPaths?.length ?? 0;
 			const links = node.degree ?? 0;
 			lines.push(
-				`${notes.toLocaleString()} ${notes === 1 ? "note" : "notes"}  ·  ${links.toLocaleString()} ${links === 1 ? "link" : "links"}`,
+				`${notes.toLocaleString()} 篇笔记  ·  ${links.toLocaleString()} 条连线`,
 			);
 		} else if (node.kind === "tag") {
 			const notes = node.degree ?? 0;
-			lines.push(`${notes.toLocaleString()} ${notes === 1 ? "note" : "notes"}`);
+			lines.push(`${notes.toLocaleString()} 篇笔记`);
 		} else if (node.cluster != null) {
-			const clusterLabel = clusterLabels[node.cluster] ?? `Cluster ${node.cluster}`;
-			lines.push(`${clusterLabel}  ·  ${node.degree ?? 0} connections`);
+			const clusterLabel = clusterLabels[node.cluster] ?? `主题 ${node.cluster}`;
+			lines.push(`${clusterLabel}  ·  ${node.degree ?? 0} 条连接`);
 		} else {
-			lines.push(`${node.degree ?? 0} connections`);
+			lines.push(`${node.degree ?? 0} 条连接`);
 		}
 		if (isForceMode && isPinned) {
-			lines.push("📌 Pinned");
+			lines.push("📌 已固定");
 		}
 
 		const fontSize = 11;

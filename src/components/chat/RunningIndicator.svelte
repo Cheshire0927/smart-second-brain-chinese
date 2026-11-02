@@ -34,7 +34,7 @@ function openChat(path: string) {
 			type="button"
 			class="s2b-running-go"
 			onclick={() => openChat(chat.path)}
-			title="Go to the running chat: {chat.name}"
+			title="前往正在运行的聊天：{chat.name}"
 		>
 			<span class="s2b-running-spinner" use:icon={"loader-circle"}></span>
 			<span class="s2b-running-label">{chat.name}</span>

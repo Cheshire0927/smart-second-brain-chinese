@@ -297,7 +297,7 @@ onDestroy(() => {
             <button
               type="button"
               class="attachment-tile-body"
-              title={`${attachment.vaultPath} (click to open)`}
+              title={`${attachment.vaultPath}（点击打开）`}
               onclick={() => openLink(attachment.vaultPath)}
               onmouseover={(evt) => previewLink(evt, attachment.vaultPath)}
               onfocus={(evt) => previewLink(evt, attachment.vaultPath)}
@@ -318,8 +318,8 @@ onDestroy(() => {
             <button
               type="button"
               class="attachment-tile-remove"
-              title="Remove attachment"
-              aria-label={`Remove ${attachment.name}`}
+              title="移除附件"
+              aria-label={`移除 ${attachment.name}`}
               onclick={(evt) => removeAttachment(evt, attachment)}
             >
               <div class="chip-icon" use:icon={"x"} style="--icon-size: 10px"></div>
@@ -338,8 +338,8 @@ onDestroy(() => {
           type="button"
           class="chip-body s2b-pill s2b-pill--interactive"
           title={deactivated
-            ? `${note.file.path} (excluded — click to include as reference)`
-            : `${note.file.path} (open note — click to exclude)`}
+            ? `${note.file.path}（已排除 — 点击作为引用包含）`
+            : `${note.file.path}（打开笔记 — 点击排除）`}
           onclick={(evt) => onNoteClick(evt, note)}
           onmouseover={(evt) => previewLink(evt, noteLinkPath(note))}
           onfocus={(evt) => previewLink(evt, noteLinkPath(note))}
@@ -359,7 +359,7 @@ onDestroy(() => {
           <button
             type="button"
             class="chip-action"
-            title="Attach full content to the message"
+            title="将完整内容附加到消息"
             onclick={(evt) => onPromote(evt, note)}
           >
             <div class="chip-icon" use:icon={"paperclip"} style="--icon-size: 11px"></div>
@@ -375,23 +375,23 @@ onDestroy(() => {
           type="button"
           class="chip-body s2b-pill s2b-pill--interactive"
           title={graphExpanded
-            ? "Graph selection — click to collapse"
+            ? "图谱选择 — 点击收起"
             : effectiveTopicLabel
-              ? `${effectiveTopicLabel} — click to expand`
-              : `${activeGraphPaths.length} note${activeGraphPaths.length === 1 ? "" : "s"} from graph — click to expand`}
+              ? `${effectiveTopicLabel} — 点击展开`
+              : `来自图谱的 ${activeGraphPaths.length} 篇笔记 — 点击展开`}
           aria-expanded={graphExpanded}
           onclick={() => (graphExpanded = !graphExpanded)}
         >
           <div class="chip-icon" use:icon={"git-fork"} style="--icon-size: 12px"></div>
           <span>
-            {effectiveTopicLabel ?? `${activeGraphPaths.length} Graph Note${activeGraphPaths.length === 1 ? "" : "s"}`}
+            {effectiveTopicLabel ?? `${activeGraphPaths.length} 个图谱笔记`}
           </span>
           <div class="chip-icon chip-chevron" use:icon={graphExpanded ? "chevron-up" : "chevron-down"} style="--icon-size: 12px"></div>
         </button>
         <button
           type="button"
           class="chip-action"
-          title="Remove all graph notes"
+          title="移除全部图谱笔记"
           onclick={clearAllGraphNotes}
         >
           <div class="chip-icon" use:icon={"x"} style="--icon-size: 11px"></div>
@@ -404,7 +404,7 @@ onDestroy(() => {
             <button
               type="button"
               class="s2b-chip s2b-pill s2b-pill--interactive graph-member"
-              title={`${path} (from graph — click to exclude)`}
+              title={`${path}（来自图谱 — 点击排除）`}
               onclick={(evt) => onGraphClick(evt, path)}
             >
               <span class="chip-label">{basename(path)}</span>
@@ -420,13 +420,13 @@ onDestroy(() => {
       <button
         type="button"
         class="s2b-chip s2b-pill s2b-pill--interactive selection"
-        title={`Selected text from ${activeSelection.path} (click to dismiss)\n\n${activeSelection.text.slice(0, 200)}`}
+        title={`来自 ${activeSelection.path} 的选中文本（点击移除）\n\n${activeSelection.text.slice(0, 200)}`}
         onclick={onSelectionClick}
       >
         <div class="chip-icon" use:icon={activeSelection.icon} style="--icon-size: 12px"></div>
         <span class="chip-label">{selectionPreview(activeSelection.text)}</span>
         {#if selectionTracker.isLong}
-          <span class="chip-warning" title="Long selection — will be truncated to fit the model's context">⚠</span>
+          <span class="chip-warning" title="选区过长 — 将被截断以适应模型的上下文">⚠</span>
         {/if}
         <div class="chip-close" use:icon={"x"} style="--icon-size: 10px"></div>
       </button>

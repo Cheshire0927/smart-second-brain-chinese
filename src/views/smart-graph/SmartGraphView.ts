@@ -17,7 +17,7 @@ export class SmartGraphView extends SvelteItemView {
 	}
 
 	getDisplayText(): string {
-		return "Smart graph";
+		return "智能图谱";
 	}
 
 	getIcon(): string {

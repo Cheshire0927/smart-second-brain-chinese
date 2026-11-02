@@ -37,8 +37,8 @@ function navigateRight() {
 			class="clickable-icon branch-nav-btn"
 			disabled={!canGoLeft}
 			onclick={navigateLeft}
-			aria-label="Previous branch"
-			title="Previous branch"
+			aria-label="上一个分支"
+			title="上一个分支"
 		>
 			<div
 				class="w-3 h-3"
@@ -53,8 +53,8 @@ function navigateRight() {
 			class="clickable-icon branch-nav-btn"
 			disabled={!canGoRight}
 			onclick={navigateRight}
-			aria-label="Next branch"
-			title="Next branch"
+			aria-label="下一个分支"
+			title="下一个分支"
 		>
 			<div
 				class="w-3 h-3"

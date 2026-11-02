@@ -68,8 +68,8 @@ function handleClick(evt: MouseEvent) {
     >
       <Button
         iconId="chevron-down"
-        ariaLabel={isExpanded ? "Collapse message" : "Expand message"}
-        tooltip={isExpanded ? "Collapse message" : "Expand message"}
+        ariaLabel={isExpanded ? "收起消息" : "展开消息"}
+        tooltip={isExpanded ? "收起消息" : "展开消息"}
         iconSize="xs"
         styles="transition-transform duration-200 {isExpanded ? 'rotate-180' : ''}"
         onClick={(e) => {

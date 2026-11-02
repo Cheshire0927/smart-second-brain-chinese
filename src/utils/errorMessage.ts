@@ -13,7 +13,7 @@
  * embedded JSON envelope, and returns a trimmed single-paragraph string.
  */
 export function extractErrorMessage(error: unknown): string {
-	const fallback = "The model request failed.";
+	const fallback = "模型请求失败。";
 
 	const raw = resolveRawMessage(error);
 	if (!raw) return fallback;

@@ -383,9 +383,9 @@ export class ChatSession {
 			if (withdrawn > 0) {
 				const kept =
 					keptPartiallyApplied > 0
-						? ` ${keptPartiallyApplied} partially applied change(s) were kept — resolve them in the review bar.`
+						? ` 已保留 ${keptPartiallyApplied} 处部分应用的更改，请在审阅栏中处理。`
 						: "";
-				new Notice(`Withdrew ${withdrawn} pending note change(s) proposed by the replaced response.${kept}`);
+				new Notice(`已撤回 ${withdrawn} 处由被替换回复提出的待处理笔记更改。${kept}`);
 			}
 		} catch {
 			// store not initialized (e.g. very early in startup) — nothing staged yet
@@ -429,7 +429,7 @@ export class ChatSession {
 		// optimistic fork: reaching it only there would first withdraw pending
 		// proposals and mutate the graph for a run that is then refused.
 		if (this.running) {
-			throw new Error("A response is already in progress for this chat.");
+			throw new Error("此聊天已有回复正在进行。");
 		}
 
 		const resolvedAttachments =
@@ -443,7 +443,7 @@ export class ChatSession {
 		const checkpointId = pair.editFromCheckpointId;
 		if (!checkpointId) {
 			throw new Error(
-				"Cannot edit: no checkpoint available for this message. Checkpoint graph may not be loaded.",
+				"无法编辑：此消息没有可用的检查点，检查点数据可能尚未加载。",
 			);
 		}
 
@@ -485,14 +485,14 @@ export class ChatSession {
 		// Before the withdrawal/fork, for the same reason as editMessage: the
 		// regenerate affordance stays visible on earlier turns while a run streams.
 		if (this.running) {
-			throw new Error("A response is already in progress for this chat.");
+			throw new Error("此聊天已有回复正在进行。");
 		}
 
 		// Get the checkpoint to fork from for regeneration
 		const checkpointId = pair.regenerateFromCheckpointId;
 		if (!checkpointId) {
 			throw new Error(
-				"Cannot regenerate: no checkpoint available for this message. Checkpoint graph may not be loaded.",
+				"无法重新生成：此消息没有可用的检查点，检查点数据可能尚未加载。",
 			);
 		}
 
@@ -520,7 +520,7 @@ export class ChatSession {
 	async retryLastError(pairId: UUIDv7): Promise<void> {
 		const pair = this.findPair(pairId);
 		if (!pair || pair.assistantMessage.state !== AssistantState.error) {
-			throw new Error("Cannot retry: message pair is not in an error state.");
+			throw new Error("无法重试：该消息对不处于错误状态。");
 		}
 
 		// Fast path: the checkpoint is already known (e.g. after a reload).
@@ -532,7 +532,7 @@ export class ChatSession {
 		// Slow path: sync from persisted checkpoints so the failed user message's
 		// checkpoint becomes addressable, then regenerate the now-resolved pair.
 		if (!this.onNeedReload) {
-			throw new Error("Cannot retry: no checkpoint available and session reload is unavailable.");
+			throw new Error("无法重试：没有可用的检查点，且会话无法重新加载。");
 		}
 		await this.onNeedReload();
 
@@ -540,7 +540,7 @@ export class ChatSession {
 			(p) => p.assistantMessage.state === AssistantState.error && p.regenerateFromCheckpointId,
 		);
 		if (!reloadedPair?.regenerateFromCheckpointId) {
-			throw new Error("Cannot retry: failed message could not be recovered from history.");
+			throw new Error("无法重试：无法从历史记录中恢复失败的消息。");
 		}
 
 		await this.regenerateResponse(reloadedPair.id);
@@ -608,7 +608,7 @@ export class ChatSession {
 		if (!pair) return;
 
 		if (this.abortController) {
-			throw new Error("A response is already in progress for this chat.");
+			throw new Error("此聊天已有回复正在进行。");
 		}
 
 		this.abortController = new AbortController();
@@ -1316,7 +1316,7 @@ export class ChatSession {
 
 	async summarizeHistoryNow(): Promise<void> {
 		if (this.messageState !== MessageState.idle) {
-			throw new Error("Cannot summarize while another response is in progress.");
+			throw new Error("已有回复正在进行，无法进行总结。");
 		}
 
 		const plugin = getPlugin();

@@ -18,8 +18,8 @@ export class RenameWidgetModal extends Modal {
 	}
 
 	onOpen(): void {
-		this.titleEl.setText("Rename widget");
-		const nameSetting = new Setting(this.contentEl).setName("Name").addText((text) => {
+		this.titleEl.setText("重命名 Widget");
+		const nameSetting = new Setting(this.contentEl).setName("名称").addText((text) => {
 			text.setValue(this.name).onChange((value) => {
 				this.name = value;
 			});
@@ -31,10 +31,10 @@ export class RenameWidgetModal extends Modal {
 			});
 		});
 		new Setting(this.contentEl)
-			.addButton((button) => button.setButtonText("Cancel").onClick(() => this.close()))
+			.addButton((button) => button.setButtonText("取消").onClick(() => this.close()))
 			.addButton((button) =>
 				button
-					.setButtonText("Rename")
+					.setButtonText("重命名")
 					.setCta()
 					.onClick(() => void this.submit()),
 			);
@@ -46,14 +46,14 @@ export class RenameWidgetModal extends Modal {
 	private async submit(): Promise<void> {
 		const name = this.name.trim();
 		if (!name) {
-			new Notice("Enter a name.");
+			new Notice("请输入名称。");
 			return;
 		}
 		// Same set the chat-save naming strips (`widgetFileBasename`): the OS-illegal
 		// characters plus the ones Obsidian reads as link syntax (# ^ [ ]), which would
 		// make the file unresolvable by path for the agent's tools.
 		if (/[\\/:*?"<>|#^[\]]/.test(name)) {
-			new Notice('A name cannot contain \\ / : * ? " < > | # ^ [ ]');
+			new Notice('名称不能包含 \\ / : * ? " < > | # ^ [ ]');
 			return;
 		}
 		if (name === this.file.basename) {
@@ -63,14 +63,14 @@ export class RenameWidgetModal extends Modal {
 		const folder = this.file.parent?.path && this.file.parent.path !== "/" ? `${this.file.parent.path}/` : "";
 		const target = `${folder}${name}.${this.file.extension}`;
 		if (this.app.vault.getAbstractFileByPath(target)) {
-			new Notice(`"${name}" already exists in this folder.`);
+			new Notice(`此文件夹中已存在“${name}”。`);
 			return;
 		}
 		try {
 			await this.app.fileManager.renameFile(this.file, target);
 			this.close();
 		} catch (error) {
-			new Notice(`Could not rename: ${error instanceof Error ? error.message : String(error)}`);
+			new Notice(`重命名失败：${error instanceof Error ? error.message : String(error)}`);
 		}
 	}
 }

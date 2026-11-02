@@ -59,7 +59,7 @@ async function fetchModelEntries(
 	const response = await requestUrl({ url: `${apiUrl}/models`, method: "GET", headers, throw: false });
 
 	if (response.status < 200 || response.status >= 300) {
-		throw new Error(`Model discovery failed for ${providerId}: ${response.text || `status ${response.status}`}`);
+		throw new Error(`${providerId} 模型发现失败：${response.text || `状态码 ${response.status}`}`);
 	}
 
 	const payload = response.json as OpenAIModelResponse;
@@ -84,29 +84,29 @@ export function createOpenAICompatibleProvider(
 		logo: config.logo,
 		setupInstructions: config.setupInstructions ?? {
 			steps: [
-				"Enter the base URL for your OpenAI-compatible API endpoint",
-				"Provide an API key if the endpoint requires authentication",
-				"Optionally add custom headers for authentication or routing",
+				"填写 OpenAI 兼容 API 端点的基础 URL",
+				"如果端点需要身份验证，请提供 API 密钥",
+				"可按需添加自定义请求头用于身份验证或路由",
 			],
 		},
 		auth: {
 			baseUrl: {
-				label: "Base URL",
-				description: "The base URL for the OpenAI-compatible API endpoint",
+				label: "基础 URL",
+				description: "OpenAI 兼容 API 端点的基础 URL",
 				kind: "text",
 				required: true,
 				placeholder: "https://your-endpoint.example/v1",
 			},
 			apiKey: {
-				label: "API Key",
-				description: "API key for authentication (leave empty if your endpoint needs none)",
+				label: "API 密钥",
+				description: "用于身份验证的 API 密钥（若端点不需要则留空）",
 				kind: "secret",
 				required: true,
 				placeholder: "sk-...",
 			},
 			headers: {
-				label: "Custom Headers",
-				description: "Additional headers as JSON (optional)",
+				label: "自定义请求头",
+				description: "以 JSON 填写的附加请求头（可选）",
 				kind: "textarea",
 				required: false,
 				placeholder: '{"X-Custom-Header": "value"}',
@@ -186,16 +186,16 @@ export function createOpenAICompatibleProvider(
 				}
 
 				if (response.status === 401 || response.status === 403) {
-					return { valid: false, error: errorMessage || "Authentication failed" };
+					return { valid: false, error: errorMessage || "身份验证失败" };
 				}
 
 				return {
 					valid: false,
-					error: errorMessage || `Request failed with status ${response.status}`,
+					error: errorMessage || `请求失败，状态码 ${response.status}`,
 				};
 			} catch (error) {
 				const message = error instanceof Error ? error.message : String(error);
-				return { valid: false, error: `Connection failed: ${message}` };
+				return { valid: false, error: `连接失败：${message}` };
 			}
 		},
 		discoverModels: async (auth: AuthObject): Promise<string[]> => {

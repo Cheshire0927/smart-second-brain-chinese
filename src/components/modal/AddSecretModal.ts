@@ -10,7 +10,7 @@ export class AddSecretModal extends SvelteModal {
 		super(plugin.app);
 		this.onSecretAdded = onSecretAdded;
 		this.suggestedId = suggestedId;
-		this.setTitle("Add New Secret");
+		this.setTitle("添加新密钥");
 	}
 
 	onOpen() {

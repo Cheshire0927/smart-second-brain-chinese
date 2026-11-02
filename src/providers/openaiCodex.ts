@@ -308,7 +308,7 @@ async function verifyCallbackServer(): Promise<void> {
 	}
 	const body = response.text;
 	if (body !== "ok") {
-		throw new Error("Callback server healthcheck returned unexpected response");
+		throw new Error("回调服务健康检查返回了意外响应");
 	}
 }
 
@@ -377,7 +377,7 @@ async function handleOpenAICodexCallback(req: IncomingMessage, res: ServerRespon
 
 async function startOpenAICodexAuthServer(expectedState: string, pkce: PkceCodes, redirectUri: string): Promise<void> {
 	if (pendingOpenAICodexAuth) {
-		throw new Error("A ChatGPT sign-in flow is already in progress");
+		throw new Error("已有一个 ChatGPT 登录流程正在进行");
 	}
 
 	await new Promise<void>((resolve, reject) => {
@@ -420,7 +420,7 @@ async function startOpenAICodexAuthServer(expectedState: string, pkce: PkceCodes
 
 export async function signInWithOpenAICodex(): Promise<CodexSession> {
 	if (Platform.isMobileApp) {
-		throw new Error("ChatGPT sign-in is only available on desktop. Enter an API key instead.");
+		throw new Error("ChatGPT 登录仅支持桌面端，请改为填写 API 密钥。");
 	}
 	const redirectUri = getRedirectUri();
 	const pkce = await generatePkce();
@@ -593,7 +593,7 @@ export function createOpenAICodexFetch(): typeof fetch {
 	return async (input: RequestInfo | URL, init?: RequestInit) => {
 		const session = await getValidOpenAICodexSession();
 		if (!session) {
-			throw new Error("ChatGPT sign-in required");
+			throw new Error("需要登录 ChatGPT");
 		}
 
 		const url = rewriteUrl(input);

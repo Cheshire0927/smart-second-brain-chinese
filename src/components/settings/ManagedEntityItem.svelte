@@ -130,7 +130,7 @@ function handleRadioClick(event: MouseEvent) {
         class:selected={radio.selected}
         role="radio"
         aria-checked={radio.selected}
-        aria-label={radio.ariaLabel ?? `Select ${name}`}
+        aria-label={radio.ariaLabel ?? `选择 ${name}`}
         onclick={handleRadioClick}
       ></button>
     </div>

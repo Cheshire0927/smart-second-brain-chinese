@@ -60,7 +60,7 @@ class WidgetEmbed extends MarkdownRenderChild {
 			this.addChild(this.child);
 		} catch (error) {
 			Logger.error(`Failed to render .widget embed for ${this.file.path}:`, error);
-			this.containerEl.setText("Could not load widget.");
+			this.containerEl.setText("无法加载 Widget。");
 		}
 	}
 

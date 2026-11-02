@@ -14,12 +14,12 @@ const pendingTab = consumePendingSettingsTab();
 let activeTab = $state(pendingTab ?? "general");
 
 const SETTINGS_TABS: SlidingTab<string>[] = [
-	{ id: "general", label: "General", icon: "settings" },
-	{ id: "search", label: "Search", icon: "search" },
-	{ id: "agents", label: "Agents", icon: "brain" },
-	{ id: "graph", label: "Graph", icon: "git-fork" },
-	{ id: "troubleshooting", label: "Troubleshooting", icon: "wrench" },
-	...(import.meta.env.DEV ? [{ id: "developer", label: "Developer", icon: "code" }] : []),
+	{ id: "general", label: "常规", icon: "settings" },
+	{ id: "search", label: "搜索", icon: "search" },
+	{ id: "agents", label: "智能体", icon: "brain" },
+	{ id: "graph", label: "图谱", icon: "git-fork" },
+	{ id: "troubleshooting", label: "故障排查", icon: "wrench" },
+	...(import.meta.env.DEV ? [{ id: "developer", label: "开发者", icon: "code" }] : []),
 ];
 </script>
 

@@ -13,7 +13,7 @@ class PromptModal extends Modal {
 		app: App,
 		private readonly title: string,
 		private readonly initialValue = "",
-		private readonly confirmLabel = "Confirm",
+		private readonly confirmLabel = "确认",
 	) {
 		super(app);
 		this.promise = new Promise<string | null>((resolve) => {
@@ -49,7 +49,7 @@ class PromptModal extends Modal {
 
 		const buttonRow = this.contentEl.createDiv({ cls: "modal-button-container" });
 
-		buttonRow.createEl("button", { text: "Cancel" }).addEventListener("click", () => {
+		buttonRow.createEl("button", { text: "取消" }).addEventListener("click", () => {
 			this.resolved = true;
 			this.resolve(null);
 			this.close();
@@ -70,7 +70,7 @@ export function promptText(
 	app: App,
 	title: string,
 	initialValue = "",
-	confirmLabel = "Confirm",
+	confirmLabel = "确认",
 ): Promise<string | null> {
 	const modal = new PromptModal(app, title, initialValue, confirmLabel);
 	modal.open();

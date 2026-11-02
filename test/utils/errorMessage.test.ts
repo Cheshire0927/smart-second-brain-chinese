@@ -47,9 +47,9 @@ describe("extractErrorMessage", () => {
 	});
 
 	it("falls back for non-error, empty, and nullish values", () => {
-		expect(extractErrorMessage(undefined)).toBe("The model request failed.");
-		expect(extractErrorMessage(null)).toBe("The model request failed.");
-		expect(extractErrorMessage(new Error(""))).toBe("The model request failed.");
-		expect(extractErrorMessage({})).toBe("The model request failed.");
+		expect(extractErrorMessage(undefined)).toBe("模型请求失败。");
+		expect(extractErrorMessage(null)).toBe("模型请求失败。");
+		expect(extractErrorMessage(new Error(""))).toBe("模型请求失败。");
+		expect(extractErrorMessage({})).toBe("模型请求失败。");
 	});
 });

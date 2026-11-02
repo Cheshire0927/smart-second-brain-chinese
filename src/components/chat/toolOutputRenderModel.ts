@@ -142,7 +142,7 @@ export type ToolOutputRenderModel =
 
 const JSON_FENCE = /^```(?:json)?\s*([\s\S]*?)\s*```$/i;
 export const MAX_RENDERED_TOOL_OUTPUT_CHARS = 20_000;
-const UI_TRUNCATION_MARKER = "[UI preview truncated:";
+const UI_TRUNCATION_MARKER = "[预览已截断：";
 const MARKDOWN_PATTERNS = [
 	/^#{1,6}\s/m,
 	/^[-*+]\s/m,
@@ -226,7 +226,7 @@ function truncateToolOutputForRendering(output: string): string {
 	if (output.length <= MAX_RENDERED_TOOL_OUTPUT_CHARS) return output;
 
 	const omitted = output.length - MAX_RENDERED_TOOL_OUTPUT_CHARS;
-	return `${output.slice(0, MAX_RENDERED_TOOL_OUTPUT_CHARS)}\n\n${UI_TRUNCATION_MARKER} ${omitted} characters omitted]`;
+	return `${output.slice(0, MAX_RENDERED_TOOL_OUTPUT_CHARS)}\n\n${UI_TRUNCATION_MARKER}${omitted} 个字符被省略]`;
 }
 
 function buildSpecializedStringModel(
@@ -566,12 +566,12 @@ function formatCellValue(value: unknown): string {
 
 function summarizeValue(value: unknown): string {
 	if (Array.isArray(value)) {
-		return `${value.length} item${value.length === 1 ? "" : "s"}`;
+		return `${value.length} 项`;
 	}
 
 	if (isPlainObject(value)) {
 		const keyCount = Object.keys(value).length;
-		return `${keyCount} key${keyCount === 1 ? "" : "s"}`;
+		return `${keyCount} 个键`;
 	}
 
 	if (isScalar(value)) return formatScalar(value);

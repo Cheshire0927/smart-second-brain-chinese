@@ -53,7 +53,7 @@ function openModelSelectionModal() {
 
 <Button
   styles="clickable-icon model-select-btn"
-  tooltip="Select model"
+  tooltip="选择模型"
   dataTestId="model-select-button"
   onClick={openModelSelectionModal}
 >
@@ -62,7 +62,7 @@ function openModelSelectionModal() {
       {getModelDisplayName(selectedAgent.chatModel.provider, selectedAgent.chatModel.model)}
     </span>
   {:else}
-    <span class="model-name no-model">Select model</span>
+    <span class="model-name no-model">选择模型</span>
   {/if}
 </Button>
 

@@ -31,17 +31,17 @@ function handleSave() {
 	error = "";
 
 	if (!secretId.trim()) {
-		error = "Secret name is required";
+		error = "请填写密钥名称";
 		return;
 	}
 
 	if (!isValidSecretId(secretId)) {
-		error = "Invalid name. Use lowercase letters, numbers, and dashes only (max 64 chars)";
+		error = "名称无效：仅可使用小写字母、数字和连字符（最多 64 个字符）";
 		return;
 	}
 
 	if (!secretValue.trim()) {
-		error = "Secret value is required";
+		error = "请填写密钥值";
 		return;
 	}
 
@@ -65,10 +65,10 @@ function handleSave() {
 	</div>
 
 	<SettingContainer
-		name="Secret name"
+		name="密钥名称"
 		desc={suggestedId
-			? "Suggested from where you opened this. Edit it to reuse a name across providers."
-			: "Unique name for this secret (lowercase letters, numbers, dashes)"}
+			? "根据打开位置推荐。修改后可在多个服务商间复用同一名称。"
+			: "此密钥的唯一名称（小写字母、数字、连字符）"}
 	>
 		<Text
 			inputType="text"
@@ -78,7 +78,7 @@ function handleSave() {
 		/>
 	</SettingContainer>
 
-	<SettingContainer name="Secret value" desc="The API key or secret value to store securely">
+	<SettingContainer name="密钥值" desc="要安全存储的 API 密钥或密钥值">
 		<Text inputType="password" placeholder="sk-..." bind:value={secretValue} />
 	</SettingContainer>
 
@@ -90,6 +90,6 @@ function handleSave() {
 </div>
 
 <div class="modal-button-container">
-	<Button buttonText="Cancel" onClick={() => modal.close()} />
-	<Button buttonText="Save secret" cta={true} disabled={!isValidId || !secretValue} onClick={handleSave} />
+	<Button buttonText="取消" onClick={() => modal.close()} />
+	<Button buttonText="保存密钥" cta={true} disabled={!isValidId || !secretValue} onClick={handleSave} />
 </div>

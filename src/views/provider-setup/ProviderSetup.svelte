@@ -329,7 +329,7 @@ async function handleDisplayNameBlur(nextName: string) {
 		displayNameError = null;
 		modal.refreshTitle(trimmedName);
 	} catch (e) {
-		displayNameError = e instanceof Error ? e.message : "Invalid name";
+		displayNameError = e instanceof Error ? e.message : "名称无效";
 	} finally {
 		pendingDisplayNameSaves -= 1;
 	}
@@ -458,7 +458,7 @@ const connectionStatus = $derived.by<ConnectionStatus>(() => {
 	return "idle";
 });
 const connectionError = $derived(
-	query.data && !query.data.success ? (query.data.message ?? "Authentication failed") : "Authentication failed",
+	query.data && !query.data.success ? (query.data.message ?? "身份验证失败") : "身份验证失败",
 );
 
 // Done must track the *commit*, not just the connection. A valid connection alone isn't
@@ -480,10 +480,10 @@ const canFinish = $derived(
          things a new user stalls on before they can tell whether a failure is their
          endpoint, their key, or their model choice. -->
     <p class="provider-picker-desc">
-      Choose a provider to connect. <DocsLink
+      选择一个服务商进行连接。<DocsLink
         variant="inline"
         doc="providers"
-        label="Setup guide"
+        label="设置指南"
       />
     </p>
     <div class="provider-picker-grid">
@@ -505,8 +505,8 @@ const canFinish = $derived(
 {:else}
   <div class="modal-content">
     <SettingItem
-      name="Provider name"
-      desc="Name this provider instance so you can distinguish it later."
+      name="服务商名称"
+      desc="给这个服务商实例起个名字，方便之后区分。"
     >
       <!-- Disabled while the commit runs: it derives the provider's permanent ID from this
            name, so editing it mid-flight has nothing sensible to mean. Note this is not
@@ -518,7 +518,7 @@ const canFinish = $derived(
         inputType="text"
         value={displayName}
         disabled={isCommitting}
-        placeholder={providerDefinition?.displayName ?? "New Provider"}
+        placeholder={providerDefinition?.displayName ?? "新服务商"}
         onblur={(value: string) => void handleDisplayNameBlur(value)}
       />
     </SettingItem>
@@ -539,7 +539,7 @@ const canFinish = $derived(
 
         <div class="auth-alt-toggle">
           <button type="button" class="auth-alt-link" onclick={toggleApiKey}>
-            {revealApiKey ? "Hide API key field" : "Use an API key instead →"}
+            {revealApiKey ? "隐藏 API key 输入框" : "改用 API key →"}
           </button>
         </div>
 
@@ -565,7 +565,7 @@ const canFinish = $derived(
       {:else}
         <div class="setting-item">
           <div class="setting-item-description">
-            {oauth.label} sign-in is only available on desktop.
+            {oauth.label} 登录仅在桌面端可用。
           </div>
         </div>
       {/if}
@@ -586,33 +586,33 @@ const canFinish = $derived(
     <div class="provider-connection-status" role="status" aria-live="polite">
       {#if connectionStatus === "checking"}
         <CircularLoader size={16} color="var(--text-muted)" />
-        <span class="provider-connection-text">Checking connection…</span>
+        <span class="provider-connection-text">正在检查连接…</span>
       {:else if connectionStatus === "connected"}
         <span class="provider-connection-icon is-success" use:icon={"check-circle"}></span>
-        <span class="provider-connection-text is-success">Connected</span>
+        <span class="provider-connection-text is-success">已连接</span>
         {#if displayNameError}
           <!-- Connected, but the commit is blocked: say why, so a disabled Done isn't a
                dead end the user has to guess at. -->
-          <span class="provider-connection-text is-muted">— fix the provider name to finish</span>
+          <span class="provider-connection-text is-muted">—— 请先修正服务商名称以完成设置</span>
         {/if}
       {:else if connectionStatus === "failed"}
         <span class="provider-connection-icon is-error" use:icon={"x-circle"}></span>
         <span class="provider-connection-text is-error">{connectionError}</span>
       {:else}
         <span class="provider-connection-text is-muted">
-          Enter your credentials above — the connection is checked automatically.
+          请在上方填写凭据 —— 系统会自动检查连接。
         </span>
       {/if}
     </div>
 
-    <Button buttonText="Done" cta={canFinish} disabled={!canFinish} onClick={() => modal.close()} />
+    <Button buttonText="完成" cta={canFinish} disabled={!canFinish} onClick={() => modal.close()} />
   </div>
 {/snippet}
 
 {#snippet trustedToggle()}
   <SettingItem
-    name="Trusted with private notes"
-    desc="Allow this provider to access notes that remain private for untrusted providers."
+    name="可信任私密笔记"
+    desc="允许该服务商访问那些对不受信任的服务商保持私密的笔记。"
   >
     <Toggle checked={isTrusted} onchange={handleTrustedChange} />
   </SettingItem>
@@ -620,27 +620,27 @@ const canFinish = $derived(
 
 {#snippet oauthSignIn()}
   {#if oauth}
-    <SettingItem name={`${oauth.label} Sign-In`} desc={oauth.description ?? ""}>
+    <SettingItem name={`${oauth.label} 登录`} desc={oauth.description ?? ""}>
       <div class="flex gap-2 items-center">
         {#if isSigningIn && oauth.cancelSignIn}
           <!-- While a sign-in is pending, let the user abort it (e.g. they closed the
                browser tab) and retry, instead of waiting out the timeout. -->
-          <Button buttonText="Cancel sign-in" onClick={handleCancelSignIn} />
+          <Button buttonText="取消登录" onClick={handleCancelSignIn} />
         {:else if oauthConnected && !oauth.disconnect}
           <!-- API-key-backed OAuth (e.g. OpenRouter): the minted key doesn't expire, so
                reconnecting is needless. Show a plain connected status, no button. -->
-          <span class="oauth-connected-label">Connected via {oauth.label}</span>
+          <span class="oauth-connected-label">已通过 {oauth.label} 连接</span>
         {:else if oauthConnected}
           <!-- Session-backed OAuth (e.g. Codex/ChatGPT): tokens can expire or be revoked,
                so keep Reconnect (re-auth) and Disconnect available. -->
-          <span class="oauth-connected-label">Connected via {oauth.label}</span>
-          <Button buttonText="Reconnect" disabled={isSigningIn} onClick={() => void handleOAuthSignIn()} />
+          <span class="oauth-connected-label">已通过 {oauth.label} 连接</span>
+          <Button buttonText="重新连接" disabled={isSigningIn} onClick={() => void handleOAuthSignIn()} />
           {#if oauth.disconnect}
-            <Button buttonText="Disconnect" onClick={handleOAuthDisconnect} />
+            <Button buttonText="断开连接" onClick={handleOAuthDisconnect} />
           {/if}
         {:else}
           <Button
-            buttonText={`Sign in with ${oauth.label}`}
+            buttonText={`通过 ${oauth.label} 登录`}
             disabled={isSigningIn}
             cta={true}
             onClick={() => void handleOAuthSignIn()}
@@ -653,12 +653,12 @@ const canFinish = $derived(
            authorization code in the browser and the user pastes it here. On desktop this
            is a fallback if the browser doesn't return to Obsidian automatically. -->
       <SettingItem
-        name="Paste authorization code"
-        desc="Copy the authorization code shown in the browser and paste it here to finish connecting."
+        name="粘贴授权码"
+        desc="复制浏览器中显示的授权码并粘贴到此处，即可完成连接。"
       >
         <div class="flex gap-2 items-center" onfocusin={scrollManualCodeIntoView}>
-          <Text inputType="text" bind:value={manualCode} placeholder="Authorization code" />
-          <Button buttonText="Submit" disabled={!manualCode.trim()} onClick={handleSubmitManualCode} />
+          <Text inputType="text" bind:value={manualCode} placeholder="授权码" />
+          <Button buttonText="提交" disabled={!manualCode.trim()} onClick={handleSubmitManualCode} />
         </div>
       </SettingItem>
     {/if}

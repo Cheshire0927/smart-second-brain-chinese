@@ -87,9 +87,9 @@ export const anthropicProvider: BaseProviderDefinition = {
 	// =========================================================================
 	setupInstructions: {
 		steps: [
-			"Create an API key from Anthropic's Console",
-			"Ensure your Anthropic account has credits available",
-			"Paste the API key below (starts with 'sk-ant-')",
+			"在 Anthropic Console 中创建 API 密钥",
+			"确认你的 Anthropic 账户有可用额度",
+			"将 API 密钥粘贴到下方（以 'sk-ant-' 开头）",
 		],
 		link: {
 			url: "https://console.anthropic.com/settings/keys",
@@ -102,22 +102,22 @@ export const anthropicProvider: BaseProviderDefinition = {
 	// =========================================================================
 	auth: {
 		apiKey: {
-			label: "API Key",
-			description: "Your Anthropic API key for authentication",
+			label: "API 密钥",
+			description: "用于身份验证的 Anthropic API 密钥",
 			kind: "secret",
 			required: true,
 			placeholder: "sk-ant-...",
 		},
 		baseUrl: {
-			label: "Base URL",
-			description: "The base URL for the Anthropic-compatible API endpoint",
+			label: "基础 URL",
+			description: "Anthropic 兼容 API 端点的基础 URL",
 			kind: "text",
 			required: false,
 			placeholder: ANTHROPIC_DEFAULT_BASE_URL,
 		},
 		headers: {
-			label: "Custom Headers",
-			description: "Additional headers as JSON (optional)",
+			label: "自定义请求头",
+			description: "以 JSON 填写的附加请求头（可选）",
 			kind: "textarea",
 			required: false,
 			placeholder: '{"X-Custom-Header": "value"}',
@@ -170,7 +170,7 @@ export const anthropicProvider: BaseProviderDefinition = {
 
 	validateAuth: async (auth: AuthObject): Promise<AuthValidationResult> => {
 		if (!auth.apiKey?.trim()) {
-			return { valid: false, error: "API key is required" };
+			return { valid: false, error: "需要 API 密钥" };
 		}
 
 		try {
@@ -197,22 +197,22 @@ export const anthropicProvider: BaseProviderDefinition = {
 			}
 
 			if (response.status === 401 || response.status === 403 || errorType === "authentication_error") {
-				return { valid: false, error: errorMessage || `Authentication failed (${response.status})` };
+				return { valid: false, error: errorMessage || `身份验证失败（${response.status}）` };
 			}
 
 			return {
 				valid: false,
-				error: errorMessage || response.text || `Request failed with status ${response.status}`,
+				error: errorMessage || response.text || `请求失败，状态码 ${response.status}`,
 			};
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			return { valid: false, error: `Connection failed: ${message}` };
+			return { valid: false, error: `连接失败：${message}` };
 		}
 	},
 
 	discoverModels: async (auth: AuthObject): Promise<string[]> => {
 		if (!auth.apiKey?.trim()) {
-			throw new Error("Anthropic model discovery requires an API key.");
+			throw new Error("发现 Anthropic 模型需要 API 密钥。");
 		}
 
 		const baseUrl = sanitizeBaseUrl(auth.baseUrl || ANTHROPIC_DEFAULT_BASE_URL);
@@ -224,7 +224,7 @@ export const anthropicProvider: BaseProviderDefinition = {
 		});
 
 		if (response.status < 200 || response.status >= 300) {
-			throw new Error(`Model discovery failed: ${response.text || `status ${response.status}`}`);
+			throw new Error(`模型发现失败：${response.text || `状态码 ${response.status}`}`);
 		}
 
 		const payload = response.json as AnthropicModelResponse;

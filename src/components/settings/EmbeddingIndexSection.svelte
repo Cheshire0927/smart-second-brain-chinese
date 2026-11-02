@@ -155,7 +155,7 @@ async function deleteIndex(targetIndexId: string) {
 		// rather than letting it surface as an unhandled rejection: the index is still there,
 		// so the row below must not be reset as though it had been removed.
 		Logger.error(`[EmbeddingIndexSection] Failed to delete index ${targetIndexId}:`, error);
-		new Notice(`Could not delete this index: ${error instanceof Error ? error.message : String(error)}`);
+		new Notice(`无法删除此索引：${error instanceof Error ? error.message : String(error)}`);
 		return;
 	}
 	if (targetIndexId === indexId) {
@@ -205,20 +205,20 @@ async function importFromFile(): Promise<boolean> {
 
 function describeCurrentSelection(): string {
 	return purpose === "search"
-		? "Embedding indexes power semantic search across your notes."
-		: "Embedding indexes power semantic graph features across your notes.";
+		? "嵌入索引为笔记的语义搜索提供支持。"
+		: "嵌入索引为笔记的语义图谱功能提供支持。";
 }
 
 function getSelectionGroupLabel(): string {
-	return purpose === "search" ? "Search embedding index" : "Graph embedding index";
+	return purpose === "search" ? "搜索嵌入索引" : "图谱嵌入索引";
 }
 </script>
 
 <ManagedEntitySection
-  heading="Embedding indexes"
+  heading="嵌入索引"
   actionsLayout="control"
   description={describeCurrentSelection()}
-  emptyMessage="No embedding indexes configured yet."
+  emptyMessage="尚未配置任何嵌入索引。"
   hasItems={indexes.length > 0}
 >
   {#snippet actions()}
@@ -239,20 +239,20 @@ function getSelectionGroupLabel(): string {
           <span>
             {indexProgress.indexed}/{indexProgress.total}
             {#if indexProgress.skipped > 0}
-              ({indexProgress.skipped} skipped)
+              （已跳过 {indexProgress.skipped}）
             {/if}
             {#if indexProgress.etaMs !== null}
-              (~{formatEta(indexProgress.etaMs)} left)
+              （约剩 {formatEta(indexProgress.etaMs)}）
             {/if}
           </span>
         </div>
       {/if}
-      <Button buttonText="Cancel" onClick={cancelIndexing} />
+      <Button buttonText="取消" onClick={cancelIndexing} />
     {:else}
       <!-- Importing an existing index lives inside the setup modal, as the
            alternative to building one — not as a bare icon competing with the
            primary action here. -->
-      <Button buttonText="Add index" cta={true} onClick={openAddIndexModal} />
+      <Button buttonText="添加索引" cta={true} onClick={openAddIndexModal} />
     {/if}
   {/snippet}
 
@@ -274,7 +274,7 @@ function getSelectionGroupLabel(): string {
           meta={[
             entryProviderDef?.displayName ?? entry.provider,
             formatIndexBuildStatus(entry.lastBuiltAt, entry.documentCount),
-            `${entry.documentCount} notes indexed`,
+            `已索引 ${entry.documentCount} 篇笔记`,
           ]
             .filter(Boolean)
             .join(" · ")}
@@ -282,7 +282,7 @@ function getSelectionGroupLabel(): string {
           radio={{
             selected,
             onclick: () => selectIndex(entry.id),
-            ariaLabel: `Use ${entry.model} as ${purpose} index`,
+            ariaLabel: `将 ${entry.model} 用作 ${purpose} 索引`,
           }}
         >
           {#snippet leading()}
@@ -293,24 +293,24 @@ function getSelectionGroupLabel(): string {
             {#if entry.documentCount > 0}
               <Button
                 iconId="list"
-                ariaLabel="View indexing report"
-                tooltip="View indexing report"
+                ariaLabel="查看索引报告"
+                tooltip="查看索引报告"
                 onClick={() => openIndexingReport(entry.id)}
               />
               <!-- Index export uses a native file dialog + node fs; desktop only. -->
               {#if Platform.isDesktopApp}
               <Button
                 iconId="download"
-                ariaLabel="Export index to file"
-                tooltip="Export index to file"
+                ariaLabel="导出索引到文件"
+                tooltip="导出索引到文件"
                 onClick={() => void exportIndex(entry.id)}
               />
               {/if}
             {/if}
             <Button
               iconId="trash"
-              ariaLabel="Delete index"
-              tooltip="Delete index"
+              ariaLabel="删除索引"
+              tooltip="删除索引"
               onClick={() => void deleteIndex(entry.id)}
             />
           {/snippet}
@@ -320,7 +320,7 @@ function getSelectionGroupLabel(): string {
   {/if}
 
   {#if memoryHint}
-    <SettingContainer name="Memory on mobile" desc={memoryHint} />
+    <SettingContainer name="移动端内存" desc={memoryHint} />
   {/if}
 </ManagedEntitySection>
 

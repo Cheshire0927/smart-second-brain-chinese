@@ -59,10 +59,10 @@ let isGroup = $derived(filter.type === "all" || filter.type === "any" || filter.
 
 // ── Leaf options ────────────────────────────────────────
 const baseLeafTypeOptions = [
-	{ display: "Folder", value: "folder" as LeafType },
-	{ display: "Tag", value: "tag" as LeafType },
-	{ display: "Extension", value: "extension" as LeafType },
-	{ display: "Property", value: "property" as LeafType },
+	{ display: "文件夹", value: "folder" as LeafType },
+	{ display: "标签", value: "tag" as LeafType },
+	{ display: "扩展名", value: "extension" as LeafType },
+	{ display: "属性", value: "property" as LeafType },
 ];
 
 function getLeafTypeOptions(selectedType?: LeafType) {
@@ -71,9 +71,9 @@ function getLeafTypeOptions(selectedType?: LeafType) {
 
 // ── Group combinator options ────────────────────────────
 const combinatorOptions = [
-	{ display: "ALL of", value: "all" as const },
-	{ display: "ANY of", value: "any" as const },
-	{ display: "NONE of", value: "none" as const },
+	{ display: "满足全部", value: "all" as const },
+	{ display: "满足任一", value: "any" as const },
+	{ display: "全部不满足", value: "none" as const },
 ];
 
 // ── Combobox state ──────────────────────────────────────
@@ -229,7 +229,7 @@ function handlePropertyValuesChange(raw: string) {
         class="filter-combinator-dropdown"
       />
       {#if onremove}
-        <button type="button" class="filter-remove" onclick={onremove} title="Remove condition">
+        <button type="button" class="filter-remove" onclick={onremove} title="移除条件">
           <Icon name="x" size="xs" />
         </button>
       {/if}
@@ -271,7 +271,7 @@ function handlePropertyValuesChange(raw: string) {
                     placeholder={liveType === "folder"
                       ? "Work/projects"
                       : liveType === "property"
-                        ? "property name"
+                        ? "属性名"
                         : "#my-tag"}
                     oninput={(e) => {
                       const v = (e.target as HTMLInputElement).value;
@@ -296,7 +296,7 @@ function handlePropertyValuesChange(raw: string) {
                   {:else if comboOpen && comboTarget === "live" && showsEmptyPoolHint(liveType)}
                     <div class="filter-combo-list picker-popover-content">
                       <div class="filter-combo-empty">
-                        No properties found in vault — type a name to use it anyway.
+                        仓库中未找到任何属性——仍可直接输入名称使用。
                       </div>
                     </div>
                   {/if}
@@ -305,7 +305,7 @@ function handlePropertyValuesChange(raw: string) {
                   <Text
                     inputType="text"
                     value={formatPropertyValues((liveLeaf as ViewFilterLeaf & { values?: string[] }).values)}
-                    placeholder="any value"
+                    placeholder="任意值"
                     onchange={(v: string) =>
                       onLiveLeafChange?.(buildPropertyLeaf(liveLeaf!.value as string, v))}
                     class="filter-leaf-value"
@@ -325,7 +325,7 @@ function handlePropertyValuesChange(raw: string) {
             </div>
           </div>
         {:else if (filter as ViewFilterGroup).conditions.length === 0}
-          <div class="live-leaf-placeholder">Make a selection in the graph</div>
+          <div class="live-leaf-placeholder">在图谱中进行选择</div>
         {/if}
       {/if}
 
@@ -344,7 +344,7 @@ function handlePropertyValuesChange(raw: string) {
             ><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"
             ></line></svg
           >
-          Condition
+          条件
         </button>
         <button type="button" class="filter-add-button" onclick={handleAddGroup}>
           <svg
@@ -360,7 +360,7 @@ function handlePropertyValuesChange(raw: string) {
             ><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"
             ></line></svg
           >
-          Group
+          分组
         </button>
       </div>
     </div>
@@ -385,7 +385,7 @@ function handlePropertyValuesChange(raw: string) {
             placeholder={leafType === "folder"
               ? "Work/projects"
               : leafType === "property"
-                ? "property name"
+                ? "属性名"
                 : "#my-tag"}
             oninput={(e) => {
               const v = (e.target as HTMLInputElement).value;
@@ -409,7 +409,7 @@ function handlePropertyValuesChange(raw: string) {
             </div>
           {:else if comboOpen && comboTarget === "leaf" && showsEmptyPoolHint(leafType)}
             <div class="filter-combo-list picker-popover-content">
-              <div class="filter-combo-empty">No properties found in vault — type a name to use it anyway.</div>
+              <div class="filter-combo-empty">仓库中未找到任何属性——仍可直接输入名称使用。</div>
             </div>
           {/if}
         </div>
@@ -417,7 +417,7 @@ function handlePropertyValuesChange(raw: string) {
           <Text
             inputType="text"
             value={formatPropertyValues((filter as ViewFilterLeaf & { values?: string[] }).values)}
-            placeholder="any value"
+            placeholder="任意值"
             onchange={handlePropertyValuesChange}
             class="filter-leaf-value"
           />
@@ -432,7 +432,7 @@ function handlePropertyValuesChange(raw: string) {
         />
       {/if}
       {#if onremove}
-        <button type="button" class="filter-remove" onclick={onremove} title="Remove condition">
+        <button type="button" class="filter-remove" onclick={onremove} title="移除条件">
           <Icon name="x" size="xs" />
         </button>
       {/if}

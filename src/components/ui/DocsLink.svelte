@@ -27,9 +27,9 @@ interface Props {
 	class?: string;
 }
 
-let { doc, variant = "icon", label = "Learn more", subject, class: className = "" }: Props = $props();
+let { doc, variant = "icon", label = "了解更多", subject, class: className = "" }: Props = $props();
 
-const accessibleName = $derived(subject ? `Documentation: ${subject}` : "Open documentation");
+const accessibleName = $derived(subject ? `文档：${subject}` : "打开文档");
 </script>
 
 {#if variant === "icon"}

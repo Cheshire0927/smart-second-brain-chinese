@@ -376,7 +376,7 @@ export class PluginDataStore {
 	private notifySaveFailed(error: unknown): void {
 		if (this.#saveFailureNotified) return;
 		this.#saveFailureNotified = true;
-		new Notice(`Smart Second Brain could not save your settings: ${extractErrorMessage(error)}`, 10000);
+		new Notice(`Smart Second Brain 无法保存你的设置：${extractErrorMessage(error)}`, 10000);
 		window.setTimeout(() => {
 			this.#saveFailureNotified = false;
 		}, 30000);

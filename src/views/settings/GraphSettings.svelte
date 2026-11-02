@@ -46,9 +46,9 @@ const graphModelWithholdsPrivate = $derived(
  */
 const namingModelDesc = $derived(
 	graphModelWithholdsPrivate
-		? "Model used to name topics. Without one, a topic is named after its best-connected note. " +
-				"This provider isn't trusted for private notes, so private titles are withheld from naming."
-		: "Model used to name topics. Without one, a topic is named after its best-connected note.",
+		? "用于为主题命名的模型。若不设置，主题将以其关联最紧密的笔记命名。" +
+				"该服务商未被信任处理私密笔记，因此私密标题不会参与命名。"
+		: "用于为主题命名的模型。若不设置，主题将以其关联最紧密的笔记命名。",
 );
 
 function openGraphModelSelection() {
@@ -63,24 +63,24 @@ function openGraphModelSelection() {
 }
 </script>
 
-<SettingGroup heading="Topic names">
-  <SettingItem name="Topic naming model" desc={namingModelDesc}>
+<SettingGroup heading="主题名称">
+  <SettingItem name="主题命名模型" desc={namingModelDesc}>
     <ModelSettingControl
       available={models.hasProviders && models.hasModels}
       loading={models.hasProviders && models.isLoadingModels}
-      configureLabel={!models.hasProviders ? "Configure Provider" : "Configure Models"}
-      unavailableHint={!models.hasProviders ? "No AI provider is configured yet." : undefined}
+      configureLabel={!models.hasProviders ? "配置服务商" : "配置模型"}
+      unavailableHint={!models.hasProviders ? "尚未配置任何 AI 服务商。" : undefined}
       onConfigure={() => models.openSettings()}
-      placeholder="Select a model"
+      placeholder="选择模型"
       selectedLabel={graphChatModel?.model ?? null}
       onSelect={openGraphModelSelection}
-      secondaryLabel={graphChatModel ? "Clear" : undefined}
+      secondaryLabel={graphChatModel ? "清除" : undefined}
       onSecondary={graphChatModel ? () => updateSetting("graphChatModel", null) : undefined}
     />
   </SettingItem>
   <SettingItem
-    name="Name topics automatically"
-    desc="Name topics whenever they change. Off means naming only runs from the graph's Topics panel."
+    name="自动命名主题"
+    desc="主题发生变化时自动命名。关闭后仅能从图谱的「主题」面板手动命名。"
   >
     <Toggle
       checked={pluginData.smartGraphSettings.autoLabelClusters ?? false}

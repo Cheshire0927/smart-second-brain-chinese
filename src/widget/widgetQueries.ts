@@ -25,7 +25,7 @@ interface DataviewQueryApi {
 }
 
 export const DATAVIEW_PLUGIN_ID = "dataview";
-export const DATAVIEW_MISSING_ERROR = "The Dataview plugin is not enabled, so this widget's queries cannot run.";
+export const DATAVIEW_MISSING_ERROR = "Dataview 插件未启用，此 Widget 的查询无法运行。";
 
 const MAX_DEPTH = 6;
 const MAX_ARRAY_ITEMS = 1000;

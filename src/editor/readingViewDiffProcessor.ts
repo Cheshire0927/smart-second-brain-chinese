@@ -337,7 +337,7 @@ function createReadingDiffActionBar(
 
 	const label = createSpan();
 	label.className = "s2b-diff-actions-label";
-	label.textContent = "Pending change";
+	label.textContent = "待处理更改";
 	bar.appendChild(label);
 
 	// Position among this note's pending change groups (e.g. "2/3"). Only shown
@@ -376,14 +376,14 @@ function createReadingDiffActionBar(
 	// Only when the thread has another stop to reach — navigation wraps, so a
 	// lone pending change would give two chevrons that lead back here.
 	if (canNavigate(entryId)) {
-		bar.appendChild(makeNavBtn("chevron-up", "Previous pending change", "prev"));
-		bar.appendChild(makeNavBtn("chevron-down", "Next pending change", "next"));
+		bar.appendChild(makeNavBtn("chevron-up", "上一处待处理更改", "prev"));
+		bar.appendChild(makeNavBtn("chevron-down", "下一处待处理更改", "next"));
 	}
 
 	// Toggle view mode icon (visible on hover via CSS)
 	const toggleBtn = createEl("button");
 	toggleBtn.className = "s2b-diff-toggle-btn";
-	toggleBtn.setAttribute("aria-label", "Toggle diff view");
+	toggleBtn.setAttribute("aria-label", "切换差异视图");
 	let currentMode: DiffViewMode;
 	try {
 		currentMode = getData().diffViewMode;
@@ -409,7 +409,7 @@ function createReadingDiffActionBar(
 	});
 	bar.appendChild(toggleBtn);
 
-	const acceptBtn = createResolveButton("s2b-diff-accept-btn", "check", "Accept", "Accept change");
+	const acceptBtn = createResolveButton("s2b-diff-accept-btn", "check", "Accept", "接受更改");
 	acceptBtn.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -435,7 +435,7 @@ function createReadingDiffActionBar(
 				acceptBtn.disabled = true;
 				acceptBtn.setAttribute(
 					"title",
-					"Cannot accept — the note changed after this was proposed. Reject it and ask the agent to re-stage.",
+					"无法接受 —— 提议之后笔记已被改动。请拒绝并让智能体重新提交。",
 				);
 			})
 			.catch(() => {
@@ -445,7 +445,7 @@ function createReadingDiffActionBar(
 		/* store not initialized */
 	}
 
-	const rejectBtn = createResolveButton("s2b-diff-reject-btn", "x", "Reject", "Reject change");
+	const rejectBtn = createResolveButton("s2b-diff-reject-btn", "x", "Reject", "拒绝更改");
 	rejectBtn.addEventListener("click", (e) => {
 		e.preventDefault();
 		e.stopPropagation();

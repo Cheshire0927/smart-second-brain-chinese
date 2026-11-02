@@ -60,7 +60,7 @@ async function acceptGroup(groupIndex: number) {
 	try {
 		await store.acceptChangeGroup(entry.id, groupIndex);
 	} catch (e) {
-		new Notice(`Failed to apply change: ${e instanceof Error ? e.message : String(e)}`);
+		new Notice(`应用更改失败：${e instanceof Error ? e.message : String(e)}`);
 	}
 }
 
@@ -70,7 +70,7 @@ function rejectGroup(groupIndex: number) {
 </script>
 
 {#if groups.length === 0}
-  <div class="pdh-empty">No remaining differences.</div>
+  <div class="pdh-empty">没有剩余差异。</div>
 {:else}
   <div class="pdh-hunks">
     {#each groups as group, groupIndex (groupIndex)}
@@ -87,9 +87,9 @@ function rejectGroup(groupIndex: number) {
                   class="pdh-action-icon pdh-action-accept"
                   onclick={() => acceptGroup(groupIndex)}
                   title={stale
-                    ? "Cannot accept — the note changed after this was proposed. Reject it and ask the agent to re-stage."
-                    : "Accept this change"}
-                  aria-label="Accept change {groupIndex + 1} of {groups.length}"
+                    ? "无法接受 — 此笔记在提出更改后发生了变化。请拒绝它并让智能体重新暂存。"
+                    : "接受此更改"}
+                  aria-label="接受第 {groupIndex + 1}/{groups.length} 项更改"
                   type="button"
                   disabled={stale}
                 >
@@ -98,8 +98,8 @@ function rejectGroup(groupIndex: number) {
                 <button
                   class="pdh-action-icon pdh-action-reject"
                   onclick={() => rejectGroup(groupIndex)}
-                  title="Reject this change"
-                  aria-label="Reject change {groupIndex + 1} of {groups.length}"
+                  title="拒绝此更改"
+                  aria-label="拒绝第 {groupIndex + 1}/{groups.length} 项更改"
                   type="button"
                 >
                   <div use:icon={"x"} style="--icon-size: 12px"></div>
@@ -110,7 +110,7 @@ function rejectGroup(groupIndex: number) {
         {/if}
         {#if group.removedText.length + group.addedText.length > MAX_HUNK_PREVIEW_CHARS}
           <div class="pdh-too-large">
-            This change is too large to preview here — open the note to review it.
+            此更改过大，无法在此预览 — 请打开笔记查看。
           </div>
         {:else}
           <!-- Word-level old->new diff, same idiom as the in-note card. The each

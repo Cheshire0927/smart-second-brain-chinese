@@ -27,13 +27,13 @@ function handleOpenProviderSetup() {
 
 <!-- Providers -->
 <ManagedEntitySection
-  heading="Providers"
-  description="Providers connect Smart Second Brain to the AI services used for chat, embeddings, and other model-powered features."
-  emptyMessage="No provider instances configured yet."
+  heading="服务商"
+  description="服务商用于将 Smart Second Brain 连接到聊天、嵌入及其他模型功能所需的 AI 服务。"
+  emptyMessage="尚未配置任何服务商实例。"
   hasItems={configuredProviderIds.length > 0}
 >
   {#snippet actions()}
-    <Button buttonText="Add provider" cta={true} onClick={handleOpenProviderSetup} />
+    <Button buttonText="添加服务商" cta={true} onClick={handleOpenProviderSetup} />
   {/snippet}
 
   {#if configuredProviderIds.length > 0}
@@ -44,11 +44,11 @@ function handleOpenProviderSetup() {
 </ManagedEntitySection>
 
 <!-- Privacy -->
-<SettingGroup heading="Privacy">
+<SettingGroup heading="隐私">
   <SettingItem
-    name="Note access policy"
+    name="笔记访问策略"
     class="privacy-setting-item"
-    desc="Choose whether untrusted providers see nothing or everything by default, then manage the matching file list."
+    desc="选择不受信任的服务商默认可见范围为「无」还是「全部」，并管理对应的文件列表。"
   >
     {#snippet nameSuffix()}
       <span
@@ -59,15 +59,15 @@ function handleOpenProviderSetup() {
       <!-- Two vault modes crossed with per-provider trust, where the same toggle
            inverts meaning depending on the mode — more than one description line
            can carry, so link the page that lays it out. -->
-      <DocsLink doc="privacyModel" subject="Note access policy" />
+      <DocsLink doc="privacyModel" subject="笔记访问策略" />
     {/snippet}
 
-    <Button onClick={() => privacyListModal.open()} buttonText="Manage" />
+    <Button onClick={() => privacyListModal.open()} buttonText="管理" />
   </SettingItem>
 
   <SettingItem
-    name="Check for updates"
-    desc="Once a day, fetch this plugin's version number from GitHub and show a notice when a newer one is available. Nothing about you or your vault is sent. Skipped while Obsidian's own automatic plugin update check is on."
+    name="检查更新"
+    desc="每天从 GitHub 获取一次本插件的版本号，发现新版本时显示提示。不会发送关于你或仓库的任何信息。若 Obsidian 自身的插件自动更新检查已开启，则跳过此项。"
   >
     <Toggle
       checked={pluginData.checkForUpdates}

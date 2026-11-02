@@ -27,7 +27,7 @@ export class EmbeddingIndexSetupModal extends SvelteModal {
 
 	onOpen() {
 		this.setTitle(
-			this.options.purpose === "search" ? "Configure Search Embedding Index" : "Configure Graph Embedding Index",
+			this.options.purpose === "search" ? "配置搜索嵌入索引" : "配置图谱嵌入索引",
 		);
 		// Wrapped in ModalProvider: the component calls `useAvailableModels()`, which
 		// resolves a QueryClient from Svelte context. Mounting it bare threw

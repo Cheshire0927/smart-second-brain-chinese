@@ -14,7 +14,7 @@ export class AgentEditorModal extends SvelteModal {
 	}
 
 	onOpen() {
-		this.setTitle("Edit Agent");
+		this.setTitle("编辑智能体");
 		this.mountComponent(
 			ModalProvider<{
 				modal: AgentEditorModal;

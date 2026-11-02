@@ -117,10 +117,10 @@ function reviewStatusChips(toolCallId: string): Array<{ label: string; cls: stri
 			else rejected++;
 		}
 		const chips: Array<{ label: string; cls: string }> = [];
-		if (accepted > 0) chips.push({ label: `${accepted} accepted`, cls: "tool-output-metric-chip-success" });
-		if (partial > 0) chips.push({ label: `${partial} partly applied`, cls: "tool-output-metric-chip-warning" });
-		if (rejected > 0) chips.push({ label: `${rejected} rejected`, cls: "tool-output-metric-chip-danger" });
-		if (pending > 0) chips.push({ label: `${pending} awaiting review`, cls: "tool-output-metric-chip-accent" });
+		if (accepted > 0) chips.push({ label: `${accepted} 项已接受`, cls: "tool-output-metric-chip-success" });
+		if (partial > 0) chips.push({ label: `${partial} 项部分已应用`, cls: "tool-output-metric-chip-warning" });
+		if (rejected > 0) chips.push({ label: `${rejected} 项已拒绝`, cls: "tool-output-metric-chip-danger" });
+		if (pending > 0) chips.push({ label: `${pending} 项待审阅`, cls: "tool-output-metric-chip-accent" });
 		return chips;
 	} catch {
 		// store not initialized (e.g. tests rendering the section standalone)
@@ -135,7 +135,7 @@ function reviewStatusChips(toolCallId: string): Array<{ label: string; cls: stri
  * no outcome yet (still running, or nothing to report) just the label is shown.
  */
 function foldOutcome(summary: ToolSummary): string {
-	return summary.summary ? `${summary.label}, ${summary.summary}` : summary.label;
+	return summary.summary ? `${summary.label}，${summary.summary}` : summary.label;
 }
 
 /**
@@ -202,7 +202,7 @@ function getVisibleItems<T>(items: T[] | undefined, maxItems = 8): { visible: T[
 function formatReadContentSource(sourceType: "file" | "pdf" | "excalidraw"): string {
 	if (sourceType === "pdf") return "PDF";
 	if (sourceType === "excalidraw") return "Excalidraw";
-	return "Note";
+	return "笔记";
 }
 
 /* ── Unified tool call model ── */
@@ -236,9 +236,9 @@ function shouldShowDirectoryTreePath(name: string, path: string): boolean {
 
 function formatFolderMeta(node: DirectoryTreeNodeView): string {
 	const parts: string[] = [];
-	if (node.fileCount !== undefined) parts.push(`${node.fileCount} file${node.fileCount === 1 ? "" : "s"}`);
+	if (node.fileCount !== undefined) parts.push(`${node.fileCount} 个文件`);
 	if (node.folderCount !== undefined) {
-		parts.push(`${node.folderCount} subfolder${node.folderCount === 1 ? "" : "s"}`);
+		parts.push(`${node.folderCount} 个子文件夹`);
 	}
 	return parts.join(" · ");
 }
@@ -392,13 +392,13 @@ const runningTools = $derived(lastStep?.tools.filter((t) => isInFlight(t.status)
  *   genuinely opaque phase, which keeps the generic "Thinking…".
  */
 const runningPhase = $derived.by((): string => {
-	if (summarizingHistory) return "Summarizing earlier messages";
+	if (summarizingHistory) return "正在摘要较早的消息";
 	if (runningTools.length > 0) {
-		return runningTools.length === 1 ? "Running 1 tool" : `Running ${runningTools.length} tools`;
+		return runningTools.length === 1 ? "正在运行 1 个工具" : `正在运行 ${runningTools.length} 个工具`;
 	}
-	if (steps.length === 0 && !answerContent) return isLocalModel ? "Loading model" : "Waiting for the model";
-	if (answerContent) return "Writing";
-	return "Thinking";
+	if (steps.length === 0 && !answerContent) return isLocalModel ? "正在加载模型" : "正在等待模型响应";
+	if (answerContent) return "正在撰写";
+	return "正在思考";
 });
 
 const runningLabel = $derived(`${runningPhase}… ${runningSeconds}s`);
@@ -413,7 +413,7 @@ const settledSeconds = $derived(
 		? Math.max(1, Math.round(thinkingDurationMs / 1000))
 		: Math.max(1, runningSeconds),
 );
-const settledLabel = $derived(`Thought for ${settledSeconds}s`);
+const settledLabel = $derived(`已思考 ${settledSeconds}s`);
 
 // The single content spot below the label. `answerContent` (the reducer's `content`)
 // holds ONLY the current message's uncommitted text: while streaming it's the run's
@@ -509,7 +509,7 @@ const PROSE_MARKDOWN_CLASS =
        shown (folding couldn't find it) still notes which subagent it ran in. The
        `task` row itself needs no chip — its sentence already names the subagent. -->
   {#if subAgentName && !isTask}
-    <span class="tool-card-subagent-badge">via {subAgentName}</span>
+    <span class="tool-card-subagent-badge">由 {subAgentName}</span>
   {/if}
 {/snippet}
 
@@ -518,7 +518,7 @@ const PROSE_MARKDOWN_CLASS =
        already restates them. Developer mode reveals the exact arguments. -->
   {#if showRawIO && formatToolInput(tool.input).length > 0}
     <div class="tool-io-section">
-      <div class="tool-io-label">Input</div>
+      <div class="tool-io-label">输入</div>
       <div class="tool-io-entries">
         {#each formatToolInput(tool.input) as { key, value } (key)}
           <div class="tool-io-entry">
@@ -539,8 +539,8 @@ const PROSE_MARKDOWN_CLASS =
     </div>
   {:else if showRawIO && !isInFlight(tool.status)}
     <div class="tool-io-section">
-      <div class="tool-io-label">Output</div>
-      <span class="tool-io-empty">(no output)</span>
+      <div class="tool-io-label">输出</div>
+      <span class="tool-io-empty">（无输出）</span>
     </div>
   {/if}
 {/snippet}
@@ -582,7 +582,7 @@ const PROSE_MARKDOWN_CLASS =
       <!-- The subagent's final output, below its steps. -->
       {#if hasFriendlyResult(outputModel)}
         <div class="tool-subagent-output">
-          <div class="tool-subagent-output-label">Result</div>
+          <div class="tool-subagent-output-label">结果</div>
           <div class="tool-io-output">
             {@render outputBody(outputModel!, tool.id)}
           </div>
@@ -673,7 +673,7 @@ const PROSE_MARKDOWN_CLASS =
   {#if node.moreFolders > 0}
     <div class="tool-output-tree-row tool-output-tree-row-more" style={`--tree-depth: ${childDepth};`}>
       <span class="tool-output-tree-icon">…</span>
-      <span class="tool-output-tree-meta">+{node.moreFolders} more folder{node.moreFolders === 1 ? "" : "s"}</span>
+      <span class="tool-output-tree-meta">还有 {node.moreFolders} 个文件夹</span>
     </div>
   {/if}
 
@@ -690,9 +690,9 @@ const PROSE_MARKDOWN_CLASS =
     <div class="tool-output-tree-row tool-output-tree-row-more" style={`--tree-depth: ${childDepth};`}>
       <span class="tool-output-tree-icon">…</span>
       <span class="tool-output-tree-meta"
-        >{node.files.length > 0 ? "+" : ""}{node.moreFiles} file{node.moreFiles === 1 ? "" : "s"}{node.files.length > 0
-          ? " more"
-          : " not listed"}</span
+        >{node.files.length > 0 ? "另有 " : ""}{node.moreFiles} 个文件{node.files.length > 0
+          ? ""
+          : "未列出"}</span
       >
     </div>
   {/if}
@@ -781,23 +781,23 @@ const PROSE_MARKDOWN_CLASS =
     {@const visibleResults = getVisibleItems(model.payload.results, 6)}
     <div class="tool-output-metrics">
       {#if model.payload.query}
-        <span class="tool-output-metric-chip">query: {model.payload.query}</span>
+        <span class="tool-output-metric-chip">查询：{model.payload.query}</span>
       {/if}
       {#if model.payload.algorithm}
-        <span class="tool-output-metric-chip">algorithm: {model.payload.algorithm}</span>
+        <span class="tool-output-metric-chip">算法：{model.payload.algorithm}</span>
       {/if}
       {#if model.payload.totalResults !== undefined}
-        <span class="tool-output-metric-chip">results: {model.payload.totalResults}</span>
+        <span class="tool-output-metric-chip">结果：{model.payload.totalResults}</span>
       {/if}
       {#if model.payload.returnedResults !== undefined}
-        <span class="tool-output-metric-chip">shown: {model.payload.returnedResults}</span>
+        <span class="tool-output-metric-chip">已显示：{model.payload.returnedResults}</span>
       {/if}
       {#if model.payload.recentOnly}
-        <span class="tool-output-metric-chip">recent only</span>
+        <span class="tool-output-metric-chip">仅最近</span>
       {/if}
       {#if (model.payload.skippedPrivateFiles ?? 0) > 0}
         <span class="tool-output-metric-chip tool-output-metric-chip-warning"
-          >skipped private: {model.payload.skippedPrivateFiles}</span
+          >已跳过私密：{model.payload.skippedPrivateFiles}</span
         >
       {/if}
     </div>
@@ -811,7 +811,7 @@ const PROSE_MARKDOWN_CLASS =
             <div class="tool-output-result-title-row">
               <span class="tool-output-result-rank">#{result.rank ?? resultIndex + 1}</span>
               <span class="tool-output-result-title"
-                >{result.name ?? result.path ?? "Untitled"}</span
+                >{result.name ?? result.path ?? "无标题"}</span
               >
             </div>
             {#if result.path}
@@ -835,33 +835,33 @@ const PROSE_MARKDOWN_CLASS =
         {/each}
       </div>
       {#if visibleResults.hiddenCount > 0}
-        <div class="tool-output-truncation-note">+{visibleResults.hiddenCount} more result(s)</div>
+        <div class="tool-output-truncation-note">还有 {visibleResults.hiddenCount} 条结果</div>
       {/if}
     {/if}
   {:else if model.kind === "list_directory"}
     {@const directoryTree = buildDirectoryTreeView(model.payload)}
     <div class="tool-output-metrics">
-      <span class="tool-output-metric-chip">root: {model.payload.root ?? "/"}</span>
-      <span class="tool-output-metric-chip">folders: {model.payload.totalFolders ?? 0}</span>
-      <span class="tool-output-metric-chip">files: {model.payload.totalFiles ?? 0}</span>
+      <span class="tool-output-metric-chip">根目录：{model.payload.root ?? "/"}</span>
+      <span class="tool-output-metric-chip">文件夹：{model.payload.totalFolders ?? 0}</span>
+      <span class="tool-output-metric-chip">文件：{model.payload.totalFiles ?? 0}</span>
       {#if model.payload.maxDepth !== undefined}
-        <span class="tool-output-metric-chip">depth: {model.payload.maxDepth}</span>
+        <span class="tool-output-metric-chip">深度：{model.payload.maxDepth}</span>
       {/if}
       {#if model.payload.includeFiles === false}
-        <span class="tool-output-metric-chip">folders only</span>
+        <span class="tool-output-metric-chip">仅文件夹</span>
       {/if}
       {#if model.payload.note}
-        <span class="tool-output-metric-chip tool-output-metric-chip-warning">collapsed</span>
+        <span class="tool-output-metric-chip tool-output-metric-chip-warning">已折叠</span>
       {/if}
       {#if (model.payload.skippedPrivateFiles ?? 0) > 0}
         <span class="tool-output-metric-chip tool-output-metric-chip-warning"
-          >skipped private: {model.payload.skippedPrivateFiles}</span
+          >已跳过私密：{model.payload.skippedPrivateFiles}</span
         >
       {/if}
     </div>
     {#if (model.payload.totalFolders ?? 0) > 0 || (model.payload.totalFiles ?? 0) > 0}
       <div class="tool-output-group">
-        <div class="tool-output-group-title">Tree</div>
+        <div class="tool-output-group-title">目录树</div>
         <div class="tool-output-tree">
           {@render directoryTreeNode(directoryTree, 0, true)}
         </div>
@@ -869,8 +869,8 @@ const PROSE_MARKDOWN_CLASS =
     {/if}
   {:else if model.kind === "manage_notes"}
     <div class="tool-output-metrics">
-      <span class="tool-output-metric-chip">operations: {model.summary.operations}</span>
-      <span class="tool-output-metric-chip">paths: {model.summary.paths}</span>
+      <span class="tool-output-metric-chip">操作数：{model.summary.operations}</span>
+      <span class="tool-output-metric-chip">路径数：{model.summary.paths}</span>
       {#each model.summary.breakdown as part (part)}
         <span class="tool-output-metric-chip tool-output-metric-chip-accent">{part}</span>
       {/each}
@@ -894,7 +894,7 @@ const PROSE_MARKDOWN_CLASS =
         >
       {/if}
       {#if model.payload.truncated}
-        <span class="tool-output-metric-chip tool-output-metric-chip-warning">truncated</span>
+        <span class="tool-output-metric-chip tool-output-metric-chip-warning">已截断</span>
       {/if}
     </div>
     <div class="tool-output-read-content-card">
@@ -909,11 +909,11 @@ const PROSE_MARKDOWN_CLASS =
       {#if model.payload.durationMs !== undefined}
         <span class="tool-output-metric-chip">{model.payload.durationMs}ms</span>
       {/if}
-      <span class="tool-output-metric-chip">logs: {model.payload.logs.length}</span>
+      <span class="tool-output-metric-chip">日志：{model.payload.logs.length}</span>
       {#if model.payload.state === "error"}
-        <span class="tool-output-metric-chip tool-output-metric-chip-warning">error</span>
+        <span class="tool-output-metric-chip tool-output-metric-chip-warning">错误</span>
       {:else if model.payload.resultText}
-        <span class="tool-output-metric-chip tool-output-metric-chip-accent">return value</span>
+        <span class="tool-output-metric-chip tool-output-metric-chip-accent">返回值</span>
       {/if}
     </div>
     {#if model.payload.errorMessage}
@@ -921,7 +921,7 @@ const PROSE_MARKDOWN_CLASS =
     {/if}
     {#if model.payload.logs.length > 0}
       <div class="tool-output-group">
-        <div class="tool-output-group-title">Console Output</div>
+        <div class="tool-output-group-title">控制台输出</div>
         <div class="tool-output-list">
           {#each model.payload.logs as logEntry, logIndex (`log-${logIndex}`)}
             <div class="tool-output-list-item tool-output-code-line">{logEntry}</div>
@@ -931,7 +931,7 @@ const PROSE_MARKDOWN_CLASS =
     {/if}
     {#if model.payload.resultText}
       <div class="tool-output-group">
-        <div class="tool-output-group-title">Return Value</div>
+        <div class="tool-output-group-title">返回值</div>
         <MarkdownRenderer
           content={formatRawToolOutput(model.payload.resultText)}
           class="tool-output-content markdown-preview-view !m-0 !p-0 text-[0.8rem] leading-[1.55] [&_pre]:my-0 [&_pre]:bg-[--background-primary] [&_pre]:p-2.5 [&_pre]:rounded"
@@ -940,7 +940,7 @@ const PROSE_MARKDOWN_CLASS =
     {/if}
     {#if showRawIO && model.payload.code}
       <details class="tool-output-raw-toggle">
-        <summary class="tool-output-raw-summary">Executed Code</summary>
+        <summary class="tool-output-raw-summary">执行的代码</summary>
         <MarkdownRenderer
           content={"```javascript\n" + model.payload.code + "\n```"}
           class="tool-output-content markdown-preview-view !m-0 !p-0 text-[0.8rem] leading-[1.55] [&_pre]:my-0 [&_pre]:bg-[--background-primary] [&_pre]:p-2.5 [&_pre]:rounded"
@@ -949,7 +949,7 @@ const PROSE_MARKDOWN_CLASS =
     {/if}
     {#if showRawIO && model.payload.inputJson}
       <details class="tool-output-raw-toggle">
-        <summary class="tool-output-raw-summary">Input</summary>
+        <summary class="tool-output-raw-summary">输入</summary>
         <MarkdownRenderer
           content={formatRawToolOutput(model.payload.inputJson)}
           class="tool-output-content markdown-preview-view !m-0 !p-0 text-[0.8rem] leading-[1.55] [&_pre]:my-0 [&_pre]:bg-[--background-primary] [&_pre]:p-2.5 [&_pre]:rounded"
@@ -957,12 +957,12 @@ const PROSE_MARKDOWN_CLASS =
       </details>
     {/if}
   {:else}
-    <div class="tool-io-empty">(no output)</div>
+    <div class="tool-io-empty">（无输出）</div>
   {/if}
 
   {#if showRawIO && model.rawText.trim() && model.kind !== "markdown"}
     <details class="tool-output-raw-toggle">
-      <summary class="tool-output-raw-summary">Raw output</summary>
+      <summary class="tool-output-raw-summary">原始输出</summary>
       <MarkdownRenderer
         content={formatRawToolOutput(model.rawText)}
         class="tool-output-content markdown-preview-view !m-0 !p-0 text-[0.8rem] leading-[1.55] [&_pre]:my-0 [&_pre]:bg-[--background-primary] [&_pre]:p-2.5 [&_pre]:rounded"

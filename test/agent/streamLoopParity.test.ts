@@ -237,7 +237,7 @@ describe("stream loop parity across the three entry points", () => {
 		const a = makeAgent();
 		await expect(
 			collect(a.streamTokens({ query: "hi", resolved: await makeResolved(a), threadId: THREAD_ID })),
-		).rejects.toThrow(/streaming completed without producing a final output/i);
+		).rejects.toThrow(/未产生最终结果/);
 
 		const c = makeAgent();
 		await expect(
@@ -248,7 +248,7 @@ describe("stream loop parity across the three entry points", () => {
 					checkpointId: "cp-1",
 				}),
 			),
-		).rejects.toThrow(/regeneration completed without producing a final output/i);
+		).rejects.toThrow(/未产生最终结果/);
 	});
 });
 

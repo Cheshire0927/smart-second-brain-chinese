@@ -61,7 +61,7 @@ let controlsOpen = $state(false);
 let buildVersion = 0;
 let workspaceRefs: EventRef[] = [];
 
-const semanticHint = "Semantic neighbors appear once a graph embedding index is configured.";
+const semanticHint = "配置图谱嵌入索引后，才会显示语义邻居。";
 function mergeDirection(
 	current: NoteContextDirection | undefined,
 	next: "incoming" | "outgoing",
@@ -74,11 +74,11 @@ function mergeDirection(
 function getDirectionLabel(direction: NoteContextDirection): string | null {
 	switch (direction) {
 		case "incoming":
-			return "In";
+			return "入向";
 		case "outgoing":
-			return "Out";
+			return "出向";
 		case "both":
-			return "Both";
+			return "双向";
 		default:
 			return null;
 	}
@@ -312,7 +312,7 @@ onDestroy(() => {
         <div class="note-context__status">
           <div class="note-context__loading" data-testid="note-context-loading">
             <LoadingAnimation />
-            <span>Updating…</span>
+            <span>更新中…</span>
           </div>
         </div>
       {/if}
@@ -321,8 +321,8 @@ onDestroy(() => {
         {#if viewMode === "graph" && showFitButton}
           <Button
             iconId="scan-search"
-            ariaLabel="Fit graph to view"
-            tooltip="Fit graph to view"
+            ariaLabel="适应视图"
+            tooltip="适应视图"
             class="note-context__floating-button"
             dataTestId="note-context-fit"
             onClick={() => {
@@ -337,7 +337,7 @@ onDestroy(() => {
           bind:open={controlsOpen}
           triggerStyles="clickable-icon"
           triggerClass="note-context__floating-button note-context__floating-button--quiet"
-          tooltip="Note Context options"
+          tooltip="笔记上下文选项"
           dataTestId="note-context-controls"
           contentClass="note-context__menu"
           side="bottom"
@@ -350,11 +350,11 @@ onDestroy(() => {
 
           <div class="note-context__menu-section" data-testid="note-context-view-mode">
             <div class="note-context__menu-section-header">
-              <span class="note-context__menu-label">View</span>
+              <span class="note-context__menu-label">视图</span>
               <Button
                 iconId="x"
-                ariaLabel="Close Note Context options"
-                tooltip="Close"
+                ariaLabel="关闭笔记上下文选项"
+                tooltip="关闭"
                 class="note-context__menu-close"
                 dataTestId="note-context-controls-close"
                 onClick={() => {
@@ -364,14 +364,14 @@ onDestroy(() => {
             </div>
             <div class="note-context__menu-buttons">
               <Button
-                buttonText="Graph"
+                buttonText="图谱"
                 cta={viewMode === "graph"}
                 class="note-context__button"
                 dataTestId="note-context-mode-graph"
                 onClick={() => setViewMode("graph")}
               />
               <Button
-                buttonText="List"
+                buttonText="列表"
                 cta={viewMode === "list"}
                 class="note-context__button"
                 dataTestId="note-context-mode-list"
@@ -383,17 +383,17 @@ onDestroy(() => {
           <div class="picker-popover-separator menu-separator"></div>
 
           <div class="note-context__menu-section" data-testid="note-context-relationship-mode">
-            <span class="note-context__menu-label">Show</span>
+            <span class="note-context__menu-label">显示</span>
             <div class="note-context__menu-buttons">
               <Button
-                buttonText="Linked"
+                buttonText="链接"
                 cta={relationshipMode === "linked"}
                 class="note-context__button"
                 dataTestId="note-context-mode-linked"
                 onClick={() => setRelationshipMode("linked")}
               />
               <Button
-                buttonText="Semantic"
+                buttonText="语义"
                 cta={relationshipMode === "semantic"}
                 class={`note-context__button ${!hasSemanticIndex ? "note-context__button--unavailable" : ""}`}
                 dataTestId="note-context-mode-semantic"
@@ -401,7 +401,7 @@ onDestroy(() => {
                 onClick={() => setRelationshipMode("semantic")}
               />
               <Button
-                buttonText="Both"
+                buttonText="两者"
                 cta={relationshipMode === "both"}
                 class={`note-context__button ${!hasSemanticIndex ? "note-context__button--unavailable" : ""}`}
                 dataTestId="note-context-mode-both"
@@ -414,9 +414,9 @@ onDestroy(() => {
           <div class="picker-popover-separator menu-separator"></div>
 
           <div class="note-context__menu-section" data-testid="note-context-display-settings">
-            <span class="note-context__menu-label">Display</span>
+            <span class="note-context__menu-label">显示</span>
             <div class="note-context__toggle-row">
-              <span class="note-context__toggle-label">Direction arrows</span>
+              <span class="note-context__toggle-label">方向箭头</span>
               <Toggle
                 checked={data.smartGraphSettings.directedWikiEdges}
                 onchange={setDirectedWikiEdges}
@@ -479,9 +479,9 @@ onDestroy(() => {
     {:else}
       <div class="note-context__empty" data-testid="note-context-empty">
         {#if activePath}
-          No neighbors.
+          没有相邻笔记。
         {:else}
-          Open a note.
+          请先打开一篇笔记。
         {/if}
       </div>
     {/if}

@@ -98,7 +98,7 @@ export async function openTagSearch(app: App, tag: string): Promise<boolean> {
 			}
 		} else {
 			Logger.warn("[TagSearch] Could not find method to set search query");
-			new Notice("Search pane opened but could not set tag query");
+			new Notice("已打开搜索面板，但无法设置标签查询");
 			return false;
 		}
 
@@ -109,7 +109,7 @@ export async function openTagSearch(app: App, tag: string): Promise<boolean> {
 		return true;
 	} catch (error) {
 		Logger.error("[TagSearch] Error opening search pane with tag:", error);
-		new Notice(`Failed to open search pane for tag: ${bareTag}`);
+		new Notice(`打开标签搜索面板失败：${bareTag}`);
 		return false;
 	}
 }

@@ -75,7 +75,7 @@ const editingMessageId = $derived(session?.editingPairId ?? null);
 
 function startEdit(messagePair: MessagePair) {
 	if (session?.isRunning) {
-		new Notice("Wait for the current response to finish before editing");
+		new Notice("请等待当前回复完成后再编辑");
 		return;
 	}
 	session?.beginEdit(messagePair.id);
@@ -99,7 +99,7 @@ async function regenerateResponse(messageId: UUIDv7) {
 		await session?.regenerateResponse(messageId);
 	} catch (error) {
 		Logger.error("[MessageContainer] Regenerate failed:", error);
-		new Notice(`Regenerate failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+		new Notice(`重新生成失败：${error instanceof Error ? error.message : "未知错误"}`);
 	}
 }
 
@@ -108,7 +108,7 @@ async function retryLastError(messageId: UUIDv7) {
 		await session?.retryLastError(messageId);
 	} catch (error) {
 		Logger.error("[MessageContainer] Retry failed:", error);
-		new Notice(`Retry failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+		new Notice(`重试失败：${error instanceof Error ? error.message : "未知错误"}`);
 	}
 }
 
@@ -118,7 +118,7 @@ async function handleBranchNavigate(checkpointId: string) {
 		await registry.switchToBranch(threadPath, checkpointId);
 	} catch (error) {
 		Logger.error("[MessageContainer] Branch switch failed:", error);
-		new Notice(`Branch switch failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+		new Notice(`分支切换失败：${error instanceof Error ? error.message : "未知错误"}`);
 	}
 }
 
@@ -362,16 +362,16 @@ function registerMessageRef(node: HTMLDivElement, id: string) {
 
 function renderAssitantAnswer(assistantAnswer: AssistantMessage) {
 	if (assistantAnswer.state === AssistantState.cancelled) {
-		return "> [!Warning] stopped by user";
+		return "> [!Warning] 已被用户停止";
 	}
 	if (assistantAnswer.state === AssistantState.error) {
 		const detail = assistantAnswer.errorCode?.trim();
 		if (detail) {
 			// Indent continuation lines so multi-line messages stay inside the callout.
 			const body = detail.replace(/\n/g, "\n> ");
-			return `> [!Error] Something went wrong\n> ${body}`;
+			return `> [!Error] 出错了\n> ${body}`;
 		}
-		return "> [!Error] Something went wrong\n> The model request failed.";
+		return "> [!Error] 出错了\n> 模型请求失败。";
 	}
 	return assistantAnswer.content;
 }
@@ -426,7 +426,7 @@ function getRenderableAssistantContent(assistantAnswer: AssistantMessage) {
 
 async function copyToClipboard(content: string) {
 	await navigator.clipboard.writeText(content);
-	new Notice("Copied to Clipboard");
+	new Notice("已复制到剪贴板");
 }
 
 /**
@@ -452,14 +452,14 @@ function openUserMessageMenu(pair: MessagePair, x: number, y: number) {
 
 	menu.addItem((item) =>
 		item
-			.setTitle("Edit message")
+			.setTitle("编辑消息")
 			.setIcon("edit")
 			.onClick(() => startEdit(pair)),
 	);
 
 	menu.addItem((item) =>
 		item
-			.setTitle("Copy message")
+			.setTitle("复制消息")
 			.setIcon("copy")
 			.onClick(() => copyToClipboard(pair.userMessage.content)),
 	);
@@ -742,8 +742,8 @@ $effect(() => {
               <div
                 class="summary-marker inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs"
                 title={messagePair.transcriptEvent.source === "manual_summarization"
-                  ? "Manual conversation compaction"
-                  : "Automatic conversation compaction"}
+                  ? "手动压缩对话"
+                  : "自动压缩对话"}
               >
                 <span class="summary-marker-icon" use:icon={"archive"} style="--icon-size: 12px"
                 ></span>
@@ -887,14 +887,14 @@ $effect(() => {
                       {#if !onMobile && !isBeingEdited}
                         <Button
                           iconId="edit"
-                          ariaLabel="Edit message"
-                          tooltip="Edit message"
+                          ariaLabel="编辑消息"
+                          tooltip="编辑消息"
                           onClick={() => startEdit(messagePair)}
                         />
                         <Button
                           iconId="copy"
-                          ariaLabel="Copy message"
-                          tooltip="Copy message"
+                          ariaLabel="复制消息"
+                          tooltip="复制消息"
                           onClick={() => copyToClipboard(messagePair.userMessage.content)}
                         />
                       {/if}
@@ -950,9 +950,9 @@ $effect(() => {
                   <div class="flex flex-row items-center">
                     <Button
                       iconId="refresh-cw"
-                      buttonText="Retry"
-                      ariaLabel="Retry this request"
-                      tooltip="Re-run the failed request"
+                      buttonText="重试"
+                      ariaLabel="重试此请求"
+                      tooltip="重新运行失败的请求"
                       onClick={() => retryLastError(messagePair.id)}
                     />
                   </div>
@@ -977,14 +977,14 @@ $effect(() => {
                     {/if}
                     <Button
                       iconId="refresh-cw"
-                      ariaLabel="Regenerate response"
-                      tooltip="Regenerate response"
+                      ariaLabel="重新生成回复"
+                      tooltip="重新生成回复"
                       onClick={() => regenerateResponse(messagePair.id)}
                     />
                     <Button
                       iconId="copy"
-                      ariaLabel="Copy response"
-                      tooltip="Copy response"
+                      ariaLabel="复制回复"
+                      tooltip="复制回复"
                       onClick={() => copyToClipboard(messagePair.assistantMessage.content)}
                     />
                   </div>
@@ -1039,7 +1039,7 @@ $effect(() => {
       <Button
         class="jump-to-bottom"
         iconId="arrow-down"
-        tooltip="Jump to bottom"
+        tooltip="跳到底部"
         dataTestId="jump-to-bottom"
         onClick={jumpToBottom}
       />

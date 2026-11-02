@@ -73,14 +73,14 @@ export const ollamaProvider: EmbeddingProviderDefinition = {
 	// =========================================================================
 	setupInstructions: {
 		steps: [
-			"Install Ollama from ollama.ai",
-			"Run 'ollama serve' to start the server",
-			"Pull a model with 'ollama pull llama3.1'",
-			"The default URL is http://localhost:11434",
+			"从 ollama.ai 安装 Ollama",
+			"运行 'ollama serve' 启动服务",
+			"用 'ollama pull llama3.1' 拉取模型",
+			"默认 URL 为 http://localhost:11434",
 		],
 		link: {
 			url: "https://ollama.ai",
-			text: "Ollama Website",
+			text: "Ollama 官网",
 		},
 	},
 
@@ -89,21 +89,21 @@ export const ollamaProvider: EmbeddingProviderDefinition = {
 	// =========================================================================
 	auth: {
 		baseUrl: {
-			label: "Server URL",
-			description: "The URL where your Ollama server is running",
+			label: "服务器 URL",
+			description: "你的 Ollama 服务运行所在的 URL",
 			kind: "text",
 			required: true,
 			placeholder: "http://localhost:11434",
 		},
 		apiKey: {
-			label: "API Key",
-			description: "API key for authentication (usually not required for local Ollama)",
+			label: "API 密钥",
+			description: "用于身份验证的 API 密钥（本地 Ollama 通常不需要）",
 			kind: "secret",
 			required: false,
 		},
 		headers: {
-			label: "Custom Headers",
-			description: "Additional headers as JSON (optional)",
+			label: "自定义请求头",
+			description: "以 JSON 填写的附加请求头（可选）",
 			kind: "textarea",
 			required: false,
 			placeholder: '{"X-Custom-Header": "value"}',
@@ -158,7 +158,7 @@ export const ollamaProvider: EmbeddingProviderDefinition = {
 
 	validateAuth: async (auth: AuthObject): Promise<AuthValidationResult> => {
 		if (!auth.baseUrl?.trim()) {
-			return { valid: false, error: "Server URL is required" };
+			return { valid: false, error: "需要服务器 URL" };
 		}
 
 		const baseUrl = sanitizeBaseUrl(auth.baseUrl);
@@ -173,7 +173,7 @@ export const ollamaProvider: EmbeddingProviderDefinition = {
 			});
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			return { valid: false, error: `Connection failed: ${message}` };
+			return { valid: false, error: `连接失败：${message}` };
 		}
 
 		if (response.ok) {
@@ -183,10 +183,10 @@ export const ollamaProvider: EmbeddingProviderDefinition = {
 		const errorBody = await safeReadText(response);
 
 		if (response.status === 401 || response.status === 403) {
-			return { valid: false, error: errorBody || `Authentication failed (${response.status})` };
+			return { valid: false, error: errorBody || `身份验证失败（${response.status}）` };
 		}
 
-		return { valid: false, error: errorBody || `Request failed with status ${response.status}` };
+		return { valid: false, error: errorBody || `请求失败，状态码 ${response.status}` };
 	},
 
 	discoverModels: async (auth: AuthObject): Promise<string[]> => {
