@@ -270,6 +270,14 @@ export default defineConfig(({ mode }) => {
 			"import.meta.env.MODE": JSON.stringify(mode),
 		},
 		build: {
+			// Vite's default "modules" target is
+			// es2020/edge88/firefox78/chrome87/safari14. esbuild 0.28 (pinned in
+			// `overrides`) marks safari14 as NOT supporting destructuring and cannot
+			// downlevel it, so every `?worker&inline` transform fails with
+			// "Transforming destructuring ... is not supported yet". Safari 14.1 is
+			// the first version its feature table accepts, and no real target here is
+			// below iOS 14.1 — so raise that one entry and keep the rest.
+			target: ["es2020", "edge88", "firefox78", "chrome87", "safari14.1"],
 			lib: {
 				entry: "src/main.ts",
 				formats: ["cjs"],

@@ -23,7 +23,7 @@
     "svelte-check": "^4.7.6",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3",
-    "vite": "^7.3.6",
+    "vite": "^6.4.5",
     "vitest": "^4.1.11"
   },
   "private": true,
@@ -92,5 +92,20 @@
     "rollup": "^4.63.1",
     "ws": "^8.21.3",
     "esbuild": "^0.28.2"
-  }
+  },
+  "description": "<div align=\"center\">",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cheshire0927/smart-second-brain-chinese.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cheshire0927/smart-second-brain-chinese/issues"
+  },
+  "homepage": "https://github.com/Cheshire0927/smart-second-brain-chinese#readme"
 }
