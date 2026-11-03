@@ -1,33 +1,25 @@
-# Security policy
+# 安全政策
 
-Smart Second Brain runs inside Obsidian, holds API keys for the providers you configure, and
-decides which notes may leave your machine. Bugs in that last part matter most to us.
+Smart Second Brain 运行在 Obsidian 内部，持有你为各供应商配置的 API key，并决定哪些笔记可以离开你的机器。其中最后这一部分的问题，对我们来说最重要。
 
-## What counts as a security issue
+## 什么算安全问题
 
-- Notes on the privacy list reaching an untrusted provider or the web tools, by any path
-  (search, graph, agent tools, memory, skills, MCP).
-- API keys or OAuth tokens written to disk unencrypted, logged, or sent anywhere other than
-  the provider they belong to.
-- An agent tool writing to the vault without going through the staged-review flow, outside the
-  memory folder where writes are auto-approved by design.
-- A skill, `AGENT.md`, or vault note being able to grant an agent tools it should not have.
-- Prompt injection from note or web content that leads to any of the above.
+- 隐私名单上的笔记通过任何路径（搜索、图谱、agent 工具、记忆、skills、MCP）到达了不受信任的供应商或联网工具。
+- API key 或 OAuth token 被未加密地写入磁盘、被记入日志，或被发送到它所属供应商以外的任何地方。
+- 某个 agent 工具绕过分阶段审阅流程直接写入 vault（记忆文件夹除外，那里的写入按设计是自动批准的）。
+- 一个 skill、`AGENT.md` 或 vault 笔记能够授予 agent 本不该拥有的工具。
+- 来自笔记或网页内容的提示词注入，并导致了上述任何一种后果。
 
-Provider outages, model hallucinations, and "the agent ignored my instructions" are not
-security issues; please use a normal bug report or Q&A for those.
+供应商服务中断、模型幻觉，以及"agent 无视了我的指令"都不属于安全问题；请使用普通的缺陷报告或 Q&A 渠道。
 
-## Reporting
+## 报告方式
 
-**Please do not open a public issue.** Use GitHub's private vulnerability reporting:
+**请不要公开开 issue。** 请使用 GitHub 的私有漏洞报告：
 
 https://github.com/s2b-dev/smart-second-brain/security/advisories/new
 
-Include the plugin version, platform, provider setup (never the keys themselves), and steps to
-reproduce. We aim to acknowledge reports within a week. This is a spare-time project, so a fix
-may take longer; we will keep you updated and credit you in the release notes unless you prefer
-not to be named.
+请在报告中包含插件版本、平台、供应商配置（绝不要包含密钥本身）以及复现步骤。我们争取在一周内确认收到报告。这是一个业余时间维护的项目，因此修复可能需要更久；我们会持续向你通报进展，并在发布说明中致谢 —— 除非你不希望被具名。
 
-## Supported versions
+## 受支持的版本
 
-Only the latest release receives fixes.
+只有最新版本会获得修复。

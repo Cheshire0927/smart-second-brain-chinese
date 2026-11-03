@@ -10,40 +10,41 @@
 
 <br>
 
-Your Smart Second Brain is a **free** and **open-source** Obsidian plugin that makes your vault smarter: better search, an interactive knowledge graph, and an AI assistant that actually knows your notes.
+Your Smart Second Brain 是一个**免费且开源**的 Obsidian 插件，它让你的 vault 变得更聪明：更好的搜索、可交互的知识图谱，以及一个真正读过你笔记的 AI 助手。
 
-Search surfaces your notes, the graph groups them into the topics your vault is actually about, and the assistant can draw on both when answering. **Search and the graph work right away with no AI provider.** Connecting one unlocks the full agent. Runs on desktop and mobile.
+搜索帮你找出笔记，图谱把它们归拢成你的 vault 真正在谈论的主题，而助手可以同时借助这两者来作答。**搜索和图谱开箱即用，不需要任何 AI 供应商。**接入一个供应商即可解锁完整的 agent。桌面端与移动端均可运行。
 
-**[smartsecondbrain.dev](https://smartsecondbrain.dev)** has a demo video, the features, setup guides, and documentation.
+**[smartsecondbrain.dev](https://smartsecondbrain.dev)** 上有演示视频、功能介绍、设置指南与完整文档。
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/s2b-dev/smart-second-brain/main/assets/hero-desktop-dark.png">
-  <img alt="Smart Second Brain: the smart graph with the vault grouped into topics, beside a chat that reads your notes and proposes an edit" src="https://raw.githubusercontent.com/s2b-dev/smart-second-brain/main/assets/hero-desktop-light.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/s2b-dev/smart-second-brain/main/assets/hero-desktop-light.png">
+  <img alt="Smart Second Brain：智能图谱把 vault 按主题分组，旁边是一个阅读笔记并提出修改建议的聊天" src="https://raw.githubusercontent.com/s2b-dev/smart-second-brain/main/assets/hero-desktop-light.png">
 </picture>
 
-## Features
+## 功能
 
-- **[Search](https://smartsecondbrain.dev/search/)** that combines keyword matching with meaning, so you find the note you were thinking of rather than the one you typed ([how it works](https://smartsecondbrain.dev/search/how-it-works/))
-- **[Smart Graph](https://smartsecondbrain.dev/graph/)** that works out what your vault is about: notes grouped into topics from your links, your tags, and what you wrote, with nothing to maintain ([how it works](https://smartsecondbrain.dev/graph/how-it-works/))
-- **[Agents](https://smartsecondbrain.dev/agents/)** that read and write your notes, draw charts and dashboards live from them as [widgets](https://smartsecondbrain.dev/agents/widgets/), with skills, memory, MCP, and integrations with your other plugins
+- **[搜索](https://smartsecondbrain.dev/search/)**：把关键词匹配与语义理解结合起来，让你找到的是心里想着的那篇笔记，而不是敲进去的那几个字（[工作原理](https://smartsecondbrain.dev/search/how-it-works/)）
+- **[智能图谱](https://smartsecondbrain.dev/graph/)**：推导出你的 vault 究竟在讲什么——依据你的链接、标签和你写下的内容把笔记归入各个主题，且无需维护任何东西（[工作原理](https://smartsecondbrain.dev/graph/how-it-works/)）
+- **[Agents](https://smartsecondbrain.dev/agents/)**：读写你的笔记，并以 [widget](https://smartsecondbrain.dev/agents/widgets/) 的形式从中即时绘制图表与看板，支持 skills、记忆、MCP，以及与你其他插件的集成
 
-## Install
+## 安装
 
-Install **Smart Second Brain** from Obsidian's community plugins and enable it. Search and the Smart Graph work immediately, with no configuration.
+从 Obsidian 的社区插件中安装 **Smart Second Brain** 并启用它。搜索与智能图谱立刻可用，无需任何配置。
 
-Add an embedding model and pick it for search and for the graph to unlock semantic search and topics that read what your notes say, not just how they link; add an AI provider to enable the agent. See the [getting started guide](https://smartsecondbrain.dev/start/installation/).
+添加一个嵌入模型，并把它指定给搜索和图谱，即可解锁语义搜索，以及读得懂笔记内容（而不只是链接关系）的主题归类；再添加一个 AI 供应商即可启用 agent。参见[入门指南](https://smartsecondbrain.dev/start/installation/)。
 
-Out of the box, none of your data leaves your machine. Your notes only go to the providers you configure, and there is no telemetry — see [privacy](https://smartsecondbrain.dev/privacy/model/). The one other network request is a daily update check that fetches this plugin's `manifest.json` from GitHub and sends nothing about you; turn it off under Settings → General → Check for updates.
+开箱状态下，你的任何数据都不会离开本机。笔记只会发送给你自己配置的供应商，且没有任何遥测 —— 参见[隐私说明](https://smartsecondbrain.dev/privacy/model/)。唯一的其他网络请求是每天一次的检查更新：它从 GitHub 拉取本插件的 `manifest.json`，且不发送任何关于你的信息；可以在"设置 → 通用 → 检查更新"中关闭。
 
-## Contributing
+## 参与贡献
 
-- Report a bug or request a feature [here](https://github.com/s2b-dev/smart-second-brain/issues/new/choose)
-- Ask a question in the [Q&A](https://github.com/s2b-dev/smart-second-brain/discussions/categories/q-a)
-- Share a skill, agent, or workflow in [Show and tell](https://github.com/s2b-dev/smart-second-brain/discussions/categories/show-and-tell)
-- Pull requests welcome. [CONTRIBUTING.md](CONTRIBUTING.md) has the development setup and how we handle AI-assisted contributions; [AGENTS.md](AGENTS.md) has the architecture, commands, and conventions
+- 报告缺陷或提出功能建议请到[这里](https://github.com/s2b-dev/smart-second-brain/issues/new/choose)
+- 提问请到 [Q&A](https://github.com/s2b-dev/smart-second-brain/discussions/categories/q-a)
+- 分享你的 skill、agent 或工作流请到 [Show and tell](https://github.com/s2b-dev/smart-second-brain/discussions/categories/show-and-tell)
+- 欢迎提交 pull request。[CONTRIBUTING.md](CONTRIBUTING.md) 里有开发环境设置以及我们如何处理 AI 辅助贡献；[AGENTS.md](AGENTS.md) 里有架构说明、命令与代码约定
 
-We initially built this as a university project. That's long finished, but we keep developing it in our spare time, as an experimental playground for state-of-the-art AI and as a tool for the Obsidian workflow we're passionate about. Much of the code is written with AI coding agents; we review, test, and stand behind every change, and commits and pull requests say when an agent was involved.
+我们最初是把它当作一个大学项目做出来的。那段时光早已结束，但我们仍在业余时间继续开发它 —— 作为前沿 AI 的一块试验田，也作为我们所热爱的 Obsidian 工作流中的一件工具。代码中有很大一部分由 AI 编码智能体写成；我们审阅、测试，并为每一处改动负责，提交与 PR 也会说明是否有智能体参与。
 
-## License
+## 许可证
 
 [MIT](LICENSE)
